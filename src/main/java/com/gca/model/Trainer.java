@@ -7,5 +7,4 @@ import lombok.EqualsAndHashCode;
 @Data
 public class Trainer extends User{
     private String specialization;
-    private User user;
 }
