@@ -11,10 +11,13 @@ import java.util.Map;
 
 @Repository
 public class TrainingDAOImpl implements TrainingDAO {
-    @Autowired
     private Map<Long, Training> storage;
-
     private static Long idCounter = 0L;
+
+    @Autowired
+    public void setStorage(Map<Long, Training> storage) {
+        this.storage = storage;
+    }
 
     @Override
     public Training create(Training training) {

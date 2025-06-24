@@ -2,14 +2,19 @@ package com.gca.storage;
 
 import com.gca.model.*;
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -18,18 +23,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
+@Data
 public class StorageInitializer {
     @Value("${storage.init.file}")
     private String initFilePath;
+    private static final Logger logger = LoggerFactory.getLogger(StorageInitializer.class);
+    private Map<Long, Training> trainingStorage;
+    private Map<Long, Trainer> trainerStorage;
+    private Map<Long, Trainee> traineeStorage;
 
-    private final Map<Long, Training> trainingStorage = new HashMap<>();
-    private final Map<Long, Trainer> trainerStorage = new HashMap<>();
-    private final Map<Long, Trainee> traineeStorage = new HashMap<>();
+    @Autowired
+    public void setTrainingStorage(Map<Long, Training> trainingStorage) {
+        this.trainingStorage = trainingStorage;
+    }
+
+    @Autowired
+    public void setTrainerStorage(Map<Long, Trainer> trainerStorage) {
+        this.trainerStorage = trainerStorage;
+    }
+
+    @Autowired
+    public void setTraineeStorage(Map<Long, Trainee> traineeStorage) {
+        this.traineeStorage = traineeStorage;
+    }
 
     @PostConstruct
     public void init() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(initFilePath))) {
+        logger.info("Initializing storage...");
+        logger.info("Init path file: {}", initFilePath);
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new ClassPathResource(initFilePath).getInputStream()))) {
             String line;
             String currentSection = null;
             while ((line = reader.readLine()) != null) {
@@ -55,7 +78,9 @@ public class StorageInitializer {
                         throw new IllegalArgumentException("Невідома секція: " + currentSection);
                 }
             }
+            logger.info("Storage initialized successfully.");
         } catch (IOException e) {
+            logger.error("Не вдалося ініціалізувати зберігання з файлу: {}", initFilePath);
             throw new RuntimeException("Не вдалося ініціалізувати зберігання з файлу: " + initFilePath, e);
         }
     }
