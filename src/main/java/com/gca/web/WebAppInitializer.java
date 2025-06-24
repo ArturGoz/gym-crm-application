@@ -1,4 +1,4 @@
-package com.gca.config;
+package com.gca.web;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 

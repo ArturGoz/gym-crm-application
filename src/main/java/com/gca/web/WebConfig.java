@@ -1,4 +1,4 @@
-package com.gca.config;
+package com.gca.web;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

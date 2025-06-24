@@ -1,0 +1,3 @@
+storage:
+  init:
+    file: classpath:data.txt
