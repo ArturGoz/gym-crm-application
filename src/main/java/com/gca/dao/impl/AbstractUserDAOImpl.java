@@ -2,10 +2,13 @@ package com.gca.dao.impl;
 
 import com.gca.dao.UserDAO;
 import com.gca.model.User;
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Data
 public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> {
     protected Map<Long, T> storage;
 
