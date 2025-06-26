@@ -1,0 +1,8 @@
+[Trainer]
+1,John,Doe,john.doe,pass123,true,Strength
+
+[Trainee]
+1,Alice,Johnson,alice.johnson,pass789,true,1990-01-01,123 Main St
+
+[Training]
+1,1,1,2023-01-01,PT1H,Beginner Cardio,CARDIO
