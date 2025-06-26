@@ -2,16 +2,17 @@ package com.gca.dao.impl;
 
 import com.gca.dao.TraineeDAO;
 import com.gca.model.Trainee;
+import com.gca.storage.Namespace;
+import com.gca.storage.StorageRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import java.util.Map;
 
 @Repository
 public class TraineeDAOImpl extends AbstractUserDAOImpl<Trainee> implements TraineeDAO {
     @Autowired
     @Override
-    protected void setStorage(Map<Long, Trainee> storage) {
-        this.storage = storage;
+    protected void setStorage(StorageRegistry storageRegistry) {
+        this.storage = storageRegistry.getStorage(Namespace.TRAINEE);
     }
 
     @Override

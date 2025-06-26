@@ -6,17 +6,20 @@ import com.gca.model.Training;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class StorageRegistry {
     private final Map<Namespace, Map<Long, ?>> storageMap = new EnumMap<>(Namespace.class);
 
-    public StorageRegistry() {
-        storageMap.put(Namespace.TRAINING, new HashMap<Long, Training>());
-        storageMap.put(Namespace.TRAINER, new HashMap<Long, Trainer>());
-        storageMap.put(Namespace.TRAINEE, new HashMap<Long, Trainee>());
+    public StorageRegistry(
+            Map<Long, Training> trainingStorage,
+            Map<Long, Trainer> trainerStorage,
+            Map<Long, Trainee> traineeStorage
+    ) {
+        storageMap.put(Namespace.TRAINING, trainingStorage);
+        storageMap.put(Namespace.TRAINER, trainerStorage);
+        storageMap.put(Namespace.TRAINEE, traineeStorage);
     }
 
     @SuppressWarnings("unchecked")

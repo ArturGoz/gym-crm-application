@@ -34,7 +34,6 @@ public class StorageInitializer {
             logger.info("Data initialized successfully.");
             return data;
         } catch (IOException e) {
-            logger.error("Failed to initialize data from file: {}", initFilePath);
             throw new RuntimeException("Failed to initialize data from file: " + initFilePath, e);
         }
     }
@@ -81,6 +80,7 @@ public class StorageInitializer {
 
     private Training parseTraining(String line) {
         String[] parts = line.split(",");
+
         Long id = Long.parseLong(parts[0]);
         Long trainerId = Long.parseLong(parts[1]);
         Long traineeId = Long.parseLong(parts[2]);
@@ -104,16 +104,20 @@ public class StorageInitializer {
 
     private Trainer parseTrainer(String line) {
         String[] parts = line.split(",");
+
         Trainer trainer = parseUser(parts, new Trainer());
         trainer.setSpecialization(parts[6]);
+
         return trainer;
     }
 
     private Trainee parseTrainee(String line) {
         String[] parts = line.split(",");
+
         Trainee trainee = parseUser(parts, new Trainee());
         trainee.setDateOfBirth(LocalDate.parse(parts[6]));
         trainee.setAddress(parts[7]);
+
         return trainee;
     }
 
@@ -124,6 +128,7 @@ public class StorageInitializer {
         user.setUsername(parts[3]);
         user.setPassword(parts[4]);
         user.setActive(Boolean.parseBoolean(parts[5]));
+
         return user;
     }
 }

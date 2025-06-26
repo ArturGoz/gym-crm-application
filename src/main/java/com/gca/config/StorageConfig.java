@@ -3,7 +3,6 @@ package com.gca.config;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
-import com.gca.storage.Namespace;
 import com.gca.storage.StorageRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
@@ -23,22 +23,26 @@ public class StorageConfig {
     }
 
     @Bean
-    public StorageRegistry storageRegistry() {
-        return new StorageRegistry();
+    public Map<Long, Training> trainingStorage() {
+        return new HashMap<>();
     }
 
     @Bean
-    public Map<Long, Training> trainingStorage(StorageRegistry registry) {
-        return registry.getStorage(Namespace.TRAINING);
+    public Map<Long, Trainer> trainerStorage() {
+        return new HashMap<>();
     }
 
     @Bean
-    public Map<Long, Trainer> trainerStorage(StorageRegistry registry) {
-        return registry.getStorage(Namespace.TRAINER);
+    public Map<Long, Trainee> traineeStorage() {
+        return new HashMap<>();
     }
 
     @Bean
-    public Map<Long, Trainee> traineeStorage(StorageRegistry registry) {
-        return registry.getStorage(Namespace.TRAINEE);
+    public StorageRegistry storageRegistry(
+            Map<Long, Training> trainingStorage,
+            Map<Long, Trainer> trainerStorage,
+            Map<Long, Trainee> traineeStorage
+    ) {
+        return new StorageRegistry(trainingStorage, trainerStorage, traineeStorage);
     }
 }

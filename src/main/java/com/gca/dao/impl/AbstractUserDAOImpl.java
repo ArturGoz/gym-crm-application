@@ -2,6 +2,7 @@ package com.gca.dao.impl;
 
 import com.gca.dao.UserDAO;
 import com.gca.model.User;
+import com.gca.storage.StorageRegistry;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -12,13 +13,14 @@ import java.util.Map;
 public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> {
     protected Map<Long, T> storage;
 
-    protected abstract void setStorage(Map<Long, T> storage);
+    protected abstract void setStorage(StorageRegistry storageRegistry);
 
     @Override
     public T create(T entity) {
         Long id = getNextId();
         entity.setUserId(id);
         storage.put(id, entity);
+
         return entity;
     }
 
@@ -30,6 +32,7 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
                     entity.getUserId()));
         }
         storage.put(entity.getUserId(), entity);
+
         return entity;
     }
 

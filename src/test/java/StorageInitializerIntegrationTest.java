@@ -37,7 +37,6 @@ public class StorageInitializerIntegrationTest {
 
     @Test
     void testInitFilePath() {
-        System.out.println("initFilePath: " + storageInitializer.getInitFilePath());
         assertEquals("data-test.txt", storageInitializer.getInitFilePath(), "initFilePath should be resolved to 'data-test.txt'");
     }
 
