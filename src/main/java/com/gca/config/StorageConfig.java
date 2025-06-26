@@ -36,13 +36,4 @@ public class StorageConfig {
     public Map<Long, Trainee> traineeStorage() {
         return new HashMap<>();
     }
-
-    @Bean
-    public StorageRegistry storageRegistry(
-            Map<Long, Training> trainingStorage,
-            Map<Long, Trainer> trainerStorage,
-            Map<Long, Trainee> traineeStorage
-    ) {
-        return new StorageRegistry(trainingStorage, trainerStorage, traineeStorage);
-    }
 }

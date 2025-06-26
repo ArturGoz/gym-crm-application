@@ -8,6 +8,10 @@ import org.springframework.stereotype.Component;
 import java.util.EnumMap;
 import java.util.Map;
 
+import static com.gca.storage.Namespace.TRAINEE;
+import static com.gca.storage.Namespace.TRAINER;
+import static com.gca.storage.Namespace.TRAINING;
+
 @Component
 public class StorageRegistry {
     private final Map<Namespace, Map<Long, ?>> storageMap = new EnumMap<>(Namespace.class);
@@ -15,11 +19,10 @@ public class StorageRegistry {
     public StorageRegistry(
             Map<Long, Training> trainingStorage,
             Map<Long, Trainer> trainerStorage,
-            Map<Long, Trainee> traineeStorage
-    ) {
-        storageMap.put(Namespace.TRAINING, trainingStorage);
-        storageMap.put(Namespace.TRAINER, trainerStorage);
-        storageMap.put(Namespace.TRAINEE, traineeStorage);
+            Map<Long, Trainee> traineeStorage) {
+        storageMap.put(TRAINING, trainingStorage);
+        storageMap.put(TRAINER, trainerStorage);
+        storageMap.put(TRAINEE, traineeStorage);
     }
 
     @SuppressWarnings("unchecked")
@@ -29,9 +32,9 @@ public class StorageRegistry {
 
     @SuppressWarnings("unchecked")
     public void initStorages(InitializedData initData) {
-        Map<Long, Training> trainingStorage = (Map<Long, Training>) storageMap.get(Namespace.TRAINING);
-        Map<Long, Trainer> trainerStorage = (Map<Long, Trainer>) storageMap.get(Namespace.TRAINER);
-        Map<Long, Trainee> traineeStorage = (Map<Long, Trainee>) storageMap.get(Namespace.TRAINEE);
+        Map<Long, Training> trainingStorage = (Map<Long, Training>) storageMap.get(TRAINING);
+        Map<Long, Trainer> trainerStorage = (Map<Long, Trainer>) storageMap.get(TRAINER);
+        Map<Long, Trainee> traineeStorage = (Map<Long, Trainee>) storageMap.get(TRAINEE);
 
         initData.getTrainings().forEach(t -> trainingStorage.put(t.getId(), t));
         initData.getTrainers().forEach(t -> trainerStorage.put(t.getUserId(), t));

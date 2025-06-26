@@ -2,7 +2,6 @@ package com.gca.dao.impl;
 
 import com.gca.dao.TrainingDAO;
 import com.gca.model.Training;
-import com.gca.storage.Namespace;
 import com.gca.storage.StorageRegistry;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.gca.storage.Namespace.TRAINING;
 
 @Repository
 @Data
@@ -21,7 +22,7 @@ public class TrainingDAOImpl implements TrainingDAO {
 
     @Autowired
     public void setStorage(StorageRegistry storageRegistry) {
-        this.storage = storageRegistry.getStorage(Namespace.TRAINING);
+        this.storage = storageRegistry.getStorage(TRAINING);
     }
 
     @Override
