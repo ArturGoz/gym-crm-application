@@ -8,7 +8,7 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
-import com.gca.storage.StorageConfig;
+import com.gca.config.StorageConfig;
 import com.gca.storage.StorageInitializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -23,5 +23,16 @@ public class StorageRegistry {
     public <T> Map<Long, T> getStorage(Namespace namespace) {
         return (Map<Long, T>) storageMap.get(namespace);
     }
+
+    @SuppressWarnings("unchecked")
+    public void initStorages(InitializedData initData) {
+        Map<Long, Training> trainingStorage = (Map<Long, Training>) storageMap.get(Namespace.TRAINING);
+        Map<Long, Trainer> trainerStorage = (Map<Long, Trainer>) storageMap.get(Namespace.TRAINER);
+        Map<Long, Trainee> traineeStorage = (Map<Long, Trainee>) storageMap.get(Namespace.TRAINEE);
+
+        initData.getTrainings().forEach(t -> trainingStorage.put(t.getId(), t));
+        initData.getTrainers().forEach(t -> trainerStorage.put(t.getUserId(), t));
+        initData.getTrainees().forEach(t -> traineeStorage.put(t.getUserId(), t));
+    }
 }
 

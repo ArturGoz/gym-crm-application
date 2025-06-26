@@ -1,4 +1,4 @@
-package com.gca.storage;
+package com.gca.config;
 
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.PropertiesPropertySource;

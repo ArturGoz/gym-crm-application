@@ -1,7 +1,7 @@
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
-import com.gca.storage.StorageConfig;
+import com.gca.config.StorageConfig;
 import com.gca.storage.StorageInitializer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +31,15 @@ public class StorageInitializerIntegrationTest {
 
     @Autowired
     private Map<Long, Trainee> traineeStorage;
+
+    @Autowired
+    private StorageInitializer storageInitializer;
+
+    @Test
+    void testInitFilePath() {
+        System.out.println("initFilePath: " + storageInitializer.getInitFilePath());
+        assertEquals("data-test.txt", storageInitializer.getInitFilePath(), "initFilePath should be resolved to 'data-test.txt'");
+    }
 
     @Test
     void shouldLoadDataFromFile() {
