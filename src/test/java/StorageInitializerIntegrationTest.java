@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {StorageConfig.class, StorageInitializer.class})
-@TestPropertySource(properties = {"storage.init.file=data-test.txt"})
+@TestPropertySource(properties = {"storage.init.file=init-data-test.txt"})
 public class StorageInitializerIntegrationTest {
     @Autowired
     private Map<Long, Training> trainingStorage;
@@ -37,7 +37,7 @@ public class StorageInitializerIntegrationTest {
 
     @Test
     void testInitFilePath() {
-        assertEquals("data-test.txt", storageInitializer.getInitFilePath(), "initFilePath should be resolved to 'data-test.txt'");
+        assertEquals("init-data-test.txt", storageInitializer.getInitFilePath(), "initFilePath should be resolved to 'data-test.txt'");
     }
 
     @Test
