@@ -1,22 +1,24 @@
 package com.gca.storage;
 
-import com.gca.model.*;
+import com.gca.model.Trainee;
+import com.gca.model.Trainer;
+import com.gca.model.Training;
+import com.gca.model.TrainingType;
+import com.gca.model.User;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Component
@@ -46,39 +48,55 @@ public class StorageInitializer {
 
     @PostConstruct
     public void init() {
-        logger.info("Initializing storage...");
         logger.info("Init path file: {}", initFilePath);
+
+        try {
+            processInitFile(initFilePath);
+            logger.info("Storage initialized successfully.");
+        } catch (IOException e) {
+            logger.error("Failed to initialize data from file: {}", initFilePath);
+            throw new RuntimeException("Failed to initialize data from file: " + initFilePath, e);
+        }
+    }
+
+    private void processInitFile(String filePath) throws IOException {
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new ClassPathResource(initFilePath).getInputStream()))) {
-            String line;
+                new InputStreamReader(new ClassPathResource(filePath).getInputStream()))) {
+
             String currentSection = null;
+            String line;
+
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
+
                 if (line.isEmpty() || line.startsWith("#")) {
                     continue;
                 }
-                if (line.startsWith("[")) {
-                    currentSection = line.substring(1, line.length() - 1);
+
+                if (isSectionHeader(line)) {
+                    currentSection = extractSectionName(line);
                     continue;
                 }
-                switch (currentSection) {
-                    case "Training":
-                        parseAndAddTraining(line);
-                        break;
-                    case "Trainer":
-                        parseAndAddTrainer(line);
-                        break;
-                    case "Trainee":
-                        parseAndAddTrainee(line);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Невідома секція: " + currentSection);
-                }
+
+                handleDataLine(currentSection, line);
             }
-            logger.info("Storage initialized successfully.");
-        } catch (IOException e) {
-            logger.error("Не вдалося ініціалізувати зберігання з файлу: {}", initFilePath);
-            throw new RuntimeException("Не вдалося ініціалізувати зберігання з файлу: " + initFilePath, e);
+        }
+    }
+
+    private boolean isSectionHeader(String line) {
+        return line.startsWith("[") && line.endsWith("]");
+    }
+
+    private String extractSectionName(String line) {
+        return line.substring(1, line.length() - 1).trim();
+    }
+
+    private void handleDataLine(String section, String line) {
+        switch (section) {
+            case "Training" -> parseAndAddTraining(line);
+            case "Trainer" -> parseAndAddTrainer(line);
+            case "Trainee" -> parseAndAddTrainee(line);
+            default -> throw new IllegalArgumentException("Unknown section: " + section);
         }
     }
 
@@ -87,7 +105,7 @@ public class StorageInitializer {
         Long id = Long.parseLong(parts[0]);
         Long trainerId = Long.parseLong(parts[1]);
         Long traineeId = Long.parseLong(parts[2]);
-        Date trainingDate = parseDate(parts[3]);
+        LocalDate trainingDate = LocalDate.parse(parts[3]);
         Duration trainingDuration = Duration.parse(parts[4]);
         String trainingName = parts[5];
         String trainingTypeStr = parts[6];
@@ -121,7 +139,7 @@ public class StorageInitializer {
         String[] parts = line.split(",");
 
         Long traineeId = parseAndSetUserPartsAndReturnUserId(trainee, parts);
-        Date dateOfBirth = parseDate(parts[6]); // Очікується формат "yyyy-MM-dd"
+        LocalDate dateOfBirth = LocalDate.parse(parts[6]); // Очікується формат "yyyy-MM-dd"
         String address = parts[7];
         trainee.setDateOfBirth(dateOfBirth);
         trainee.setAddress(address);
@@ -144,13 +162,5 @@ public class StorageInitializer {
         user.setPassword(password);
         user.setActive(isActive);
         return id;
-    }
-
-    private Date parseDate(String dateStr) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
-        } catch (ParseException e) {
-            throw new RuntimeException("Не вдалося розпарсити дату: " + dateStr, e);
-        }
     }
 }

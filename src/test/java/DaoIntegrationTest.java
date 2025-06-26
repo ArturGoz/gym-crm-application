@@ -17,11 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Date;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
@@ -53,17 +56,14 @@ class DaoIntegrationTest {
 
     @BeforeEach
     void resetState() {
-        // Очищаємо сховища перед кожним тестом
         traineeStorage.clear();
         trainerStorage.clear();
         trainingStorage.clear();
 
-        // Переініціалізуємо початкові дані
         initializeTestData();
     }
 
     private void initializeTestData() {
-        // Ініціалізація тренерів
         Trainer trainer1 = new Trainer();
         trainer1.setUserId(1L);
         trainer1.setFirstName("John");
@@ -84,7 +84,6 @@ class DaoIntegrationTest {
         trainer2.setSpecialization("Cardio");
         trainerStorage.put(2L, trainer2);
 
-        // Ініціалізація стажерів
         Trainee trainee1 = new Trainee();
         trainee1.setUserId(1L);
         trainee1.setFirstName("Alice");
@@ -92,7 +91,7 @@ class DaoIntegrationTest {
         trainee1.setUsername("alice.johnson");
         trainee1.setPassword("pass789");
         trainee1.setActive(true);
-        trainee1.setDateOfBirth(Date.valueOf("1990-01-01"));
+        trainee1.setDateOfBirth(LocalDate.of(1990, 1, 1));
         trainee1.setAddress("123 Main St");
         traineeStorage.put(1L, trainee1);
 
@@ -103,16 +102,15 @@ class DaoIntegrationTest {
         trainee2.setUsername("bob.williams");
         trainee2.setPassword("pass012");
         trainee2.setActive(true);
-        trainee2.setDateOfBirth(Date.valueOf("1992-02-02"));
+        trainee2.setDateOfBirth(LocalDate.of(1992, 2, 2));
         trainee2.setAddress("456 Elm St");
         traineeStorage.put(2L, trainee2);
 
-        // Ініціалізація тренувань
         Training training1 = new Training();
         training1.setId(1L);
         training1.setTrainerId(1L);
         training1.setTraineeId(1L);
-        training1.setTrainingDate(Date.valueOf("2023-01-01"));
+        training1.setTrainingDate(LocalDate.of(2023, 1, 1));
         training1.setTrainingDuration(Duration.parse("PT1H"));
         training1.setTrainingName("Beginner Cardio");
         training1.setTrainingType(new TrainingType("CARDIO"));
@@ -122,7 +120,7 @@ class DaoIntegrationTest {
         training2.setId(2L);
         training2.setTrainerId(2L);
         training2.setTraineeId(2L);
-        training2.setTrainingDate(Date.valueOf("2023-01-02"));
+        training2.setTrainingDate(LocalDate.of(2023, 1, 2));
         training2.setTrainingDuration(Duration.parse("PT2H"));
         training2.setTrainingName("Advanced Strength");
         training2.setTrainingType(new TrainingType("STRENGTH"));
@@ -148,7 +146,6 @@ class DaoIntegrationTest {
 
     @Test
     void createOperations_ShouldUpdateStorage() {
-        // Перевіряємо операції створення
         Trainee newTrainee = new Trainee();
         newTrainee.setFirstName("New");
         newTrainee.setLastName("Trainee");
@@ -168,13 +165,12 @@ class DaoIntegrationTest {
 
     @Test
     void getOperations_ShouldReturnCorrectData() {
-        // Перевіряємо, що дані з ініціалізації доступні через DAO
         Trainee trainee = traineeDAO.getById(1L);
         assertNotNull(trainee);
         assertEquals("Alice", trainee.getFirstName());
         assertEquals("Johnson", trainee.getLastName());
         assertEquals("123 Main St", trainee.getAddress());
-        assertEquals(Date.valueOf("1990-01-01"), trainee.getDateOfBirth());
+        assertEquals(LocalDate.of(1990, 1, 1), trainee.getDateOfBirth());
 
         Trainer trainer = trainerDAO.getById(1L);
         assertNotNull(trainer);
@@ -191,7 +187,6 @@ class DaoIntegrationTest {
 
     @Test
     void updateOperations_ShouldModifyData() {
-        // Перевіряємо операції оновлення
         Trainee trainee = traineeDAO.getById(1L);
         trainee.setAddress("New Address");
         Trainee updated = traineeDAO.update(trainee);
@@ -201,7 +196,6 @@ class DaoIntegrationTest {
 
     @Test
     void deleteOperations_ShouldRemoveData() {
-        // Перевіряємо операції видалення
         traineeDAO.delete(2L);
         assertEquals(1, traineeStorage.size());
         assertNull(traineeStorage.get(2L));

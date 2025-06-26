@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Duration;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +14,7 @@ public class Training {
     private Long id;
     private Long trainerId;
     private Long traineeId;
-    private Date trainingDate;
+    private LocalDate trainingDate;
     private Duration trainingDuration;
     private String trainingName;
     private TrainingType trainingType;

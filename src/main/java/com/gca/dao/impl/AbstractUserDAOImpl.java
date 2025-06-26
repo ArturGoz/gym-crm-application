@@ -25,7 +25,9 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
     @Override
     public T update(T entity) {
         if (!storage.containsKey(entity.getUserId())) {
-            throw new RuntimeException(this.getClass().getSimpleName() + " not found with id: " + entity.getUserId());
+            throw new RuntimeException(String.format("%s not found with id: %s",
+                    this.getClass().getSimpleName(),
+                    entity.getUserId()));
         }
         storage.put(entity.getUserId(), entity);
         return entity;

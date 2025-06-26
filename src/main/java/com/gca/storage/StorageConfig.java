@@ -3,14 +3,11 @@ package com.gca.storage;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import java.util.HashMap;
 import java.util.Map;
-
 
 @Configuration
 @ComponentScan(basePackages = "com.gca.storage")
