@@ -58,6 +58,7 @@ public class StorageInitializer {
                 handleDataLine(currentSection, line, data);
             }
         }
+
         return data;
     }
 

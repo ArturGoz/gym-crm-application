@@ -14,6 +14,7 @@ public class UsernameGeneratorImpl implements UsernameGenerator {
         while (existsPredicate.test(candidate)) {
             candidate = base + suffix++;
         }
+
         return candidate;
     }
 }
