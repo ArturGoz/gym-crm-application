@@ -3,8 +3,11 @@ package com.gca.service.impl;
 import com.gca.dao.TraineeDAO;
 import com.gca.model.Trainee;
 import com.gca.service.TraineeService;
-import com.gca.utils.PasswordUtils;
+import com.gca.utils.CombinedUsernameExistenceChecker;
+import com.gca.utils.RandomPasswordGenerator;
+import com.gca.utils.UserCreationHelper;
 import com.gca.utils.UsernameGenerator;
+import com.gca.utils.UsernameGeneratorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +20,12 @@ public class TraineeServiceImpl implements TraineeService {
     private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
     @Autowired private TraineeDAO traineeDAO;
-    @Autowired private  UsernameGenerator usernameGenerator;
-
+    @Autowired private UserCreationHelper userCreationHelper;
 
     @Override
     public Trainee createTrainee(Trainee trainee) {
-        String username = usernameGenerator.generate(trainee.getFirstName(), trainee.getLastName());
-        String password = PasswordUtils.generateRandomPassword();
+        String username = userCreationHelper.generateUsername(trainee.getFirstName(), trainee.getLastName());
+        String password = userCreationHelper.generatePassword();
 
         trainee.setUsername(username);
         trainee.setPassword(password);

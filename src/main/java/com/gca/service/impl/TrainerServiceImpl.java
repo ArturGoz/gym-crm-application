@@ -3,8 +3,9 @@ package com.gca.service.impl;
 import com.gca.dao.TrainerDAO;
 import com.gca.model.Trainer;
 import com.gca.service.TrainerService;
-import com.gca.utils.PasswordUtils;
-import com.gca.utils.UsernameGenerator;
+import com.gca.utils.RandomPasswordGenerator;
+import com.gca.utils.UserCreationHelper;
+import com.gca.utils.UsernameGeneratorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,22 @@ import java.util.List;
 public class TrainerServiceImpl implements TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
-    @Autowired private TrainerDAO trainerDAO;
-    @Autowired private UsernameGenerator usernameGenerator;
+    private TrainerDAO trainerDAO;
+    private UserCreationHelper userCreationHelper;
+
+    @Autowired
+    public void setTrainerDAO(TrainerDAO trainerDAO) {
+        this.trainerDAO = trainerDAO;
+    }
+    @Autowired
+    public void setUserCreationHelper(UserCreationHelper userCreationHelper) {
+        this.userCreationHelper = userCreationHelper;
+    }
 
     @Override
     public Trainer createTrainer(Trainer trainer) {
-        String username = usernameGenerator.generate(trainer.getFirstName(), trainer.getLastName());
-        String password = PasswordUtils.generateRandomPassword();
+        String username = userCreationHelper.generateUsername(trainer.getFirstName(), trainer.getLastName());
+        String password = userCreationHelper.generatePassword();
 
         trainer.setUsername(username);
         trainer.setPassword(password);
