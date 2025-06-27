@@ -14,7 +14,12 @@ import java.util.List;
 public class TrainingServiceImpl implements TrainingService {
     private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
-    @Autowired TrainingDAO trainingDAO;
+    private TrainingDAO trainingDAO;
+
+    @Autowired
+    public void setTrainingDAO(TrainingDAO trainingDAO) {
+        this.trainingDAO = trainingDAO;
+    }
 
     @Override
     public Training createTraining(Training training) {
@@ -33,14 +38,4 @@ public class TrainingServiceImpl implements TrainingService {
     public List<Training> getAllTrainings() {
         return trainingDAO.getAll();
     }
-
-/*    @Override
-    public List<Training> getTrainingsByTraineeId(Long traineeId) {
-        return trainingDAO.ge(traineeId);
-    }
-
-    @Override
-    public List<Training> getTrainingsByTrainerId(Long trainerId) {
-        return trainingDAO.getByTrainerId(trainerId);
-    }*/
 }

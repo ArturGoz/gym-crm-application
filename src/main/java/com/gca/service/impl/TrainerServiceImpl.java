@@ -3,9 +3,7 @@ package com.gca.service.impl;
 import com.gca.dao.TrainerDAO;
 import com.gca.model.Trainer;
 import com.gca.service.TrainerService;
-import com.gca.utils.RandomPasswordGenerator;
 import com.gca.utils.UserCreationHelper;
-import com.gca.utils.UsernameGeneratorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +44,6 @@ public class TrainerServiceImpl implements TrainerService {
     public Trainer updateTrainer(Trainer trainer) {
         Trainer existing = trainerDAO.getById(trainer.getUserId());
         if (existing == null) {
-            logger.error("Trainer not found for update: {}", trainer.getUserId());
             throw new RuntimeException("Trainer not found");
         }
 
