@@ -2,16 +2,14 @@ package com.gca.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public abstract class User {
-    private Long userId;
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String password;
-    private boolean isActive;
+    private final Long userId;
+    private final String firstName;
+    private final String lastName;
+    private final String username;
+    private final String password;
+    private final boolean isActive;
 }
