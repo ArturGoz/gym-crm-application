@@ -1,3 +1,5 @@
+package integration;
+
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
@@ -22,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {StorageConfig.class, StorageInitializer.class})
 @TestPropertySource(properties = {"storage.init.file=init-data-test.txt"})
-public class StorageInitializerIntegrationTest {
+public class StorageInitializerIT {
     @Autowired
     private Map<Long, Training> trainingStorage;
 

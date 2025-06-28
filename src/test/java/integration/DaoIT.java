@@ -1,3 +1,5 @@
+package integration;
+
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
@@ -34,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         TrainerDAOImpl.class,
         TrainingDAOImpl.class
 })
-class DaoIntegrationTest {
+class DaoIT {
 
     @Autowired
     private TraineeDAO traineeDAO;
