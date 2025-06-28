@@ -10,7 +10,6 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TraineeMapperTest {
@@ -18,9 +17,12 @@ public class TraineeMapperTest {
 
     @Test
     void testToEntity_fromCreateRequest() {
-        TraineeCreateRequest request = new TraineeCreateRequest(
-                "John", "Doe", LocalDate.of(2000, 1, 1), "Kyiv"
-        );
+        TraineeCreateRequest request = TraineeCreateRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .address("Kyiv")
+                .build();
 
         Trainee entity = traineeMapper.toEntity(request);
 
@@ -32,9 +34,12 @@ public class TraineeMapperTest {
 
     @Test
     void testToEntity_fromUpdateRequest() {
-        TraineeUpdateRequest request = new TraineeUpdateRequest(
-                10L, false, LocalDate.of(1999, 5, 5), "Lviv"
-        );
+        TraineeUpdateRequest request = TraineeUpdateRequest.builder()
+                .userId(10L)
+                .isActive(false)
+                .dateOfBirth(LocalDate.of(1999, 5, 5))
+                .address("Lviv")
+                .build();
 
         Trainee entity = traineeMapper.toEntity(request);
 
@@ -46,14 +51,15 @@ public class TraineeMapperTest {
 
     @Test
     void testToResponse() {
-        Trainee entity = new Trainee();
-        entity.setUserId(15L);
-        entity.setFirstName("Alice");
-        entity.setLastName("Smith");
-        entity.setUsername("alice.smith");
-        entity.setActive(true);
-        entity.setDateOfBirth(LocalDate.of(1998, 12, 12));
-        entity.setAddress("Dnipro");
+        Trainee entity = Trainee.builder()
+                .userId(15L)
+                .firstName("Alice")
+                .lastName("Smith")
+                .username("alice.smith")
+                .isActive(true)
+                .dateOfBirth(LocalDate.of(1998, 12, 12))
+                .address("Dnipro")
+                .build();
 
         TraineeResponse response = traineeMapper.toResponse(entity);
 
