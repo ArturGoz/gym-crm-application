@@ -6,8 +6,12 @@ import com.gca.dto.trainee.TraineeUpdateRequest;
 
 public interface TraineeService {
     TraineeResponse createTrainee(TraineeCreateRequest request);
+
     TraineeResponse updateTrainee(TraineeUpdateRequest request);
+
     void deleteTrainee(Long id);
+
     TraineeResponse getTraineeById(Long id);
+
     TraineeResponse getTraineeByUsername(String username);
 }

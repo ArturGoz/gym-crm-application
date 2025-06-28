@@ -22,6 +22,7 @@ public class TrainingServiceImpl implements TrainingService {
     public void setTrainingDAO(TrainingDAO trainingDAO) {
         this.trainingDAO = trainingDAO;
     }
+
     @Autowired
     public void setTrainingMapper(TrainingMapper trainingMapper) {
         this.trainingMapper = trainingMapper;
