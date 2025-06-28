@@ -1,11 +1,12 @@
 package com.gca.service;
 
-import com.gca.model.Training;
+import com.gca.dto.training.TrainingCreateRequest;
+import com.gca.dto.training.TrainingResponse;
 
 import java.util.List;
 
 public interface TrainingService {
-    Training createTraining(Training training);
-    Training getTrainingById(Long id);
-    List<Training> getAllTrainings();
+    TrainingResponse createTraining(TrainingCreateRequest request);
+    TrainingResponse getTrainingById(Long id);
+    List<TrainingResponse> getAllTrainings();
 }

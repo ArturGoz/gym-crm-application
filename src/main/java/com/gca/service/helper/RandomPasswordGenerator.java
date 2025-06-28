@@ -1,14 +1,13 @@
-package com.gca.utils;
+package com.gca.service.helper;
 
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
 @Component
-public class RandomPasswordGenerator implements PasswordGenerator {
+public class RandomPasswordGenerator {
     private final String ALPHA_NUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    @Override
     public String generatePassword() {
         StringBuilder sb = new StringBuilder(10);
         Random random = new Random();

@@ -18,7 +18,7 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
     @Override
     public T create(T entity) {
         Long id = getNextId();
-        entity.setUserId(id);
+        entity.setId(id);
         storage.put(id, entity);
 
         return entity;
@@ -26,12 +26,12 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
 
     @Override
     public T update(T entity) {
-        if (!storage.containsKey(entity.getUserId())) {
+        if (!storage.containsKey(entity.getId())) {
             throw new RuntimeException(String.format("%s not found with id: %s",
                     this.getClass().getSimpleName(),
-                    entity.getUserId()));
+                    entity.getId()));
         }
-        storage.put(entity.getUserId(), entity);
+        storage.put(entity.getId(), entity);
 
         return entity;
     }

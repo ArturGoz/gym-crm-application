@@ -1,4 +1,4 @@
-package com.gca.utils;
+package com.gca.service.helper;
 
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;

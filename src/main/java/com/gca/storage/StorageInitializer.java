@@ -123,12 +123,12 @@ public class StorageInitializer {
     }
 
     private <T extends User> T parseUser(String[] parts, T user) {
-        user.setUserId(Long.parseLong(parts[0]));
+        user.setId(Long.parseLong(parts[0]));
         user.setFirstName(parts[1]);
         user.setLastName(parts[2]);
         user.setUsername(parts[3]);
         user.setPassword(parts[4]);
-        user.setActive(Boolean.parseBoolean(parts[5]));
+        user.setIsActive(Boolean.parseBoolean(parts[5]));
 
         return user;
     }

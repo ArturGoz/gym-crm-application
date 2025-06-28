@@ -1,8 +1,13 @@
 package com.gca.facade;
 
-import com.gca.model.Trainee;
-import com.gca.model.Trainer;
-import com.gca.model.Training;
+import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainer.TrainerCreateRequest;
+import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.dto.training.TrainingCreateRequest;
+import com.gca.dto.training.TrainingResponse;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
@@ -22,76 +27,74 @@ public class TrainingAppFacade {
     private final TrainerService trainerService;
     private final TrainingService trainingService;
 
-    public Trainee createTrainee(Trainee trainee) {
-        logger.info("Facade: Creating trainee {}", trainee.getFirstName() + " " + trainee.getLastName());
-
-        return traineeService.createTrainee(trainee);
+    public TraineeResponse createTrainee(TraineeCreateRequest request) {
+        logger.info("Facade: Creating trainee {} {}", request.getFirstName(), request.getLastName());
+        return traineeService.createTrainee(request);
     }
 
-    public Trainee updateTrainee(Trainee trainee) {
-        logger.info("Facade: Updating trainee with ID {}", trainee.getUserId());
-
-        return traineeService.updateTrainee(trainee);
+    public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
+        logger.info("Facade: Updating trainee with ID {}", request.getId());
+        return traineeService.updateTrainee(request);
     }
 
     public void deleteTrainee(Long id) {
         logger.info("Facade: Deleting trainee with ID {}", id);
-
         traineeService.deleteTrainee(id);
     }
 
-    public Trainee getTraineeById(Long id) {
+    public TraineeResponse getTraineeById(Long id) {
         logger.info("Facade: Retrieving trainee with ID {}", id);
-
         return traineeService.getTraineeById(id);
     }
 
-    public List<Trainee> getAllTrainees() {
-        logger.info("Facade: Retrieving all trainees");
+    public TraineeResponse getTraineeByUsername(String username) {
+        logger.info("Facade: Retrieving trainee with username {}", username);
+        return traineeService.getTraineeByUsername(username);
+    }
 
+    public List<TraineeResponse> getAllTrainees() {
+        logger.info("Facade: Retrieving all trainees");
         return traineeService.getAllTrainees();
     }
 
-    public Trainer createTrainer(Trainer trainer) {
-        logger.info("Facade: Creating trainer {}", trainer.getFirstName() + " " + trainer.getLastName());
-
-        return trainerService.createTrainer(trainer);
+    public TrainerResponse createTrainer(TrainerCreateRequest request) {
+        logger.info("Facade: Creating trainer {} {}", request.getFirstName(), request.getLastName());
+        return trainerService.createTrainer(request);
     }
 
-    public Trainer updateTrainer(Trainer trainer) {
-        logger.info("Facade: Updating trainer with ID {}", trainer.getUserId());
-
-        return trainerService.updateTrainer(trainer);
+    public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
+        logger.info("Facade: Updating trainer with ID {}", request.getId());
+        return trainerService.updateTrainer(request);
     }
 
-    public Trainer getTrainerById(Long id) {
+    public TrainerResponse getTrainerById(Long id) {
         logger.info("Facade: Retrieving trainer with ID {}", id);
-
         return trainerService.getTrainerById(id);
     }
 
-    public List<Trainer> getAllTrainers() {
-        logger.info("Facade: Retrieving all trainers");
+    public TrainerResponse getTrainerByUsername(String username) {
+        logger.info("Facade: Retrieving trainer with username {}", username);
+        return trainerService.getTrainerByUsername(username);
+    }
 
+    public List<TrainerResponse> getAllTrainers() {
+        logger.info("Facade: Retrieving all trainers");
         return trainerService.getAllTrainers();
     }
 
-    public Training createTraining(Training training) {
+    public TrainingResponse createTraining(TrainingCreateRequest request) {
         logger.info("Facade: Creating training with trainerId={}, traineeId={}",
-                training.getTrainerId(), training.getTraineeId());
-
-        return trainingService.createTraining(training);
+                request.getTrainerId(), request.getTraineeId());
+        return trainingService.createTraining(request);
     }
 
-    public Training getTrainingById(Long id) {
+    public TrainingResponse getTrainingById(Long id) {
         logger.info("Facade: Retrieving training with ID {}", id);
-
         return trainingService.getTrainingById(id);
     }
 
-    public List<Training> getAllTrainings() {
+    public List<TrainingResponse> getAllTrainings() {
         logger.info("Facade: Retrieving all trainings");
-
         return trainingService.getAllTrainings();
     }
 }

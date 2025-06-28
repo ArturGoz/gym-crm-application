@@ -1,14 +1,16 @@
 package com.gca.service;
 
-import com.gca.model.Trainee;
+import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeUpdateRequest;
 
 import java.util.List;
 
 public interface TraineeService {
-    Trainee createTrainee(Trainee trainee);
-    Trainee updateTrainee(Trainee trainee);
+    TraineeResponse createTrainee(TraineeCreateRequest request);
+    TraineeResponse updateTrainee(TraineeUpdateRequest request);
     void deleteTrainee(Long id);
-    Trainee getTraineeById(Long id);
-    Trainee getTraineeByUsername(String username);
-    List<Trainee> getAllTrainees();
+    TraineeResponse getTraineeById(Long id);
+    TraineeResponse getTraineeByUsername(String username);
+    List<TraineeResponse> getAllTrainees();
 }

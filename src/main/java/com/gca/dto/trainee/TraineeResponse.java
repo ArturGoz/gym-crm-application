@@ -1,17 +1,20 @@
-package com.gca.model;
+package com.gca.dto.trainee;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public abstract class User {
+@AllArgsConstructor
+public class TraineeResponse {
     private Long id;
     private String firstName;
     private String lastName;
     private String username;
-    private String password;
     private Boolean isActive;
+    private LocalDate dateOfBirth;
+    private String address;
 }

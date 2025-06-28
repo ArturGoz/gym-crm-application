@@ -1,15 +1,20 @@
 package com.gca.service.impl;
 
 import com.gca.dao.TrainerDAO;
+import com.gca.dto.trainer.TrainerCreateRequest;
+import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
 import com.gca.service.TrainerService;
-import com.gca.utils.UserCreationHelper;
+import com.gca.service.helper.UserCreationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TrainerServiceImpl implements TrainerService {
@@ -17,55 +22,66 @@ public class TrainerServiceImpl implements TrainerService {
 
     private TrainerDAO trainerDAO;
     private UserCreationHelper userCreationHelper;
+    private TrainerMapper trainerMapper;
 
     @Autowired
     public void setTrainerDAO(TrainerDAO trainerDAO) {
         this.trainerDAO = trainerDAO;
     }
+
     @Autowired
     public void setUserCreationHelper(UserCreationHelper userCreationHelper) {
         this.userCreationHelper = userCreationHelper;
     }
 
+    @Autowired
+    public void setTrainerMapper(TrainerMapper trainerMapper) {
+        this.trainerMapper = trainerMapper;
+    }
+
     @Override
-    public Trainer createTrainer(Trainer trainer) {
+    public TrainerResponse createTrainer(TrainerCreateRequest request) {
+        Trainer trainer = trainerMapper.toEntity(request);
         String username = userCreationHelper.generateUsername(trainer.getFirstName(), trainer.getLastName());
         String password = userCreationHelper.generatePassword();
 
         trainer.setUsername(username);
         trainer.setPassword(password);
-        trainer.setActive(true);
+        trainer.setIsActive(true);
 
         logger.info("Creating trainer: {}", username);
-        return trainerDAO.create(trainer);
+        Trainer created = trainerDAO.create(trainer);
+
+        return trainerMapper.toResponse(created);
     }
 
     @Override
-    public Trainer updateTrainer(Trainer trainer) {
-        Trainer existing = trainerDAO.getById(trainer.getUserId());
+    public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
+        Trainer existing = trainerDAO.getById(request.getId());
         if (existing == null) {
             throw new RuntimeException("Trainer not found");
         }
 
-        existing.setSpecialization(trainer.getSpecialization());
-        existing.setActive(trainer.isActive());
-
         logger.info("Updating trainer: {}", existing.getUsername());
-        return trainerDAO.update(existing);
+        Trainer updated = trainerDAO.update(existing);
+
+        return trainerMapper.toResponse(updated);
     }
 
     @Override
-    public Trainer getTrainerById(Long id) {
-        return trainerDAO.getById(id);
+    public TrainerResponse getTrainerById(Long id) {
+        return trainerMapper.toResponse(trainerDAO.getById(id));
     }
 
     @Override
-    public Trainer getTrainerByUsername(String username) {
-        return trainerDAO.getByUsername(username);
+    public TrainerResponse getTrainerByUsername(String username) {
+        return trainerMapper.toResponse(trainerDAO.getByUsername(username));
     }
 
     @Override
-    public List<Trainer> getAllTrainers() {
-        return trainerDAO.getAll();
+    public List<TrainerResponse> getAllTrainers() {
+        return trainerDAO.getAll().stream()
+                .map(trainerMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

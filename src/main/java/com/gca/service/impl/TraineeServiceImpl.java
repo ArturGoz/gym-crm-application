@@ -1,15 +1,20 @@
 package com.gca.service.impl;
 
 import com.gca.dao.TraineeDAO;
+import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
 import com.gca.service.TraineeService;
-import com.gca.utils.UserCreationHelper;
+import com.gca.service.helper.UserCreationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TraineeServiceImpl implements TraineeService {
@@ -17,6 +22,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     private TraineeDAO traineeDAO;
     private UserCreationHelper userCreationHelper;
+    private TraineeMapper traineeMapper;
 
     @Autowired
     public void setTraineeDAO(TraineeDAO traineeDAO) {
@@ -28,32 +34,38 @@ public class TraineeServiceImpl implements TraineeService {
         this.userCreationHelper = userCreationHelper;
     }
 
+    @Autowired
+    public void setTraineeMapper(TraineeMapper traineeMapper) {
+        this.traineeMapper = traineeMapper;
+    }
+
     @Override
-    public Trainee createTrainee(Trainee trainee) {
+    public TraineeResponse createTrainee(TraineeCreateRequest request) {
+        Trainee trainee = traineeMapper.toEntity(request);
         String username = userCreationHelper.generateUsername(trainee.getFirstName(), trainee.getLastName());
         String password = userCreationHelper.generatePassword();
 
         trainee.setUsername(username);
         trainee.setPassword(password);
-        trainee.setActive(true);
+        trainee.setIsActive(true);
 
         logger.info("Creating trainee: {}", username);
-        return traineeDAO.create(trainee);
+        Trainee created = traineeDAO.create(trainee);
+
+        return traineeMapper.toResponse(created);
     }
 
     @Override
-    public Trainee updateTrainee(Trainee trainee) {
-        Trainee existing = traineeDAO.getById(trainee.getUserId());
+    public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
+        Trainee existing = traineeDAO.getById(request.getId());
         if (existing == null) {
             throw new RuntimeException("Trainee not found");
         }
 
-        existing.setDateOfBirth(trainee.getDateOfBirth());
-        existing.setAddress(trainee.getAddress());
-        existing.setActive(trainee.isActive());
-
         logger.info("Updating trainee: {}", existing.getUsername());
-        return traineeDAO.update(existing);
+        Trainee updated = traineeDAO.update(existing);
+
+        return traineeMapper.toResponse(updated);
     }
 
     @Override
@@ -63,17 +75,19 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public Trainee getTraineeById(Long id) {
-        return traineeDAO.getById(id);
+    public TraineeResponse getTraineeById(Long id) {
+        return traineeMapper.toResponse(traineeDAO.getById(id));
     }
 
     @Override
-    public Trainee getTraineeByUsername(String username) {
-        return traineeDAO.getByUsername(username);
+    public TraineeResponse getTraineeByUsername(String username) {
+        return traineeMapper.toResponse(traineeDAO.getByUsername(username));
     }
 
     @Override
-    public List<Trainee> getAllTrainees() {
-        return traineeDAO.getAll();
+    public List<TraineeResponse> getAllTrainees() {
+        return traineeDAO.getAll().stream()
+                .map(traineeMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

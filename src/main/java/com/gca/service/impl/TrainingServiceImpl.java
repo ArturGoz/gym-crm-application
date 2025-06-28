@@ -1,6 +1,9 @@
 package com.gca.service.impl;
 
 import com.gca.dao.TrainingDAO;
+import com.gca.dto.training.TrainingCreateRequest;
+import com.gca.dto.training.TrainingResponse;
+import com.gca.mapper.TrainingMapper;
 import com.gca.model.Training;
 import com.gca.service.TrainingService;
 import org.slf4j.Logger;
@@ -9,33 +12,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TrainingServiceImpl implements TrainingService {
     private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
     private TrainingDAO trainingDAO;
+    private TrainingMapper trainingMapper;
 
     @Autowired
     public void setTrainingDAO(TrainingDAO trainingDAO) {
         this.trainingDAO = trainingDAO;
     }
+    @Autowired
+    public void setTrainingMapper(TrainingMapper trainingMapper) {
+        this.trainingMapper = trainingMapper;
+    }
 
     @Override
-    public Training createTraining(Training training) {
+    public TrainingResponse createTraining(TrainingCreateRequest request) {
+        Training training = trainingMapper.toEntity(request);
+
         logger.info("Creating training for trainee: {}, trainer: {}",
                 training.getTraineeId(), training.getTrainerId());
+        Training created = trainingDAO.create(training);
 
-        return trainingDAO.create(training);
+        return trainingMapper.toResponse(created);
     }
 
     @Override
-    public Training getTrainingById(Long id) {
-        return trainingDAO.getById(id);
+    public TrainingResponse getTrainingById(Long id) {
+        return trainingMapper.toResponse(trainingDAO.getById(id));
     }
 
     @Override
-    public List<Training> getAllTrainings() {
-        return trainingDAO.getAll();
+    public List<TrainingResponse> getAllTrainings() {
+        return trainingDAO.getAll().stream()
+                .map(trainingMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

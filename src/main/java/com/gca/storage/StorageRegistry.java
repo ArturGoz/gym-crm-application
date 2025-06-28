@@ -37,8 +37,8 @@ public class StorageRegistry {
         Map<Long, Trainee> traineeStorage = (Map<Long, Trainee>) storageMap.get(TRAINEE);
 
         initData.getTrainings().forEach(t -> trainingStorage.put(t.getId(), t));
-        initData.getTrainers().forEach(t -> trainerStorage.put(t.getUserId(), t));
-        initData.getTrainees().forEach(t -> traineeStorage.put(t.getUserId(), t));
+        initData.getTrainers().forEach(t -> trainerStorage.put(t.getId(), t));
+        initData.getTrainees().forEach(t -> traineeStorage.put(t.getId(), t));
     }
 }
 
