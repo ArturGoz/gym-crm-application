@@ -1,14 +1,12 @@
 package com.gca.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
-@Data
-@SuperBuilder(toBuilder = true)
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class TrainingType {
-    private String name;
+    private final String name;
 }

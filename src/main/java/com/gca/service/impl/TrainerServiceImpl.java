@@ -42,9 +42,11 @@ public class TrainerServiceImpl implements TrainerService {
         String username = userProfileService.generateUsername(trainer.getFirstName(), trainer.getLastName());
         String password = userProfileService.generatePassword();
 
-        trainer.setUsername(username);
-        trainer.setPassword(password);
-        trainer.setActive(true);
+        trainer = trainer.toBuilder()
+                .username(username)
+                .password(password)
+                .isActive(true)
+                .build();
 
         logger.info("Creating trainer: {}", username);
         Trainer created = trainerDAO.create(trainer);

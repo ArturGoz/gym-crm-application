@@ -26,7 +26,11 @@ public class TrainingDAOImpl implements TrainingDAO {
     @Override
     public Training create(Training training) {
         Long id = idCounter++;
-        training.setId(id);
+
+        training = training.toBuilder()
+                .id(id)
+                .build();
+
         storage.put(id, training);
 
         return training;

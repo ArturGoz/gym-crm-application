@@ -1,19 +1,15 @@
 package com.gca.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
 @SuperBuilder(toBuilder = true)
-@AllArgsConstructor
-@NoArgsConstructor
 public class Trainee extends User {
-    private LocalDate dateOfBirth;
-    private String address;
+    private final LocalDate dateOfBirth;
+    private final String address;
 }

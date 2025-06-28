@@ -16,9 +16,14 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
     protected abstract void setStorage(StorageRegistry storageRegistry);
 
     @Override
+    @SuppressWarnings("unchecked")
     public T create(T entity) {
         Long id = getNextId();
-        entity.setUserId(id);
+
+        entity = (T) entity.toBuilder()
+                .userId(id)
+                .build();
+
         storage.put(id, entity);
 
         return entity;

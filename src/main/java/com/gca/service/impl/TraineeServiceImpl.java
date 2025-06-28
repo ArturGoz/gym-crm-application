@@ -42,9 +42,11 @@ public class TraineeServiceImpl implements TraineeService {
         String username = userProfileService.generateUsername(trainee.getFirstName(), trainee.getLastName());
         String password = userProfileService.generatePassword();
 
-        trainee.setUsername(username);
-        trainee.setPassword(password);
-        trainee.setActive(true);
+        trainee = trainee.toBuilder()
+                .username(username)
+                .password(password)
+                .isActive(true)
+                .build();
 
         logger.info("Creating trainee: {}", username);
         Trainee created = traineeDAO.create(trainee);
