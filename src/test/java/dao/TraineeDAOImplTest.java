@@ -29,7 +29,6 @@ class TraineeDAOImplTest {
                 .thenReturn((Map) traineeStorage);
 
         traineeDAO = new TraineeDAOImpl();
-        // Directly inject mocked storage (imitate what setStorage would do)
         traineeDAO.setStorage(storageRegistryMock);
     }
 
