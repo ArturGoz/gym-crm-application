@@ -1,4 +1,4 @@
-package com.gca.service.helper;
+package com.gca.service.common;
 
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CombinedUsernameExistenceChecker {
+public class UsernameGenerator {
     private TraineeDAO traineeDAO;
     private TrainerDAO trainerDAO;
 
@@ -18,6 +18,18 @@ public class CombinedUsernameExistenceChecker {
     @Autowired
     public void setTrainerDAO(TrainerDAO trainerDAO) {
         this.trainerDAO = trainerDAO;
+    }
+
+    public String generate(String firstName, String lastName) {
+        String base = firstName + "." + lastName;
+        String candidate = base;
+        int suffix = 1;
+
+        while (exists(candidate)) {
+            candidate = base + suffix++;
+        }
+
+        return candidate;
     }
 
     public boolean exists(String username) {

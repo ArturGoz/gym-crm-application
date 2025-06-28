@@ -7,7 +7,7 @@ import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
 import com.gca.service.TrainerService;
-import com.gca.service.helper.UserCreationHelper;
+import com.gca.service.common.UserProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class TrainerServiceImpl implements TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
     private TrainerDAO trainerDAO;
-    private UserCreationHelper userCreationHelper;
+    private UserProfileService userProfileService;
     private TrainerMapper trainerMapper;
 
     @Autowired
@@ -27,8 +27,8 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Autowired
-    public void setUserCreationHelper(UserCreationHelper userCreationHelper) {
-        this.userCreationHelper = userCreationHelper;
+    public void setUserCreationHelper(UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
     }
 
     @Autowired
@@ -39,8 +39,8 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerResponse createTrainer(TrainerCreateRequest request) {
         Trainer trainer = trainerMapper.toEntity(request);
-        String username = userCreationHelper.generateUsername(trainer.getFirstName(), trainer.getLastName());
-        String password = userCreationHelper.generatePassword();
+        String username = userProfileService.generateUsername(trainer.getFirstName(), trainer.getLastName());
+        String password = userProfileService.generatePassword();
 
         trainer.setUsername(username);
         trainer.setPassword(password);

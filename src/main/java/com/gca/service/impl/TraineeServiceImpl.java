@@ -7,7 +7,7 @@ import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
 import com.gca.service.TraineeService;
-import com.gca.service.helper.UserCreationHelper;
+import com.gca.service.common.UserProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class TraineeServiceImpl implements TraineeService {
     private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
     private TraineeDAO traineeDAO;
-    private UserCreationHelper userCreationHelper;
+    private UserProfileService userProfileService;
     private TraineeMapper traineeMapper;
 
     @Autowired
@@ -27,8 +27,8 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Autowired
-    public void setUserCreationHelper(UserCreationHelper userCreationHelper) {
-        this.userCreationHelper = userCreationHelper;
+    public void setUserCreationHelper(UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
     }
 
     @Autowired
@@ -39,8 +39,8 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeResponse createTrainee(TraineeCreateRequest request) {
         Trainee trainee = traineeMapper.toEntity(request);
-        String username = userCreationHelper.generateUsername(trainee.getFirstName(), trainee.getLastName());
-        String password = userCreationHelper.generatePassword();
+        String username = userProfileService.generateUsername(trainee.getFirstName(), trainee.getLastName());
+        String password = userProfileService.generatePassword();
 
         trainee.setUsername(username);
         trainee.setPassword(password);

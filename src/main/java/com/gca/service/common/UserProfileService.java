@@ -1,17 +1,17 @@
-package com.gca.service.helper;
+package com.gca.service.common;
 
+import com.gca.service.helper.RandomPasswordGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserCreationHelper {
+public class UserProfileService {
     private final UsernameGenerator usernameGenerator;
     private final RandomPasswordGenerator randomPasswordGenerator;
-    private final CombinedUsernameExistenceChecker usernameExistenceChecker;
 
     public String generateUsername(String firstName, String lastName) {
-        return usernameGenerator.generate(firstName, lastName, usernameExistenceChecker::exists);
+        return usernameGenerator.generate(firstName, lastName);
     }
 
     public String generatePassword() {
