@@ -5,8 +5,6 @@ import com.gca.model.User;
 import com.gca.storage.StorageRegistry;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -18,7 +16,7 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
     @Override
     public T create(T entity) {
         Long id = getNextId();
-        entity.setId(id);
+        entity.setUserId(id);
         storage.put(id, entity);
 
         return entity;
@@ -26,12 +24,12 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
 
     @Override
     public T update(T entity) {
-        if (!storage.containsKey(entity.getId())) {
+        if (!storage.containsKey(entity.getUserId())) {
             throw new RuntimeException(String.format("%s not found with id: %s",
                     this.getClass().getSimpleName(),
-                    entity.getId()));
+                    entity.getUserId()));
         }
-        storage.put(entity.getId(), entity);
+        storage.put(entity.getUserId(), entity);
 
         return entity;
     }
@@ -47,11 +45,6 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst()
                 .orElse(null);
-    }
-
-    @Override
-    public List<T> getAll() {
-        return new ArrayList<>(storage.values());
     }
 
     protected Long getNextId() {

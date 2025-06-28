@@ -65,7 +65,7 @@ public class StorageInitializerIntegrationTest {
         assertEquals("John", trainer.getFirstName(), "Incorrect first name");
         assertEquals("Doe", trainer.getLastName(), "Incorrect last name");
         assertEquals("Strength", trainer.getSpecialization(), "Incorrect specialization");
-        assertTrue(trainer.getIsActive(), "Trainer should be active");
+        assertTrue(trainer.isActive(), "Trainer should be active");
     }
 
     @Test
@@ -76,6 +76,6 @@ public class StorageInitializerIntegrationTest {
         assertEquals("Johnson", trainee.getLastName(), "Incorrect last name");
         assertEquals("123 Main St", trainee.getAddress(), "Incorrect address");
         assertEquals(LocalDate.of(1990, 1, 1), trainee.getDateOfBirth(), "Incorrect date of birth");
-        assertTrue(trainee.getIsActive(), "Trainee should be active");
+        assertTrue(trainee.isActive(), "Trainee should be active");
     }
 }

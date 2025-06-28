@@ -13,9 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class TrainerServiceImpl implements TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
@@ -47,7 +44,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         trainer.setUsername(username);
         trainer.setPassword(password);
-        trainer.setIsActive(true);
+        trainer.setActive(true);
 
         logger.info("Creating trainer: {}", username);
         Trainer created = trainerDAO.create(trainer);
@@ -57,7 +54,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
-        Trainer existing = trainerDAO.getById(request.getId());
+        Trainer existing = trainerDAO.getById(request.getUserId());
         if (existing == null) {
             throw new RuntimeException("Trainer not found");
         }
@@ -76,12 +73,5 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerResponse getTrainerByUsername(String username) {
         return trainerMapper.toResponse(trainerDAO.getByUsername(username));
-    }
-
-    @Override
-    public List<TrainerResponse> getAllTrainers() {
-        return trainerDAO.getAll().stream()
-                .map(trainerMapper::toResponse)
-                .collect(Collectors.toList());
     }
 }

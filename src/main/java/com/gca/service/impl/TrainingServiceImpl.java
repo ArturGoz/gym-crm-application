@@ -11,9 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class TrainingServiceImpl implements TrainingService {
     private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
@@ -44,12 +41,5 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public TrainingResponse getTrainingById(Long id) {
         return trainingMapper.toResponse(trainingDAO.getById(id));
-    }
-
-    @Override
-    public List<TrainingResponse> getAllTrainings() {
-        return trainingDAO.getAll().stream()
-                .map(trainingMapper::toResponse)
-                .collect(Collectors.toList());
     }
 }

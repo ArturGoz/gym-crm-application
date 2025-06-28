@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,8 +38,8 @@ public class TraineeMapperTest {
 
         Trainee entity = traineeMapper.toEntity(request);
 
-        assertEquals(10L, entity.getId());
-        assertEquals(false, entity.getIsActive());
+        assertEquals(10L, entity.getUserId());
+        assertFalse(entity.isActive());
         assertEquals(LocalDate.of(1999, 5, 5), entity.getDateOfBirth());
         assertEquals("Lviv", entity.getAddress());
     }
@@ -46,21 +47,21 @@ public class TraineeMapperTest {
     @Test
     void testToResponse() {
         Trainee entity = new Trainee();
-        entity.setId(15L);
+        entity.setUserId(15L);
         entity.setFirstName("Alice");
         entity.setLastName("Smith");
         entity.setUsername("alice.smith");
-        entity.setIsActive(true);
+        entity.setActive(true);
         entity.setDateOfBirth(LocalDate.of(1998, 12, 12));
         entity.setAddress("Dnipro");
 
         TraineeResponse response = traineeMapper.toResponse(entity);
 
-        assertEquals(15L, response.getId());
+        assertEquals(15L, response.getUserId());
         assertEquals("Alice", response.getFirstName());
         assertEquals("Smith", response.getLastName());
         assertEquals("alice.smith", response.getUsername());
-        assertTrue(response.getIsActive());
+        assertTrue(response.isActive());
         assertEquals(LocalDate.of(1998, 12, 12), response.getDateOfBirth());
         assertEquals("Dnipro", response.getAddress());
     }

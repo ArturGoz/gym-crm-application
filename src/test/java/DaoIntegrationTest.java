@@ -65,43 +65,43 @@ class DaoIntegrationTest {
 
     private void initializeTestData() {
         Trainer trainer1 = new Trainer();
-        trainer1.setId(1L);
+        trainer1.setUserId(1L);
         trainer1.setFirstName("John");
         trainer1.setLastName("Doe");
         trainer1.setUsername("john.doe");
         trainer1.setPassword("pass123");
-        trainer1.setIsActive(true);
+        trainer1.setActive(true);
         trainer1.setSpecialization("Strength");
         trainerStorage.put(1L, trainer1);
 
         Trainer trainer2 = new Trainer();
-        trainer2.setId(2L);
+        trainer2.setUserId(2L);
         trainer2.setFirstName("Jane");
         trainer2.setLastName("Smith");
         trainer2.setUsername("jane.smith");
         trainer2.setPassword("pass456");
-        trainer2.setIsActive(true);
+        trainer2.setActive(true);
         trainer2.setSpecialization("Cardio");
         trainerStorage.put(2L, trainer2);
 
         Trainee trainee1 = new Trainee();
-        trainee1.setId(1L);
+        trainee1.setUserId(1L);
         trainee1.setFirstName("Alice");
         trainee1.setLastName("Johnson");
         trainee1.setUsername("alice.johnson");
         trainee1.setPassword("pass789");
-        trainee1.setIsActive(true);
+        trainee1.setActive(true);
         trainee1.setDateOfBirth(LocalDate.of(1990, 1, 1));
         trainee1.setAddress("123 Main St");
         traineeStorage.put(1L, trainee1);
 
         Trainee trainee2 = new Trainee();
-        trainee2.setId(2L);
+        trainee2.setUserId(2L);
         trainee2.setFirstName("Bob");
         trainee2.setLastName("Williams");
         trainee2.setUsername("bob.williams");
         trainee2.setPassword("pass012");
-        trainee2.setIsActive(true);
+        trainee2.setActive(true);
         trainee2.setDateOfBirth(LocalDate.of(1992, 2, 2));
         trainee2.setAddress("456 Elm St");
         traineeStorage.put(2L, trainee2);
@@ -151,9 +151,9 @@ class DaoIntegrationTest {
         newTrainee.setLastName("Trainee");
 
         Trainee createdTrainee = traineeDAO.create(newTrainee);
-        assertNotNull(createdTrainee.getId());
+        assertNotNull(createdTrainee.getUserId());
         assertEquals(3, traineeStorage.size());
-        assertTrue(traineeStorage.containsKey(createdTrainee.getId()));
+        assertTrue(traineeStorage.containsKey(createdTrainee.getUserId()));
 
         Training newTraining = new Training();
         newTraining.setTrainingName("New Training");

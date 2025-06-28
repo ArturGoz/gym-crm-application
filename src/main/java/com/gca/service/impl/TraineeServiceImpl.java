@@ -13,9 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class TraineeServiceImpl implements TraineeService {
     private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
@@ -47,7 +44,7 @@ public class TraineeServiceImpl implements TraineeService {
 
         trainee.setUsername(username);
         trainee.setPassword(password);
-        trainee.setIsActive(true);
+        trainee.setActive(true);
 
         logger.info("Creating trainee: {}", username);
         Trainee created = traineeDAO.create(trainee);
@@ -57,7 +54,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
-        Trainee existing = traineeDAO.getById(request.getId());
+        Trainee existing = traineeDAO.getById(request.getUserId());
         if (existing == null) {
             throw new RuntimeException("Trainee not found");
         }
@@ -82,12 +79,5 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeResponse getTraineeByUsername(String username) {
         return traineeMapper.toResponse(traineeDAO.getByUsername(username));
-    }
-
-    @Override
-    public List<TraineeResponse> getAllTrainees() {
-        return traineeDAO.getAll().stream()
-                .map(traineeMapper::toResponse)
-                .collect(Collectors.toList());
     }
 }

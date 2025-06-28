@@ -16,8 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class TrainingAppFacade {
@@ -33,7 +31,7 @@ public class TrainingAppFacade {
     }
 
     public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
-        logger.info("Facade: Updating trainee with ID {}", request.getId());
+        logger.info("Facade: Updating trainee with ID {}", request.getUserId());
         return traineeService.updateTrainee(request);
     }
 
@@ -52,18 +50,13 @@ public class TrainingAppFacade {
         return traineeService.getTraineeByUsername(username);
     }
 
-    public List<TraineeResponse> getAllTrainees() {
-        logger.info("Facade: Retrieving all trainees");
-        return traineeService.getAllTrainees();
-    }
-
     public TrainerResponse createTrainer(TrainerCreateRequest request) {
         logger.info("Facade: Creating trainer {} {}", request.getFirstName(), request.getLastName());
         return trainerService.createTrainer(request);
     }
 
     public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
-        logger.info("Facade: Updating trainer with ID {}", request.getId());
+        logger.info("Facade: Updating trainer with ID {}", request.getUserId());
         return trainerService.updateTrainer(request);
     }
 
@@ -77,11 +70,6 @@ public class TrainingAppFacade {
         return trainerService.getTrainerByUsername(username);
     }
 
-    public List<TrainerResponse> getAllTrainers() {
-        logger.info("Facade: Retrieving all trainers");
-        return trainerService.getAllTrainers();
-    }
-
     public TrainingResponse createTraining(TrainingCreateRequest request) {
         logger.info("Facade: Creating training with trainerId={}, traineeId={}",
                 request.getTrainerId(), request.getTraineeId());
@@ -91,10 +79,5 @@ public class TrainingAppFacade {
     public TrainingResponse getTrainingById(Long id) {
         logger.info("Facade: Retrieving training with ID {}", id);
         return trainingService.getTrainingById(id);
-    }
-
-    public List<TrainingResponse> getAllTrainings() {
-        logger.info("Facade: Retrieving all trainings");
-        return trainingService.getAllTrainings();
     }
 }

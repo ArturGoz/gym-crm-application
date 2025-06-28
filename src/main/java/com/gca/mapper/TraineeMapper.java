@@ -9,7 +9,6 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TraineeMapper {
-
     Trainee toEntity(TraineeCreateRequest request);
     Trainee toEntity(TraineeUpdateRequest request);
 

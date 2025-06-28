@@ -10,8 +10,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TraineeUpdateRequest {
-    private Long id;
-    private Boolean isActive;
+    private Long userId;
+    private boolean isActive;
     private LocalDate dateOfBirth;
     private String address;
 }

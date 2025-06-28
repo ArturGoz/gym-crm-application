@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainerUpdateRequest {
-    private Long id;
-    private Boolean isActive;
+    private Long userId;
+    private boolean isActive;
     private String specialization;
 }

@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainerResponse {
-    private Long id;
+    private Long userId;
     private String firstName;
     private String lastName;
     private String username;
-    private Boolean isActive;
+    private boolean isActive;
     private String specialization;
 }
