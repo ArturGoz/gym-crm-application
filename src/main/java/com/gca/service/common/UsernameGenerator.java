@@ -5,6 +5,9 @@ import com.gca.dao.TrainerDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Component
 public class UsernameGenerator {
     private TraineeDAO traineeDAO;
@@ -22,17 +25,17 @@ public class UsernameGenerator {
 
     public String generate(String firstName, String lastName) {
         String base = firstName + "." + lastName;
+        Set<String> allUsernames = new HashSet<>();
+        allUsernames.addAll(traineeDAO.getAllUsernames());
+        allUsernames.addAll(trainerDAO.getAllUsernames());
+
         String candidate = base;
         int suffix = 1;
 
-        while (exists(candidate)) {
+        while (allUsernames.contains(candidate)) {
             candidate = base + suffix++;
         }
 
         return candidate;
-    }
-
-    public boolean exists(String username) {
-        return traineeDAO.getByUsername(username) != null || trainerDAO.getByUsername(username) != null;
     }
 }

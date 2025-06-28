@@ -8,7 +8,8 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 
 @Data
-@SuperBuilder(toBuilder = true)@NoArgsConstructor
+@SuperBuilder(toBuilder = true)
+@NoArgsConstructor
 @AllArgsConstructor
 public class TraineeUpdateRequest {
     private Long userId;

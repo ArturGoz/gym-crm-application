@@ -5,7 +5,9 @@ import com.gca.model.User;
 import com.gca.storage.StorageRegistry;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> {
@@ -45,6 +47,13 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public List<String> getAllUsernames() {
+        return storage.values().stream()
+                .map(User::getUsername)
+                .collect(Collectors.toList());
     }
 
     protected Long getNextId() {
