@@ -1,3 +1,6 @@
+package integration;
+
+import com.gca.config.StorageConfig;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
@@ -8,7 +11,6 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
-import com.gca.config.StorageConfig;
 import com.gca.storage.StorageInitializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         TrainerDAOImpl.class,
         TrainingDAOImpl.class
 })
-class DaoIntegrationTest {
+class DaoIT {
 
     @Autowired
     private TraineeDAO traineeDAO;
@@ -64,66 +66,72 @@ class DaoIntegrationTest {
     }
 
     private void initializeTestData() {
-        Trainer trainer1 = new Trainer();
-        trainer1.setUserId(1L);
-        trainer1.setFirstName("John");
-        trainer1.setLastName("Doe");
-        trainer1.setUsername("john.doe");
-        trainer1.setPassword("pass123");
-        trainer1.setActive(true);
-        trainer1.setSpecialization("Strength");
+        Trainer trainer1 = Trainer.builder()
+                .userId(1L)
+                .firstName("John")
+                .lastName("Doe")
+                .username("john.doe")
+                .password("pass123")
+                .isActive(true)
+                .specialization("Strength")
+                .build();
         trainerStorage.put(1L, trainer1);
 
-        Trainer trainer2 = new Trainer();
-        trainer2.setUserId(2L);
-        trainer2.setFirstName("Jane");
-        trainer2.setLastName("Smith");
-        trainer2.setUsername("jane.smith");
-        trainer2.setPassword("pass456");
-        trainer2.setActive(true);
-        trainer2.setSpecialization("Cardio");
+        Trainer trainer2 = Trainer.builder()
+                .userId(2L)
+                .firstName("Jane")
+                .lastName("Smith")
+                .username("jane.smith")
+                .password("pass456")
+                .isActive(true)
+                .specialization("Cardio")
+                .build();
         trainerStorage.put(2L, trainer2);
 
-        Trainee trainee1 = new Trainee();
-        trainee1.setUserId(1L);
-        trainee1.setFirstName("Alice");
-        trainee1.setLastName("Johnson");
-        trainee1.setUsername("alice.johnson");
-        trainee1.setPassword("pass789");
-        trainee1.setActive(true);
-        trainee1.setDateOfBirth(LocalDate.of(1990, 1, 1));
-        trainee1.setAddress("123 Main St");
+        Trainee trainee1 = Trainee.builder()
+                .userId(1L)
+                .firstName("Alice")
+                .lastName("Johnson")
+                .username("alice.johnson")
+                .password("pass789")
+                .isActive(true)
+                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .address("123 Main St")
+                .build();
         traineeStorage.put(1L, trainee1);
 
-        Trainee trainee2 = new Trainee();
-        trainee2.setUserId(2L);
-        trainee2.setFirstName("Bob");
-        trainee2.setLastName("Williams");
-        trainee2.setUsername("bob.williams");
-        trainee2.setPassword("pass012");
-        trainee2.setActive(true);
-        trainee2.setDateOfBirth(LocalDate.of(1992, 2, 2));
-        trainee2.setAddress("456 Elm St");
+        Trainee trainee2 = Trainee.builder()
+                .userId(2L)
+                .firstName("Bob")
+                .lastName("Williams")
+                .username("bob.williams")
+                .password("pass012")
+                .isActive(true)
+                .dateOfBirth(LocalDate.of(1992, 2, 2))
+                .address("456 Elm St")
+                .build();
         traineeStorage.put(2L, trainee2);
 
-        Training training1 = new Training();
-        training1.setId(1L);
-        training1.setTrainerId(1L);
-        training1.setTraineeId(1L);
-        training1.setTrainingDate(LocalDate.of(2023, 1, 1));
-        training1.setTrainingDuration(Duration.parse("PT1H"));
-        training1.setTrainingName("Beginner Cardio");
-        training1.setTrainingType(new TrainingType("CARDIO"));
+        Training training1 = Training.builder()
+                .id(1L)
+                .trainerId(1L)
+                .traineeId(1L)
+                .trainingDate(LocalDate.of(2023, 1, 1))
+                .trainingDuration(Duration.parse("PT1H"))
+                .trainingName("Beginner Cardio")
+                .trainingType(new TrainingType("CARDIO"))
+                .build();
         trainingStorage.put(1L, training1);
 
-        Training training2 = new Training();
-        training2.setId(2L);
-        training2.setTrainerId(2L);
-        training2.setTraineeId(2L);
-        training2.setTrainingDate(LocalDate.of(2023, 1, 2));
-        training2.setTrainingDuration(Duration.parse("PT2H"));
-        training2.setTrainingName("Advanced Strength");
-        training2.setTrainingType(new TrainingType("STRENGTH"));
+        Training training2 = Training.builder()
+                .id(2L)
+                .trainerId(2L)
+                .traineeId(2L)
+                .trainingDate(LocalDate.of(2023, 1, 2))
+                .trainingDuration(Duration.parse("PT2H"))
+                .trainingName("Advanced Strength")
+                .trainingType(new TrainingType("STRENGTH"))
+                .build();
         trainingStorage.put(2L, training2);
     }
 
@@ -146,17 +154,19 @@ class DaoIntegrationTest {
 
     @Test
     void createOperations_ShouldUpdateStorage() {
-        Trainee newTrainee = new Trainee();
-        newTrainee.setFirstName("New");
-        newTrainee.setLastName("Trainee");
+        Trainee newTrainee = Trainee.builder()
+                .firstName("New")
+                .lastName("Trainee")
+                .build();
 
         Trainee createdTrainee = traineeDAO.create(newTrainee);
         assertNotNull(createdTrainee.getUserId());
         assertEquals(3, traineeStorage.size());
         assertTrue(traineeStorage.containsKey(createdTrainee.getUserId()));
 
-        Training newTraining = new Training();
-        newTraining.setTrainingName("New Training");
+        Training newTraining = Training.builder()
+                .trainingName("New Training")
+                .build();
         Training createdTraining = trainingDAO.create(newTraining);
         assertNotNull(createdTraining.getId());
         assertEquals(3, trainingStorage.size());
@@ -188,8 +198,10 @@ class DaoIntegrationTest {
     @Test
     void updateOperations_ShouldModifyData() {
         Trainee trainee = traineeDAO.getById(1L);
-        trainee.setAddress("New Address");
-        Trainee updated = traineeDAO.update(trainee);
+        Trainee updatedTrainee = trainee.toBuilder()
+                .address("New Address")
+                .build();
+        Trainee updated = traineeDAO.update(updatedTrainee);
         assertEquals("New Address", updated.getAddress());
         assertEquals("New Address", traineeStorage.get(1L).getAddress());
     }

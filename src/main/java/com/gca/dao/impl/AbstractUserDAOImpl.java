@@ -5,9 +5,9 @@ import com.gca.model.User;
 import com.gca.storage.StorageRegistry;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> {
@@ -16,9 +16,14 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
     protected abstract void setStorage(StorageRegistry storageRegistry);
 
     @Override
+    @SuppressWarnings("unchecked")
     public T create(T entity) {
         Long id = getNextId();
-        entity.setUserId(id);
+
+        entity = (T) entity.toBuilder()
+                .userId(id)
+                .build();
+
         storage.put(id, entity);
 
         return entity;
@@ -50,8 +55,10 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
     }
 
     @Override
-    public List<T> getAll() {
-        return new ArrayList<>(storage.values());
+    public List<String> getAllUsernames() {
+        return storage.values().stream()
+                .map(User::getUsername)
+                .collect(Collectors.toList());
     }
 
     protected Long getNextId() {

@@ -20,6 +20,7 @@ public class StorageInitializerPostProcessor implements BeanPostProcessor {
             InitializedData data = storageInitializer.initializeData();
             registry.initStorages(data);
         }
+
         return bean;
     }
 }

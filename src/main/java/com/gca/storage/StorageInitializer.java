@@ -4,7 +4,6 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
-import com.gca.model.User;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +57,7 @@ public class StorageInitializer {
                 handleDataLine(currentSection, line, data);
             }
         }
+
         return data;
     }
 
@@ -90,45 +90,43 @@ public class StorageInitializer {
         String trainingTypeStr = parts[6];
         TrainingType trainingType = new TrainingType(trainingTypeStr);
 
-        Training training = new Training();
-        training.setId(id);
-        training.setTrainerId(trainerId);
-        training.setTraineeId(traineeId);
-        training.setTrainingDate(trainingDate);
-        training.setTrainingDuration(trainingDuration);
-        training.setTrainingName(trainingName);
-        training.setTrainingType(trainingType);
-
-        return training;
+        return Training.builder()
+                .id(id)
+                .trainerId(trainerId)
+                .traineeId(traineeId)
+                .trainingDate(trainingDate)
+                .trainingDuration(trainingDuration)
+                .trainingName(trainingName)
+                .trainingType(trainingType)
+                .build();
     }
 
     private Trainer parseTrainer(String line) {
         String[] parts = line.split(",");
 
-        Trainer trainer = parseUser(parts, new Trainer());
-        trainer.setSpecialization(parts[6]);
-
-        return trainer;
+        return Trainer.builder()
+                .userId(Long.parseLong(parts[0]))
+                .firstName(parts[1])
+                .lastName(parts[2])
+                .username(parts[3])
+                .password(parts[4])
+                .isActive(Boolean.parseBoolean(parts[5]))
+                .specialization(parts[6])
+                .build();
     }
 
     private Trainee parseTrainee(String line) {
         String[] parts = line.split(",");
 
-        Trainee trainee = parseUser(parts, new Trainee());
-        trainee.setDateOfBirth(LocalDate.parse(parts[6]));
-        trainee.setAddress(parts[7]);
-
-        return trainee;
-    }
-
-    private <T extends User> T parseUser(String[] parts, T user) {
-        user.setUserId(Long.parseLong(parts[0]));
-        user.setFirstName(parts[1]);
-        user.setLastName(parts[2]);
-        user.setUsername(parts[3]);
-        user.setPassword(parts[4]);
-        user.setActive(Boolean.parseBoolean(parts[5]));
-
-        return user;
+        return Trainee.builder()
+                .userId(Long.parseLong(parts[0]))
+                .firstName(parts[1])
+                .lastName(parts[2])
+                .username(parts[3])
+                .password(parts[4])
+                .isActive(Boolean.parseBoolean(parts[5]))
+                .dateOfBirth(LocalDate.parse(parts[6]))
+                .address(parts[7])
+                .build();
     }
 }
