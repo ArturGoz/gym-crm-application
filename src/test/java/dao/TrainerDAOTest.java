@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TrainerDAOImplTest {
+class TrainerDAOTest {
 
     private TrainerDAOImpl trainerDAO;
     private StorageRegistry storageRegistryMock;

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class TrainingDAOImplTest {
+class TrainingDAOTest {
 
     private TrainingDAOImpl trainingDAO;
     private StorageRegistry storageRegistryMock;
