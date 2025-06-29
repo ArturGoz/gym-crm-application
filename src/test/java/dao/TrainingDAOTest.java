@@ -6,7 +6,6 @@ import com.gca.model.TrainingType;
 import com.gca.storage.StorageRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -17,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class TrainingDAOTest {
 
@@ -24,11 +26,18 @@ class TrainingDAOTest {
     private StorageRegistry storageRegistryMock;
     private Map<Long, Training> trainingStorage;
 
+    private static final Long TRAINER_ID = 1L;
+    private static final Long TRAINEE_ID = 2L;
+    private static final LocalDate TRAINING_DATE = LocalDate.of(2025, 6, 27);
+    private static final Duration TRAINING_DURATION = Duration.ofHours(1);
+    private static final String TRAINING_NAME = "Morning Yoga";
+    private static final TrainingType TRAINING_TYPE = new TrainingType("Yoga");
+
     @BeforeEach
     void setUp() {
         trainingStorage = new HashMap<>();
-        storageRegistryMock = Mockito.mock(StorageRegistry.class);
-        Mockito.when(storageRegistryMock.getStorage(Mockito.any()))
+        storageRegistryMock = mock(StorageRegistry.class);
+        when(storageRegistryMock.getStorage(any()))
                 .thenReturn((Map) trainingStorage);
 
         dao = new TrainingDAOImpl();
@@ -37,38 +46,59 @@ class TrainingDAOTest {
 
     @Test
     void testCreateAndGetById() {
-        Training training = Training.builder()
-                .trainerId(1L)
-                .traineeId(2L)
-                .trainingDate(LocalDate.of(2025, 6, 27))
-                .trainingDuration(Duration.ofHours(1))
-                .trainingName("Morning Yoga")
-                .trainingType(new TrainingType("Yoga"))
-                .build();
+        Training expected = buildTraining();
 
-        Training created = dao.create(training);
+        Training actual = dao.create(expected);
 
-        assertNotNull(created.getId());
-        assertEquals("Morning Yoga", dao.getById(created.getId()).getTrainingName());
+        assertNotNull(actual.getId());
+        Training actualFromStorage = dao.getById(actual.getId());
+        assertEquals(actual, actualFromStorage);
+
+        assertEquals(expected.getTrainerId(), actual.getTrainerId());
+        assertEquals(expected.getTraineeId(), actual.getTraineeId());
+        assertEquals(expected.getTrainingDate(), actual.getTrainingDate());
+        assertEquals(expected.getTrainingDuration(), actual.getTrainingDuration());
+        assertEquals(expected.getTrainingName(), actual.getTrainingName());
+        assertEquals(expected.getTrainingType(), actual.getTrainingType());
     }
 
     @Test
     void testCreateAssignsUniqueIds() {
-        Training t1 = Training.builder()
-                .trainingName("T1")
-                .build();
-        Training t2 = Training.builder()
-                .trainingName("T2")
-                .build();
+        Training training1 = buildTraining("T1");
+        Training training2 = buildTraining("T2");
 
-        Training created1 = dao.create(t1);
-        Training created2 = dao.create(t2);
+        Training actual1 = dao.create(training1);
+        Training actual2 = dao.create(training2);
 
-        assertNotEquals(created1.getId(), created2.getId());
+        assertNotEquals(actual1.getId(), actual2.getId());
     }
 
     @Test
     void testGetByIdReturnsNullIfNotFound() {
-        assertNull(dao.getById(12345L));
+        Training actual = dao.getById(12345L);
+
+        assertNull(actual);
+    }
+
+    private Training buildTraining() {
+        return Training.builder()
+                .trainerId(TRAINER_ID)
+                .traineeId(TRAINEE_ID)
+                .trainingDate(TRAINING_DATE)
+                .trainingDuration(TRAINING_DURATION)
+                .trainingName(TRAINING_NAME)
+                .trainingType(TRAINING_TYPE)
+                .build();
+    }
+
+    private Training buildTraining(String trainingName) {
+        return Training.builder()
+                .trainerId(TRAINER_ID)
+                .traineeId(TRAINEE_ID)
+                .trainingDate(TRAINING_DATE)
+                .trainingDuration(TRAINING_DURATION)
+                .trainingName(trainingName)
+                .trainingType(TRAINING_TYPE)
+                .build();
     }
 }
