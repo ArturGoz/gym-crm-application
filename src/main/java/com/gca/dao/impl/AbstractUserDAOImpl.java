@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> {
     protected Map<Long, T> storage;
 
-    protected abstract void setStorage(StorageRegistry storageRegistry);
+    public abstract void setStorage(StorageRegistry storageRegistry);
 
     @Override
     @SuppressWarnings("unchecked")
