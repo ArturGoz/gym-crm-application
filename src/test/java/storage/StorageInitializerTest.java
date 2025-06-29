@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -104,7 +105,7 @@ public class StorageInitializerTest {
         });
 
         assertTrue(exception.getMessage().contains("Failed to initialize data from file: mocked-file.txt"));
-        assertTrue(exception.getCause() instanceof IOException);
+        assertInstanceOf(IOException.class, exception.getCause());
 
         verify(readerSupplier, times(1)).get();
         verify(mockedReader).read(any(char[].class), anyInt(), anyInt());
