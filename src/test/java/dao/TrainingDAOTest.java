@@ -45,21 +45,34 @@ class TrainingDAOTest {
     }
 
     @Test
-    void testCreateAndGetById() {
+    void testCreate() {
         Training expected = buildTraining();
 
         Training actual = dao.create(expected);
 
         assertNotNull(actual.getId());
-        Training actualFromStorage = dao.getById(actual.getId());
-        assertEquals(actual, actualFromStorage);
-
         assertEquals(expected.getTrainerId(), actual.getTrainerId());
         assertEquals(expected.getTraineeId(), actual.getTraineeId());
         assertEquals(expected.getTrainingDate(), actual.getTrainingDate());
         assertEquals(expected.getTrainingDuration(), actual.getTrainingDuration());
         assertEquals(expected.getTrainingName(), actual.getTrainingName());
         assertEquals(expected.getTrainingType(), actual.getTrainingType());
+        assertEquals(actual, trainingStorage.get(actual.getId()));
+    }
+
+    @Test
+    void testGetById() {
+        Training expected = buildTraining();
+        Training created = dao.create(expected);
+
+        Training actual = dao.getById(created.getId());
+
+        assertNotNull(actual);
+        assertEquals(created, actual);
+        assertEquals(created.getId(), actual.getId());
+        assertEquals(created.getTrainerId(), actual.getTrainerId());
+        assertEquals(created.getTraineeId(), actual.getTraineeId());
+        assertEquals(created.getTrainingDate(), actual.getTrainingDate());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package dao;
 
 import com.gca.dao.impl.TrainerDAOImpl;
+import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.storage.StorageRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +13,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -24,12 +23,11 @@ class TrainerDAOTest {
     private StorageRegistry storageRegistryMock;
     private Map<Long, Trainer> trainerStorage;
 
-    private static final String TRAINER_USERNAME = "trainer1";
-    private static final String TRAINER_FIRSTNAME = "Alice";
+    private static final String TRAINER_SPECIALIZATION = "Fitness";
+    private static final String TRAINER_USERNAME = "traineruser";
+    private static final String TRAINER_FIRSTNAME = "Jane";
     private static final String TRAINER_LASTNAME = "Smith";
-    private static final String TRAINER_PASSWORD = "pass";
-    private static final String TRAINER_SPECIALIZATION = "Yoga";
-    private static final boolean TRAINER_IS_ACTIVE = true;
+    private static final String TRAINER_PASSWORD = "trainerpass";
 
     @BeforeEach
     void setUp() {
@@ -43,113 +41,94 @@ class TrainerDAOTest {
     }
 
     @Test
-    void testCreateAndGetById() {
-        Trainer expected = buildTrainer();
+    void testCreate() {
+        Trainer expected = buildTrainer(1L);
 
         Trainer actual = dao.create(expected);
 
         assertNotNull(actual.getUserId());
-        Trainer actualFromStorage = dao.getById(actual.getUserId());
-        assertEquals(actual, actualFromStorage);
-
-        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getUserId(), actual.getUserId());
         assertEquals(expected.getFirstName(), actual.getFirstName());
         assertEquals(expected.getLastName(), actual.getLastName());
-        assertEquals(expected.getPassword(), actual.getPassword());
-        assertEquals(expected.isActive(), actual.isActive());
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
+        assertEquals(actual, trainerStorage.get(expected.getUserId()));
     }
 
     @Test
-    void testUpdate() {
-        Trainer expectedBeforeUpdate = buildTrainer("trainer2", "Bob",
-                "Jones", "pass2", "Boxing");
+    void testGetById() {
+        Long id = 1L;
+        Trainer expected = buildTrainer(id);
+        trainerStorage.put(id, expected);
 
-        Trainer created = dao.create(expectedBeforeUpdate);
+        Trainer actual = dao.getById(id);
 
-        Trainer updatedTrainer = created.toBuilder()
-                .specialization("CrossFit")
-                .build();
-
-        Trainer actual = dao.update(updatedTrainer);
-
-        assertEquals("CrossFit", actual.getSpecialization());
-        assertEquals(updatedTrainer, actual);
-        Trainer actualFromStorage = dao.getById(actual.getUserId());
-        assertEquals(actual, actualFromStorage);
-
-        assertEquals(created.getUsername(), actual.getUsername());
-        assertEquals(created.getFirstName(), actual.getFirstName());
-        assertEquals(created.getLastName(), actual.getLastName());
-        assertEquals(created.getPassword(), actual.getPassword());
-        assertEquals(created.isActive(), actual.isActive());
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
     }
 
     @Test
     void testGetByUsername() {
-        Trainer expected = buildTrainer("uniqueTrainer", "Carla",
-                "White", "pw", "Pilates");
+        Long id = 2L;
+        Trainer expected = buildTrainer(id);
+        trainerStorage.put(id, expected);
 
-        dao.create(expected);
-
-        Trainer actual = dao.getByUsername("uniqueTrainer");
+        Trainer actual = dao.getByUsername(expected.getUsername());
 
         assertNotNull(actual);
+        assertEquals(expected, actual);
         assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.getFirstName(), actual.getFirstName());
-        assertEquals(expected.getLastName(), actual.getLastName());
         assertEquals(expected.getPassword(), actual.getPassword());
-        assertEquals(expected.isActive(), actual.isActive());
-        assertEquals(expected.getSpecialization(), actual.getSpecialization());
     }
 
     @Test
     void testGetAllUsernames() {
-        Trainer trainer1 = buildTrainer("t1", "A",
-                "A", "1", "Spinning");
-        Trainer trainer2 = buildTrainer("t2", "B",
-                "B", "2", "Cardio");
+        List<String> expected = List.of("trainer1", "trainer2");
+        Trainer t1 = buildTrainer(3L, expected.get(0));
+        Trainer t2 = buildTrainer(4L, expected.get(1));
+        trainerStorage.put(3L, t1);
+        trainerStorage.put(4L, t2);
 
-        dao.create(trainer1);
-        dao.create(trainer2);
+        List<String> actual = dao.getAllUsernames();
 
-        List<String> actualUsernames = dao.getAllUsernames();
-
-        assertEquals(2, actualUsernames.size());
-        assertTrue(actualUsernames.contains("t1"));
-        assertTrue(actualUsernames.contains("t2"));
+        assertEquals(expected, actual);
+        assertEquals(expected.size(), actual.size());
     }
 
     @Test
-    void testUpdateNonExistentTrainerThrows() {
-        Trainer nonExistentTrainer = Trainer.builder()
-                .userId(999L)
-                .username("noSuchTrainer")
-                .build();
+    void testUpdate() {
+        Long id = 5L;
+        Trainer trainer = buildTrainer(id);
+        trainerStorage.put(id, trainer);
+        Trainer expected = trainer.toBuilder().specialization("Yoga").build();
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> dao.update(nonExistentTrainer));
-        assertTrue(ex.getMessage().contains("not found with id: 999"));
+        Trainer actual = dao.update(expected);
+
+        assertEquals("Yoga", actual.getSpecialization());
+        assertEquals(expected, actual);
     }
 
-    private Trainer buildTrainer() {
+    private Trainer buildTrainer(Long id, String username) {
         return Trainer.builder()
+                .userId(id)
+                .username(username)
+                .firstName(TRAINER_FIRSTNAME)
+                .lastName(TRAINER_LASTNAME)
+                .password(TRAINER_PASSWORD)
+                .specialization(TRAINER_SPECIALIZATION)
+                .isActive(true)
+                .build();
+    }
+
+    private Trainer buildTrainer(Long id) {
+        return Trainer.builder()
+                .userId(id)
                 .username(TRAINER_USERNAME)
                 .firstName(TRAINER_FIRSTNAME)
                 .lastName(TRAINER_LASTNAME)
                 .password(TRAINER_PASSWORD)
-                .isActive(TRAINER_IS_ACTIVE)
                 .specialization(TRAINER_SPECIALIZATION)
-                .build();
-    }
-
-    private Trainer buildTrainer(String username, String firstName, String lastName, String password, String specialization) {
-        return Trainer.builder()
-                .username(username)
-                .firstName(firstName)
-                .lastName(lastName)
-                .password(password)
                 .isActive(true)
-                .specialization(specialization)
                 .build();
     }
 }

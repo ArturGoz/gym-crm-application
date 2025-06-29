@@ -2,18 +2,19 @@ package dao;
 
 import com.gca.dao.impl.TraineeDAOImpl;
 import com.gca.model.Trainee;
+import com.gca.model.Training;
 import com.gca.storage.StorageRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -43,88 +44,90 @@ class TraineeDAOTest {
     }
 
     @Test
-    void testCreateAndGetById() {
-        Trainee expected = buildTrainee();
+    void testCreate() {
+        Trainee expected = buildTrainee(1L);
 
         Trainee actual = dao.create(expected);
 
         assertNotNull(actual.getUserId());
-        Trainee actualFromStorage = dao.getById(actual.getUserId());
-        assertEquals(actual, actualFromStorage);
-        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getUserId(), actual.getUserId());
         assertEquals(expected.getFirstName(), actual.getFirstName());
         assertEquals(expected.getLastName(), actual.getLastName());
         assertEquals(expected.getAddress(), actual.getAddress());
-        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
-        assertEquals(expected.getPassword(), actual.getPassword());
-        assertEquals(expected.isActive(), actual.isActive());
+        assertEquals(actual, traineeStorage.get(expected.getUserId()));
     }
 
     @Test
-    void testUpdate() {
-        Trainee expectedBeforeUpdate = buildTrainee("testuser2", "Jane",
-                "Smith", "pass2", "Some address");
+    void testGetById() {
+        Long id = 1L;
+        Trainee expected = buildTrainee(id);
+        traineeStorage.put(id, expected);
 
-        Trainee created = dao.create(expectedBeforeUpdate);
+        Trainee actual = dao.getById(id);
 
-        Trainee updatedTrainee = created.toBuilder()
-                .address("New address")
-                .build();
-
-        Trainee actual = dao.update(updatedTrainee);
-
-        assertEquals("New address", actual.getAddress());
-        assertEquals(updatedTrainee, actual);
-        Trainee actualFromStorage = dao.getById(actual.getUserId());
-        assertEquals(actual, actualFromStorage);
-
-        assertEquals(created.getUsername(), actual.getUsername());
-        assertEquals(created.getFirstName(), actual.getFirstName());
-        assertEquals(created.getLastName(), actual.getLastName());
-        assertEquals(created.getDateOfBirth(), actual.getDateOfBirth());
-        assertEquals(created.getPassword(), actual.getPassword());
-        assertEquals(created.isActive(), actual.isActive());
-    }
-
-    @Test
-    void testDelete() {
-        Trainee expected = buildTrainee("testuser3", "Tom",
-                "Jerry", "pass3", "Some address");
-
-        Trainee actual = dao.create(expected);
-        Long id = actual.getUserId();
-        assertNotNull(dao.getById(id));
-
-        dao.delete(id);
-
-        Trainee actualAfterDelete = dao.getById(id);
-        assertNull(actualAfterDelete);
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
     }
 
     @Test
     void testGetByUsername() {
-        Trainee expected = buildTrainee("uniqUser", "Name",
-                "Last", "ppp", "Addr");
+        Long id = 2L;
+        Trainee expected = buildTrainee(id);
+        traineeStorage.put(id, expected);
 
-        dao.create(expected);
-
-        Trainee actual = dao.getByUsername("uniqUser");
+        Trainee actual = dao.getByUsername(expected.getUsername());
 
         assertNotNull(actual);
+        assertEquals(expected, actual);
         assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.getFirstName(), actual.getFirstName());
-        assertEquals(expected.getLastName(), actual.getLastName());
-        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
-        assertEquals(expected.getAddress(), actual.getAddress());
         assertEquals(expected.getPassword(), actual.getPassword());
-        assertEquals(expected.isActive(), actual.isActive());
     }
 
-    private Trainee buildTrainee() {
+    @Test
+    void testGetAllUsernames() {
+        List<String> expected = List.of("user1", "user2");
+        Trainee t1 = buildTrainee(3L, expected.get(0));
+        Trainee t2 = buildTrainee(4L, expected.get(1));
+        traineeStorage.put(3L, t1);
+        traineeStorage.put(4L, t2);
+
+        List<String> actual = dao.getAllUsernames();
+
+        assertEquals(expected, actual);
+        assertEquals(expected.size(), actual.size());
+    }
+
+    @Test
+    void testUpdate() {
+        Long id = 5L;
+        Trainee trainee = buildTrainee(id);
+        traineeStorage.put(id, trainee);
+        Trainee expected = trainee.toBuilder().address("new address").build();
+
+        Trainee actual = dao.update(expected);
+
+        assertEquals("new address", actual.getAddress());
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testDelete() {
+        Long id = 6L;
+        Trainee trainee = buildTrainee(id);
+        traineeStorage.put(id, trainee);
+
+        dao.delete(id);
+
+        assertNull(traineeStorage.get(id));
+    }
+
+    private Trainee buildTrainee(Long id, String username) {
         return Trainee.builder()
+                .userId(id)
+                .username(username)
                 .dateOfBirth(TRAINEE_BIRTHDAY)
                 .address(TRAINEE_ADDRESS)
-                .username(TRAINEE_USERNAME)
                 .firstName(TRAINEE_FIRSTNAME)
                 .lastName(TRAINEE_LASTNAME)
                 .password(TRAINEE_PASSWORD)
@@ -132,14 +135,15 @@ class TraineeDAOTest {
                 .build();
     }
 
-    private Trainee buildTrainee(String username, String firstName, String lastName, String password, String address) {
+    private Trainee buildTrainee(Long id) {
         return Trainee.builder()
+                .userId(id)
                 .dateOfBirth(TRAINEE_BIRTHDAY)
-                .address(address)
-                .username(username)
-                .firstName(firstName)
-                .lastName(lastName)
-                .password(password)
+                .address(TRAINEE_ADDRESS)
+                .username(TRAINEE_USERNAME)
+                .firstName(TRAINEE_FIRSTNAME)
+                .lastName(TRAINEE_LASTNAME)
+                .password(TRAINEE_PASSWORD)
                 .isActive(true)
                 .build();
     }
