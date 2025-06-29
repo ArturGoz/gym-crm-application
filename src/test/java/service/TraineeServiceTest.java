@@ -25,14 +25,14 @@ import static org.mockito.Mockito.when;
 class TraineeServiceTest {
 
     @Mock
-    private TraineeDAO traineeDAO;
+    private TraineeDAO dao;
     @Mock
     private UserProfileService userProfileService;
     @Mock
-    private TraineeMapper traineeMapper;
+    private TraineeMapper mapper;
 
     @InjectMocks
-    private TraineeServiceImpl traineeService;
+    private TraineeServiceImpl service;
 
     @BeforeEach
     void setUp() {
@@ -56,7 +56,7 @@ class TraineeServiceTest {
                 .address("address")
                 .build();
 
-        when(traineeMapper.toEntity(request)).thenReturn(trainee);
+        when(mapper.toEntity(request)).thenReturn(trainee);
         when(userProfileService.generateUsername("John", "Doe")).thenReturn("john.doe");
         when(userProfileService.generatePassword()).thenReturn("pass123");
 
@@ -66,7 +66,7 @@ class TraineeServiceTest {
                 .isActive(true)
                 .build();
 
-        when(traineeDAO.create(any(Trainee.class))).thenReturn(traineeWithCreds);
+        when(dao.create(any(Trainee.class))).thenReturn(traineeWithCreds);
 
         TraineeResponse expectedResponse = TraineeResponse.builder()
                 .userId(1L)
@@ -78,14 +78,14 @@ class TraineeServiceTest {
                 .address("address")
                 .build();
 
-        when(traineeMapper.toResponse(any(Trainee.class))).thenReturn(expectedResponse);
+        when(mapper.toResponse(any(Trainee.class))).thenReturn(expectedResponse);
 
-        TraineeResponse response = traineeService.createTrainee(request);
+        TraineeResponse response = service.createTrainee(request);
 
         assertEquals(expectedResponse, response);
-        verify(traineeMapper).toEntity(request);
-        verify(traineeDAO).create(any(Trainee.class));
-        verify(traineeMapper).toResponse(any(Trainee.class));
+        verify(mapper).toEntity(request);
+        verify(dao).create(any(Trainee.class));
+        verify(mapper).toResponse(any(Trainee.class));
     }
 
     @Test
@@ -112,8 +112,8 @@ class TraineeServiceTest {
                 .isActive(true)
                 .build();
 
-        when(traineeDAO.getById(1L)).thenReturn(existing);
-        when(traineeDAO.update(existing)).thenReturn(updated);
+        when(dao.getById(1L)).thenReturn(existing);
+        when(dao.update(existing)).thenReturn(updated);
 
         TraineeResponse expectedResponse = TraineeResponse.builder()
                 .userId(1L)
@@ -125,14 +125,14 @@ class TraineeServiceTest {
                 .address("address")
                 .build();
 
-        when(traineeMapper.toResponse(updated)).thenReturn(expectedResponse);
+        when(mapper.toResponse(updated)).thenReturn(expectedResponse);
 
-        TraineeResponse result = traineeService.updateTrainee(updateRequest);
+        TraineeResponse result = service.updateTrainee(updateRequest);
 
         assertEquals(expectedResponse, result);
-        verify(traineeDAO).getById(1L);
-        verify(traineeDAO).update(existing);
-        verify(traineeMapper).toResponse(updated);
+        verify(dao).getById(1L);
+        verify(dao).update(existing);
+        verify(mapper).toResponse(updated);
     }
 
     @Test
@@ -140,17 +140,17 @@ class TraineeServiceTest {
         TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder()
                 .userId(2L)
                 .build();
-        when(traineeDAO.getById(2L)).thenReturn(null);
+        when(dao.getById(2L)).thenReturn(null);
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> traineeService.updateTrainee(updateRequest));
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> service.updateTrainee(updateRequest));
         assertEquals("Trainee not found", ex.getMessage());
     }
 
     @Test
     void deleteTrainee_success() {
-        traineeService.deleteTrainee(1L);
+        service.deleteTrainee(1L);
 
-        verify(traineeDAO).delete(1L);
+        verify(dao).delete(1L);
     }
 
     @Test
@@ -176,14 +176,14 @@ class TraineeServiceTest {
                 .address("address")
                 .build();
 
-        when(traineeDAO.getById(1L)).thenReturn(trainee);
-        when(traineeMapper.toResponse(trainee)).thenReturn(response);
+        when(dao.getById(1L)).thenReturn(trainee);
+        when(mapper.toResponse(trainee)).thenReturn(response);
 
-        TraineeResponse result = traineeService.getTraineeById(1L);
+        TraineeResponse result = service.getTraineeById(1L);
 
         assertEquals(response, result);
-        verify(traineeDAO).getById(1L);
-        verify(traineeMapper).toResponse(trainee);
+        verify(dao).getById(1L);
+        verify(mapper).toResponse(trainee);
     }
 
     @Test
@@ -209,13 +209,13 @@ class TraineeServiceTest {
                 .address("address")
                 .build();
 
-        when(traineeDAO.getByUsername("john.doe")).thenReturn(trainee);
-        when(traineeMapper.toResponse(trainee)).thenReturn(response);
+        when(dao.getByUsername("john.doe")).thenReturn(trainee);
+        when(mapper.toResponse(trainee)).thenReturn(response);
 
-        TraineeResponse result = traineeService.getTraineeByUsername("john.doe");
+        TraineeResponse result = service.getTraineeByUsername("john.doe");
 
         assertEquals(response, result);
-        verify(traineeDAO).getByUsername("john.doe");
-        verify(traineeMapper).toResponse(trainee);
+        verify(dao).getByUsername("john.doe");
+        verify(mapper).toResponse(trainee);
     }
 }

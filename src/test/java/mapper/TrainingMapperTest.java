@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TrainingMapperTest {
-    TrainingMapper trainingMapper = new TrainingMapperImpl();
+    TrainingMapper mapper = new TrainingMapperImpl();
 
     @Test
     void testToEntity_fromCreateRequest() {
@@ -27,7 +27,7 @@ class TrainingMapperTest {
         request.setTrainingName("Functional Training");
         request.setTrainingType(new TrainingType("Functional"));
 
-        Training entity = trainingMapper.toEntity(request);
+        Training entity = mapper.toEntity(request);
 
         assertEquals(1L, entity.getTrainerId());
         assertEquals(2L, entity.getTraineeId());
@@ -50,7 +50,7 @@ class TrainingMapperTest {
                 .trainingType(new TrainingType("Yoga"))
                 .build();
 
-        TrainingResponse response = trainingMapper.toResponse(training);
+        TrainingResponse response = mapper.toResponse(training);
 
         assertEquals(10L, response.getId());
         assertEquals(1L, response.getTrainerId());

@@ -23,14 +23,14 @@ import static org.mockito.Mockito.when;
 class TrainerServiceTest {
 
     @Mock
-    private TrainerDAO trainerDAO;
+    private TrainerDAO dao;
     @Mock
     private UserProfileService userProfileService;
     @Mock
-    private TrainerMapper trainerMapper;
+    private TrainerMapper mapper;
 
     @InjectMocks
-    private TrainerServiceImpl trainerService;
+    private TrainerServiceImpl service;
 
     @BeforeEach
     void setUp() {
@@ -51,7 +51,7 @@ class TrainerServiceTest {
                 .specialization("Yoga")
                 .build();
 
-        when(trainerMapper.toEntity(request)).thenReturn(trainer);
+        when(mapper.toEntity(request)).thenReturn(trainer);
         when(userProfileService.generateUsername("Anna", "Ivanova")).thenReturn("anna.ivanova");
         when(userProfileService.generatePassword()).thenReturn("pass123");
 
@@ -61,7 +61,7 @@ class TrainerServiceTest {
                 .isActive(true)
                 .build();
 
-        when(trainerDAO.create(any(Trainer.class))).thenReturn(trainerWithCreds);
+        when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
 
         TrainerResponse expectedResponse = TrainerResponse.builder()
                 .userId(2L)
@@ -72,14 +72,14 @@ class TrainerServiceTest {
                 .specialization("Yoga")
                 .build();
 
-        when(trainerMapper.toResponse(any(Trainer.class))).thenReturn(expectedResponse);
+        when(mapper.toResponse(any(Trainer.class))).thenReturn(expectedResponse);
 
-        TrainerResponse response = trainerService.createTrainer(request);
+        TrainerResponse response = service.createTrainer(request);
 
         assertEquals(expectedResponse, response);
-        verify(trainerMapper).toEntity(request);
-        verify(trainerDAO).create(any(Trainer.class));
-        verify(trainerMapper).toResponse(any(Trainer.class));
+        verify(mapper).toEntity(request);
+        verify(dao).create(any(Trainer.class));
+        verify(mapper).toResponse(any(Trainer.class));
     }
 
     @Test
@@ -105,8 +105,8 @@ class TrainerServiceTest {
                 .specialization("Pilates")
                 .build();
 
-        when(trainerDAO.getById(2L)).thenReturn(existing);
-        when(trainerDAO.update(existing)).thenReturn(updated);
+        when(dao.getById(2L)).thenReturn(existing);
+        when(dao.update(existing)).thenReturn(updated);
 
         TrainerResponse expectedResponse = TrainerResponse.builder()
                 .userId(2L)
@@ -117,14 +117,14 @@ class TrainerServiceTest {
                 .specialization("Pilates")
                 .build();
 
-        when(trainerMapper.toResponse(updated)).thenReturn(expectedResponse);
+        when(mapper.toResponse(updated)).thenReturn(expectedResponse);
 
-        TrainerResponse result = trainerService.updateTrainer(updateRequest);
+        TrainerResponse result = service.updateTrainer(updateRequest);
 
         assertEquals(expectedResponse, result);
-        verify(trainerDAO).getById(2L);
-        verify(trainerDAO).update(existing);
-        verify(trainerMapper).toResponse(updated);
+        verify(dao).getById(2L);
+        verify(dao).update(existing);
+        verify(mapper).toResponse(updated);
     }
 
     @Test
@@ -135,10 +135,10 @@ class TrainerServiceTest {
                 .specialization("Crossfit")
                 .build();
 
-        when(trainerDAO.getById(3L)).thenReturn(null);
+        when(dao.getById(3L)).thenReturn(null);
 
         RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> trainerService.updateTrainer(updateRequest));
+                () -> service.updateTrainer(updateRequest));
         assertEquals("Trainer not found", ex.getMessage());
     }
 
@@ -163,14 +163,14 @@ class TrainerServiceTest {
                 .specialization("Yoga")
                 .build();
 
-        when(trainerDAO.getById(2L)).thenReturn(trainer);
-        when(trainerMapper.toResponse(trainer)).thenReturn(response);
+        when(dao.getById(2L)).thenReturn(trainer);
+        when(mapper.toResponse(trainer)).thenReturn(response);
 
-        TrainerResponse result = trainerService.getTrainerById(2L);
+        TrainerResponse result = service.getTrainerById(2L);
 
         assertEquals(response, result);
-        verify(trainerDAO).getById(2L);
-        verify(trainerMapper).toResponse(trainer);
+        verify(dao).getById(2L);
+        verify(mapper).toResponse(trainer);
     }
 
     @Test
@@ -194,13 +194,13 @@ class TrainerServiceTest {
                 .specialization("Yoga")
                 .build();
 
-        when(trainerDAO.getByUsername("anna.ivanova")).thenReturn(trainer);
-        when(trainerMapper.toResponse(trainer)).thenReturn(response);
+        when(dao.getByUsername("anna.ivanova")).thenReturn(trainer);
+        when(mapper.toResponse(trainer)).thenReturn(response);
 
-        TrainerResponse result = trainerService.getTrainerByUsername("anna.ivanova");
+        TrainerResponse result = service.getTrainerByUsername("anna.ivanova");
 
         assertEquals(response, result);
-        verify(trainerDAO).getByUsername("anna.ivanova");
-        verify(trainerMapper).toResponse(trainer);
+        verify(dao).getByUsername("anna.ivanova");
+        verify(mapper).toResponse(trainer);
     }
 }

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TrainerMapperTest {
-    TrainerMapper trainerMapper = new TrainerMapperImpl();
+    TrainerMapper mapper = new TrainerMapperImpl();
 
     @Test
     void testToEntity_fromCreateRequest() {
@@ -23,7 +23,7 @@ class TrainerMapperTest {
                 .specialization("Crossfit")
                 .build();
 
-        Trainer entity = trainerMapper.toEntity(request);
+        Trainer entity = mapper.toEntity(request);
 
         assertEquals("John", entity.getFirstName());
         assertEquals("Doe", entity.getLastName());
@@ -38,7 +38,7 @@ class TrainerMapperTest {
                 .specialization("Yoga")
                 .build();
 
-        Trainer entity = trainerMapper.toEntity(request);
+        Trainer entity = mapper.toEntity(request);
 
         assertEquals(20L, entity.getUserId());
         assertFalse(entity.isActive());
@@ -56,7 +56,7 @@ class TrainerMapperTest {
                 .specialization("Pilates")
                 .build();
 
-        TrainerResponse response = trainerMapper.toResponse(entity);
+        TrainerResponse response = mapper.toResponse(entity);
 
         assertEquals(30L, response.getUserId());
         assertEquals("Alice", response.getFirstName());

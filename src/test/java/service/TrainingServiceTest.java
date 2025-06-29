@@ -24,12 +24,12 @@ import static org.mockito.Mockito.when;
 class TrainingServiceTest {
 
     @Mock
-    private TrainingDAO trainingDAO;
+    private TrainingDAO dao;
     @Mock
-    private TrainingMapper trainingMapper;
+    private TrainingMapper mapper;
 
     @InjectMocks
-    private TrainingServiceImpl trainingService;
+    private TrainingServiceImpl service;
 
     @BeforeEach
     void setUp() {
@@ -60,13 +60,13 @@ class TrainingServiceTest {
                 .trainingType(trainingType)
                 .build();
 
-        when(trainingMapper.toEntity(request)).thenReturn(training);
+        when(mapper.toEntity(request)).thenReturn(training);
 
         Training created = training.toBuilder()
                 .id(1L)
                 .build();
 
-        when(trainingDAO.create(any(Training.class))).thenReturn(created);
+        when(dao.create(any(Training.class))).thenReturn(created);
 
         TrainingResponse expectedResponse = TrainingResponse.builder()
                 .id(1L)
@@ -78,14 +78,14 @@ class TrainingServiceTest {
                 .trainingType(trainingType)
                 .build();
 
-        when(trainingMapper.toResponse(any(Training.class))).thenReturn(expectedResponse);
+        when(mapper.toResponse(any(Training.class))).thenReturn(expectedResponse);
 
-        TrainingResponse response = trainingService.createTraining(request);
+        TrainingResponse response = service.createTraining(request);
 
         assertEquals(expectedResponse, response);
-        verify(trainingMapper).toEntity(request);
-        verify(trainingDAO).create(any(Training.class));
-        verify(trainingMapper).toResponse(any(Training.class));
+        verify(mapper).toEntity(request);
+        verify(dao).create(any(Training.class));
+        verify(mapper).toResponse(any(Training.class));
     }
 
     @Test
@@ -114,13 +114,13 @@ class TrainingServiceTest {
                 .trainingType(trainingType)
                 .build();
 
-        when(trainingDAO.getById(2L)).thenReturn(training);
-        when(trainingMapper.toResponse(training)).thenReturn(response);
+        when(dao.getById(2L)).thenReturn(training);
+        when(mapper.toResponse(training)).thenReturn(response);
 
-        TrainingResponse result = trainingService.getTrainingById(2L);
+        TrainingResponse result = service.getTrainingById(2L);
 
         assertEquals(response, result);
-        verify(trainingDAO).getById(2L);
-        verify(trainingMapper).toResponse(training);
+        verify(dao).getById(2L);
+        verify(mapper).toResponse(training);
     }
 }

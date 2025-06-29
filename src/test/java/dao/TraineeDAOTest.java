@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class TraineeDAOTest {
-    private TraineeDAOImpl traineeDAO;
+    private TraineeDAOImpl dao;
     private StorageRegistry storageRegistryMock;
     private Map<Long, Trainee> traineeStorage;
 
@@ -28,8 +28,8 @@ class TraineeDAOTest {
         Mockito.when(storageRegistryMock.getStorage(Mockito.any()))
                 .thenReturn((Map) traineeStorage);
 
-        traineeDAO = new TraineeDAOImpl();
-        traineeDAO.setStorage(storageRegistryMock);
+        dao = new TraineeDAOImpl();
+        dao.setStorage(storageRegistryMock);
     }
 
     @Test
@@ -44,10 +44,10 @@ class TraineeDAOTest {
                 .isActive(true)
                 .build();
 
-        Trainee created = traineeDAO.create(trainee);
+        Trainee created = dao.create(trainee);
 
         assertNotNull(created.getUserId());
-        assertEquals(created, traineeDAO.getById(created.getUserId()));
+        assertEquals(created, dao.getById(created.getUserId()));
     }
 
     @Test
@@ -62,15 +62,15 @@ class TraineeDAOTest {
                 .isActive(true)
                 .build();
 
-        Trainee created = traineeDAO.create(trainee);
+        Trainee created = dao.create(trainee);
 
         Trainee updated = created.toBuilder()
                 .address("New address")
                 .build();
-        updated = traineeDAO.update(updated);
+        updated = dao.update(updated);
 
         assertEquals("New address", updated.getAddress());
-        assertSame(updated, traineeDAO.getById(updated.getUserId()));
+        assertSame(updated, dao.getById(updated.getUserId()));
     }
 
     @Test
@@ -85,13 +85,13 @@ class TraineeDAOTest {
                 .isActive(true)
                 .build();
 
-        Trainee created = traineeDAO.create(trainee);
+        Trainee created = dao.create(trainee);
         Long id = created.getUserId();
-        assertNotNull(traineeDAO.getById(id));
+        assertNotNull(dao.getById(id));
 
-        traineeDAO.delete(id);
+        dao.delete(id);
 
-        assertNull(traineeDAO.getById(id));
+        assertNull(dao.getById(id));
     }
 
     @Test
@@ -106,9 +106,9 @@ class TraineeDAOTest {
                 .isActive(true)
                 .build();
 
-        traineeDAO.create(trainee);
+        dao.create(trainee);
 
-        Trainee found = traineeDAO.getByUsername("uniqUser");
+        Trainee found = dao.getByUsername("uniqUser");
         assertNotNull(found);
         assertEquals("uniqUser", found.getUsername());
     }

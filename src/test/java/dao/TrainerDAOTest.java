@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TrainerDAOTest {
 
-    private TrainerDAOImpl trainerDAO;
+    private TrainerDAOImpl dao;
     private StorageRegistry storageRegistryMock;
     private Map<Long, Trainer> trainerStorage;
 
@@ -29,8 +29,8 @@ class TrainerDAOTest {
         Mockito.when(storageRegistryMock.getStorage(Mockito.any()))
                 .thenReturn((Map) trainerStorage);
 
-        trainerDAO = new TrainerDAOImpl();
-        trainerDAO.setStorage(storageRegistryMock);
+        dao = new TrainerDAOImpl();
+        dao.setStorage(storageRegistryMock);
     }
 
     @Test
@@ -44,10 +44,10 @@ class TrainerDAOTest {
                 .specialization("Yoga")
                 .build();
 
-        Trainer created = trainerDAO.create(trainer);
+        Trainer created = dao.create(trainer);
 
         assertNotNull(created.getUserId());
-        assertEquals(created, trainerDAO.getById(created.getUserId()));
+        assertEquals(created, dao.getById(created.getUserId()));
     }
 
     @Test
@@ -61,15 +61,15 @@ class TrainerDAOTest {
                 .specialization("Boxing")
                 .build();
 
-        Trainer created = trainerDAO.create(trainer);
+        Trainer created = dao.create(trainer);
 
         Trainer updatedTrainer = created.toBuilder()
                 .specialization("CrossFit")
                 .build();
-        Trainer updated = trainerDAO.update(updatedTrainer);
+        Trainer updated = dao.update(updatedTrainer);
 
         assertEquals("CrossFit", updated.getSpecialization());
-        assertSame(updated, trainerDAO.getById(updated.getUserId()));
+        assertSame(updated, dao.getById(updated.getUserId()));
     }
 
     @Test
@@ -83,9 +83,9 @@ class TrainerDAOTest {
                 .specialization("Pilates")
                 .build();
 
-        trainerDAO.create(trainer);
+        dao.create(trainer);
 
-        Trainer found = trainerDAO.getByUsername("uniqueTrainer");
+        Trainer found = dao.getByUsername("uniqueTrainer");
         assertNotNull(found);
         assertEquals("uniqueTrainer", found.getUsername());
     }
@@ -110,10 +110,10 @@ class TrainerDAOTest {
                 .specialization("Cardio")
                 .build();
 
-        trainerDAO.create(trainer1);
-        trainerDAO.create(trainer2);
+        dao.create(trainer1);
+        dao.create(trainer2);
 
-        assertEquals(2, trainerDAO.getAllUsernames().size());
+        assertEquals(2, dao.getAllUsernames().size());
     }
 
     @Test
@@ -123,7 +123,7 @@ class TrainerDAOTest {
                 .username("noSuchTrainer")
                 .build();
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> trainerDAO.update(trainer));
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> dao.update(trainer));
         assertTrue(ex.getMessage().contains("not found with id: 999"));
     }
 }

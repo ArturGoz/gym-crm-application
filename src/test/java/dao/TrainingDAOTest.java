@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class TrainingDAOTest {
 
-    private TrainingDAOImpl trainingDAO;
+    private TrainingDAOImpl dao;
     private StorageRegistry storageRegistryMock;
     private Map<Long, Training> trainingStorage;
 
@@ -31,8 +31,8 @@ class TrainingDAOTest {
         Mockito.when(storageRegistryMock.getStorage(Mockito.any()))
                 .thenReturn((Map) trainingStorage);
 
-        trainingDAO = new TrainingDAOImpl();
-        trainingDAO.setStorage(storageRegistryMock);
+        dao = new TrainingDAOImpl();
+        dao.setStorage(storageRegistryMock);
     }
 
     @Test
@@ -46,10 +46,10 @@ class TrainingDAOTest {
                 .trainingType(new TrainingType("Yoga"))
                 .build();
 
-        Training created = trainingDAO.create(training);
+        Training created = dao.create(training);
 
         assertNotNull(created.getId());
-        assertEquals("Morning Yoga", trainingDAO.getById(created.getId()).getTrainingName());
+        assertEquals("Morning Yoga", dao.getById(created.getId()).getTrainingName());
     }
 
     @Test
@@ -61,14 +61,14 @@ class TrainingDAOTest {
                 .trainingName("T2")
                 .build();
 
-        Training created1 = trainingDAO.create(t1);
-        Training created2 = trainingDAO.create(t2);
+        Training created1 = dao.create(t1);
+        Training created2 = dao.create(t2);
 
         assertNotEquals(created1.getId(), created2.getId());
     }
 
     @Test
     void testGetByIdReturnsNullIfNotFound() {
-        assertNull(trainingDAO.getById(12345L));
+        assertNull(dao.getById(12345L));
     }
 }
