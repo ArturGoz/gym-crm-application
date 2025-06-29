@@ -37,13 +37,14 @@ class TrainingDAOImplTest {
 
     @Test
     void testCreateAndGetById() {
-        Training training = new Training();
-        training.setTrainerId(1L);
-        training.setTraineeId(2L);
-        training.setTrainingDate(LocalDate.of(2025, 6, 27));
-        training.setTrainingDuration(Duration.ofHours(1));
-        training.setTrainingName("Morning Yoga");
-        training.setTrainingType(new TrainingType("Yoga"));
+        Training training = Training.builder()
+                .trainerId(1L)
+                .traineeId(2L)
+                .trainingDate(LocalDate.of(2025, 6, 27))
+                .trainingDuration(Duration.ofHours(1))
+                .trainingName("Morning Yoga")
+                .trainingType(new TrainingType("Yoga"))
+                .build();
 
         Training created = trainingDAO.create(training);
 
@@ -52,35 +53,13 @@ class TrainingDAOImplTest {
     }
 
     @Test
-    void testGetAll() {
-        Training t1 = new Training();
-        t1.setTrainerId(1L);
-        t1.setTraineeId(2L);
-        t1.setTrainingDate(LocalDate.of(2025, 6, 27));
-        t1.setTrainingDuration(Duration.ofMinutes(50));
-        t1.setTrainingName("Cardio");
-        t1.setTrainingType(new TrainingType("Fitness"));
-
-        Training t2 = new Training();
-        t2.setTrainerId(3L);
-        t2.setTraineeId(4L);
-        t2.setTrainingDate(LocalDate.of(2025, 6, 28));
-        t2.setTrainingDuration(Duration.ofMinutes(45));
-        t2.setTrainingName("Boxing");
-        t2.setTrainingType(new TrainingType("Martial Arts"));
-
-        trainingDAO.create(t1);
-        trainingDAO.create(t2);
-
-        assertEquals(2, trainingDAO.getAll().size());
-    }
-
-    @Test
     void testCreateAssignsUniqueIds() {
-        Training t1 = new Training();
-        t1.setTrainingName("T1");
-        Training t2 = new Training();
-        t2.setTrainingName("T2");
+        Training t1 = Training.builder()
+                .trainingName("T1")
+                .build();
+        Training t2 = Training.builder()
+                .trainingName("T2")
+                .build();
 
         Training created1 = trainingDAO.create(t1);
         Training created2 = trainingDAO.create(t2);

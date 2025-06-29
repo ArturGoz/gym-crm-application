@@ -34,48 +34,59 @@ class TraineeDAOImplTest {
 
     @Test
     void testCreateAndGetById() {
-        Trainee trainee = new Trainee(LocalDate.of(2000,1,1), "Some address");
-        trainee.setUsername("testuser");
-        trainee.setFirstName("John");
-        trainee.setLastName("Doe");
-        trainee.setPassword("pass");
-        trainee.setIsActive(true);
+        Trainee trainee = Trainee.builder()
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .address("Some address")
+                .username("testuser")
+                .firstName("John")
+                .lastName("Doe")
+                .password("pass")
+                .isActive(true)
+                .build();
 
         Trainee created = traineeDAO.create(trainee);
 
-        assertNotNull(created.getId());
-        assertEquals(trainee, traineeDAO.getById(created.getId()));
+        assertNotNull(created.getUserId());
+        assertEquals(created, traineeDAO.getById(created.getUserId()));
     }
 
     @Test
     void testUpdate() {
-        Trainee trainee = new Trainee(LocalDate.of(2000,1,1), "Some address");
-        trainee.setUsername("testuser2");
-        trainee.setFirstName("Jane");
-        trainee.setLastName("Smith");
-        trainee.setPassword("pass2");
-        trainee.setIsActive(true);
+        Trainee trainee = Trainee.builder()
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .address("Some address")
+                .username("testuser2")
+                .firstName("Jane")
+                .lastName("Smith")
+                .password("pass2")
+                .isActive(true)
+                .build();
 
         Trainee created = traineeDAO.create(trainee);
 
-        created.setAddress("New address");
-        Trainee updated = traineeDAO.update(created);
+        Trainee updated = created.toBuilder()
+                .address("New address")
+                .build();
+        updated = traineeDAO.update(updated);
 
         assertEquals("New address", updated.getAddress());
-        assertSame(updated, traineeDAO.getById(updated.getId()));
+        assertSame(updated, traineeDAO.getById(updated.getUserId()));
     }
 
     @Test
     void testDelete() {
-        Trainee trainee = new Trainee(LocalDate.of(2000,1,1), "Some address");
-        trainee.setUsername("testuser3");
-        trainee.setFirstName("Tom");
-        trainee.setLastName("Jerry");
-        trainee.setPassword("pass3");
-        trainee.setIsActive(true);
+        Trainee trainee = Trainee.builder()
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .address("Some address")
+                .username("testuser3")
+                .firstName("Tom")
+                .lastName("Jerry")
+                .password("pass3")
+                .isActive(true)
+                .build();
 
         Trainee created = traineeDAO.create(trainee);
-        Long id = created.getId();
+        Long id = created.getUserId();
         assertNotNull(traineeDAO.getById(id));
 
         traineeDAO.delete(id);
@@ -85,12 +96,15 @@ class TraineeDAOImplTest {
 
     @Test
     void testGetByUsername() {
-        Trainee trainee = new Trainee(LocalDate.of(2000,1,1), "Addr");
-        trainee.setUsername("uniqUser");
-        trainee.setFirstName("Name");
-        trainee.setLastName("Last");
-        trainee.setPassword("ppp");
-        trainee.setIsActive(true);
+        Trainee trainee = Trainee.builder()
+                .dateOfBirth(LocalDate.of(2000, 1, 1))
+                .address("Addr")
+                .username("uniqUser")
+                .firstName("Name")
+                .lastName("Last")
+                .password("ppp")
+                .isActive(true)
+                .build();
 
         traineeDAO.create(trainee);
 

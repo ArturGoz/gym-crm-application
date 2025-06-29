@@ -35,48 +35,53 @@ class TrainerDAOImplTest {
 
     @Test
     void testCreateAndGetById() {
-        Trainer trainer = new Trainer();
-        trainer.setUsername("trainer1");
-        trainer.setFirstName("Alice");
-        trainer.setLastName("Smith");
-        trainer.setPassword("pass");
-        trainer.setIsActive(true);
-        trainer.setSpecialization("Yoga");
+        Trainer trainer = Trainer.builder()
+                .username("trainer1")
+                .firstName("Alice")
+                .lastName("Smith")
+                .password("pass")
+                .isActive(true)
+                .specialization("Yoga")
+                .build();
 
         Trainer created = trainerDAO.create(trainer);
 
-        assertNotNull(created.getId());
-        assertEquals(trainer, trainerDAO.getById(created.getId()));
+        assertNotNull(created.getUserId());
+        assertEquals(created, trainerDAO.getById(created.getUserId()));
     }
 
     @Test
     void testUpdate() {
-        Trainer trainer = new Trainer();
-        trainer.setUsername("trainer2");
-        trainer.setFirstName("Bob");
-        trainer.setLastName("Jones");
-        trainer.setPassword("pass2");
-        trainer.setIsActive(true);
-        trainer.setSpecialization("Boxing");
+        Trainer trainer = Trainer.builder()
+                .username("trainer2")
+                .firstName("Bob")
+                .lastName("Jones")
+                .password("pass2")
+                .isActive(true)
+                .specialization("Boxing")
+                .build();
 
         Trainer created = trainerDAO.create(trainer);
 
-        created.setSpecialization("CrossFit");
-        Trainer updated = trainerDAO.update(created);
+        Trainer updatedTrainer = created.toBuilder()
+                .specialization("CrossFit")
+                .build();
+        Trainer updated = trainerDAO.update(updatedTrainer);
 
         assertEquals("CrossFit", updated.getSpecialization());
-        assertSame(updated, trainerDAO.getById(updated.getId()));
+        assertSame(updated, trainerDAO.getById(updated.getUserId()));
     }
 
     @Test
     void testGetByUsername() {
-        Trainer trainer = new Trainer();
-        trainer.setUsername("uniqueTrainer");
-        trainer.setFirstName("Carla");
-        trainer.setLastName("White");
-        trainer.setPassword("pw");
-        trainer.setIsActive(true);
-        trainer.setSpecialization("Pilates");
+        Trainer trainer = Trainer.builder()
+                .username("uniqueTrainer")
+                .firstName("Carla")
+                .lastName("White")
+                .password("pw")
+                .isActive(true)
+                .specialization("Pilates")
+                .build();
 
         trainerDAO.create(trainer);
 
@@ -86,34 +91,37 @@ class TrainerDAOImplTest {
     }
 
     @Test
-    void testGetAll() {
-        Trainer trainer1 = new Trainer();
-        trainer1.setUsername("t1");
-        trainer1.setFirstName("A");
-        trainer1.setLastName("A");
-        trainer1.setPassword("1");
-        trainer1.setIsActive(true);
-        trainer1.setSpecialization("Spinning");
+    void testGetAllUsernames() {
+        Trainer trainer1 = Trainer.builder()
+                .username("t1")
+                .firstName("A")
+                .lastName("A")
+                .password("1")
+                .isActive(true)
+                .specialization("Spinning")
+                .build();
 
-        Trainer trainer2 = new Trainer();
-        trainer2.setUsername("t2");
-        trainer2.setFirstName("B");
-        trainer2.setLastName("B");
-        trainer2.setPassword("2");
-        trainer2.setIsActive(true);
-        trainer2.setSpecialization("Cardio");
+        Trainer trainer2 = Trainer.builder()
+                .username("t2")
+                .firstName("B")
+                .lastName("B")
+                .password("2")
+                .isActive(true)
+                .specialization("Cardio")
+                .build();
 
         trainerDAO.create(trainer1);
         trainerDAO.create(trainer2);
 
-        assertEquals(2, trainerDAO.getAll().size());
+        assertEquals(2, trainerDAO.getAllUsernames().size());
     }
 
     @Test
     void testUpdateNonExistentTrainerThrows() {
-        Trainer trainer = new Trainer();
-        trainer.setId(999L);
-        trainer.setUsername("noSuchTrainer");
+        Trainer trainer = Trainer.builder()
+                .userId(999L)
+                .username("noSuchTrainer")
+                .build();
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> trainerDAO.update(trainer));
         assertTrue(ex.getMessage().contains("not found with id: 999"));

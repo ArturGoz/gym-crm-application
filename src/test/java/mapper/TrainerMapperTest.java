@@ -17,8 +17,11 @@ class TrainerMapperTest {
 
     @Test
     void testToEntity_fromCreateRequest() {
-        TrainerCreateRequest request = new TrainerCreateRequest(
-                "John", "Doe","Crossfit");
+        TrainerCreateRequest request = TrainerCreateRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .specialization("Crossfit")
+                .build();
 
         Trainer entity = trainerMapper.toEntity(request);
 
@@ -29,34 +32,37 @@ class TrainerMapperTest {
 
     @Test
     void testToEntity_fromUpdateRequest() {
-        TrainerUpdateRequest request = new TrainerUpdateRequest(
-                20L, false, "Yoga"
-        );
+        TrainerUpdateRequest request = TrainerUpdateRequest.builder()
+                .userId(20L)
+                .isActive(false)
+                .specialization("Yoga")
+                .build();
 
         Trainer entity = trainerMapper.toEntity(request);
 
-        assertEquals(20L, entity.getId());
-        assertFalse(entity.getIsActive());
+        assertEquals(20L, entity.getUserId());
+        assertFalse(entity.isActive());
         assertEquals("Yoga", entity.getSpecialization());
     }
 
     @Test
     void testToResponse() {
-        Trainer entity = new Trainer();
-        entity.setId(30L);
-        entity.setFirstName("Alice");
-        entity.setLastName("Smith");
-        entity.setUsername("alice.smith");
-        entity.setIsActive(true);
-        entity.setSpecialization("Pilates");
+        Trainer entity = Trainer.builder()
+                .userId(30L)
+                .firstName("Alice")
+                .lastName("Smith")
+                .username("alice.smith")
+                .isActive(true)
+                .specialization("Pilates")
+                .build();
 
         TrainerResponse response = trainerMapper.toResponse(entity);
 
-        assertEquals(30L, response.getId());
+        assertEquals(30L, response.getUserId());
         assertEquals("Alice", response.getFirstName());
         assertEquals("Smith", response.getLastName());
         assertEquals("alice.smith", response.getUsername());
-        assertTrue(response.getIsActive());
+        assertTrue(response.isActive());
         assertEquals("Pilates", response.getSpecialization());
     }
 }

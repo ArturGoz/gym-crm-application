@@ -11,7 +11,8 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TrainingMapperTest {
     TrainingMapper trainingMapper = new TrainingMapperImpl();
@@ -39,14 +40,15 @@ class TrainingMapperTest {
 
     @Test
     void testToResponse() {
-        Training training = new Training();
-        training.setId(10L);
-        training.setTrainerId(1L);
-        training.setTraineeId(2L);
-        training.setTrainingDate(LocalDate.of(2025, 6, 29));
-        training.setTrainingDuration(Duration.ofHours(2));
-        training.setTrainingName("Morning Yoga");
-        training.setTrainingType(new TrainingType("Yoga"));
+        Training training = Training.builder()
+                .id(10L)
+                .trainerId(1L)
+                .traineeId(2L)
+                .trainingDate(LocalDate.of(2025, 6, 29))
+                .trainingDuration(Duration.ofHours(2))
+                .trainingName("Morning Yoga")
+                .trainingType(new TrainingType("Yoga"))
+                .build();
 
         TrainingResponse response = trainingMapper.toResponse(training);
 
