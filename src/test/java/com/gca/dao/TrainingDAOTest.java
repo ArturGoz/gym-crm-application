@@ -48,7 +48,7 @@ class TrainingDAOTest {
     }
 
     @Test
-    void testCreate() {
+    void shouldSuccessfullyCreateTraining() {
         Training expected = buildTraining();
 
         Training actual = dao.create(expected);
@@ -64,7 +64,7 @@ class TrainingDAOTest {
     }
 
     @Test
-    void testGetById() {
+    void shouldReturnTrainingById() {
         Training expected = buildTraining();
         Training created = dao.create(expected);
 
@@ -79,7 +79,7 @@ class TrainingDAOTest {
     }
 
     @Test
-    void testCreateAssignsUniqueIds() {
+    void shouldAssignUniqueIdsForEachCreatedTraining() {
         Training training1 = buildTraining("T1");
         Training training2 = buildTraining("T2");
 
@@ -90,14 +90,14 @@ class TrainingDAOTest {
     }
 
     @Test
-    void testGetByIdReturnsNullIfNotFound() {
+    void shouldReturnNullIfTrainingByIdNotFound() {
         Training actual = dao.getById(12345L);
 
         assertNull(actual);
     }
 
     @Test
-    void testEqualsAndHashCodeAndToString() {
+    void shouldImplementEqualsHashCodeAndToStringCorrectly() {
         TrainingDAOImpl dao1 = new TrainingDAOImpl();
         TrainingDAOImpl dao2 = new TrainingDAOImpl();
 

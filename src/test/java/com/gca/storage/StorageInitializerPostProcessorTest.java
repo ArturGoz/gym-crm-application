@@ -18,14 +18,14 @@ import static org.mockito.Mockito.when;
 
 class StorageInitializerPostProcessorTest {
 
-    private StorageInitializer storageInitializerMock;
+    private StorageInitializer storageInitializer;
     private StorageInitializerPostProcessor postProcessor;
 
     @BeforeEach
     void setUp() {
-        storageInitializerMock = mock(StorageInitializer.class);
+        storageInitializer = mock(StorageInitializer.class);
         postProcessor = new StorageInitializerPostProcessor();
-        postProcessor.setStorageInitializer(storageInitializerMock);
+        postProcessor.setStorageInitializer(storageInitializer);
     }
 
     @Test
@@ -46,7 +46,7 @@ class StorageInitializerPostProcessorTest {
         initializedData.getTrainers().add(trainer);
         initializedData.getTrainees().add(trainee);
 
-        when(storageInitializerMock.initializeData()).thenReturn(initializedData);
+        when(storageInitializer.initializeData()).thenReturn(initializedData);
 
         Object result = postProcessor.
                 postProcessAfterInitialization(registry, "storageRegistry");
@@ -60,10 +60,11 @@ class StorageInitializerPostProcessorTest {
     @Test
     void testPostProcessAfterInitialization_withNonRegistryBean() {
         Object someBean = new Object();
+
         Object result = postProcessor.
                 postProcessAfterInitialization(someBean, "notARegistry");
 
         assertSame(someBean, result);
-        verify(storageInitializerMock, never()).initializeData();
+        verify(storageInitializer, never()).initializeData();
     }
 }

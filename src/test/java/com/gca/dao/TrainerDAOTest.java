@@ -33,7 +33,7 @@ class TrainerDAOTest {
     }
 
     @Test
-    void testCreate() {
+    void shouldSuccessfullyCreateTrainer() {
         Trainer expected = buildTrainer(1L);
 
         Trainer actual = dao.create(expected);
@@ -47,7 +47,7 @@ class TrainerDAOTest {
     }
 
     @Test
-    void testGetById() {
+    void shouldReturnTrainerById() {
         Long id = 1L;
         Trainer expected = buildTrainer(id);
         trainerStorage.put(id, expected);
@@ -60,7 +60,7 @@ class TrainerDAOTest {
     }
 
     @Test
-    void testGetByUsername() {
+    void shouldReturnTrainerByUsername() {
         Long id = 2L;
         Trainer expected = buildTrainer(id);
         trainerStorage.put(id, expected);
@@ -74,7 +74,7 @@ class TrainerDAOTest {
     }
 
     @Test
-    void testGetAllUsernames() {
+    void shouldReturnAllTrainerUsernames() {
         List<String> expected = List.of("trainer1", "trainer2");
         Trainer t1 = buildTrainer(3L, expected.get(0));
         Trainer t2 = buildTrainer(4L, expected.get(1));
@@ -88,7 +88,7 @@ class TrainerDAOTest {
     }
 
     @Test
-    void testUpdate() {
+    void shouldUpdateTrainer() {
         Long id = 5L;
         Trainer trainer = buildTrainer(id);
         trainerStorage.put(id, trainer);

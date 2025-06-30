@@ -37,7 +37,7 @@ class TraineeDAOTest {
     }
 
     @Test
-    void testCreate() {
+    void shouldSuccessfullyCreateTrainee() {
         Trainee expected = buildTrainee(1L);
 
         Trainee actual = dao.create(expected);
@@ -51,7 +51,7 @@ class TraineeDAOTest {
     }
 
     @Test
-    void testGetById() {
+    void shouldReturnTraineeById() {
         Long id = 1L;
         Trainee expected = buildTrainee(id);
         traineeStorage.put(id, expected);
@@ -64,7 +64,7 @@ class TraineeDAOTest {
     }
 
     @Test
-    void testGetByUsername() {
+    void shouldReturnTraineeByUsername() {
         Long id = 2L;
         Trainee expected = buildTrainee(id);
         traineeStorage.put(id, expected);
@@ -78,7 +78,7 @@ class TraineeDAOTest {
     }
 
     @Test
-    void testGetAllUsernames() {
+    void shouldReturnAllUsernames() {
         List<String> expected = List.of("user1", "user2");
         Trainee t1 = buildTrainee(3L, expected.get(0));
         Trainee t2 = buildTrainee(4L, expected.get(1));
@@ -92,7 +92,7 @@ class TraineeDAOTest {
     }
 
     @Test
-    void testUpdate() {
+    void shouldUpdateTrainee() {
         Long id = 5L;
         Trainee trainee = buildTrainee(id);
         traineeStorage.put(id, trainee);
@@ -105,7 +105,7 @@ class TraineeDAOTest {
     }
 
     @Test
-    void testDelete() {
+    void shouldDeleteTraineeById() {
         Long id = 6L;
         Trainee trainee = buildTrainee(id);
         traineeStorage.put(id, trainee);
