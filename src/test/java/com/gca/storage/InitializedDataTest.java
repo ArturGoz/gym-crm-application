@@ -19,28 +19,28 @@ class InitializedDataTest {
 
     @Test
     void testEqualsHashCodeToStringSetters() {
-        InitializedData d1 = new InitializedData();
-        InitializedData d2 = new InitializedData();
+        InitializedData data1 = new InitializedData();
+        InitializedData data2 = new InitializedData();
 
-        assertEquals(d1, d1);
-        assertEquals(d1, d2);
-        assertEquals(d1.hashCode(), d2.hashCode());
-        assertTrue(d1.canEqual(d2));
-        assertNotEquals("not initialized data", d1);
-        assertFalse(d1.canEqual("not initialized data"));
+        assertEquals(data1, data1);
+        assertEquals(data1, data2);
+        assertEquals(data1.hashCode(), data2.hashCode());
+        assertTrue(data1.canEqual(data2));
+        assertNotEquals("not initialized data", data1);
+        assertFalse(data1.canEqual("not initialized data"));
 
-        assertNotNull(d1.toString());
+        assertNotNull(data1.toString());
 
         Set<Training> trainings = new HashSet<>();
         Set<Trainer> trainers = new HashSet<>();
         Set<Trainee> trainees = new HashSet<>();
 
-        d1.setTrainings(trainings);
-        d1.setTrainers(trainers);
-        d1.setTrainees(trainees);
+        data1.setTrainings(trainings);
+        data1.setTrainers(trainers);
+        data1.setTrainees(trainees);
 
-        assertSame(trainings, d1.getTrainings());
-        assertSame(trainers, d1.getTrainers());
-        assertSame(trainees, d1.getTrainees());
+        assertSame(trainings, data1.getTrainings());
+        assertSame(trainers, data1.getTrainers());
+        assertSame(trainees, data1.getTrainees());
     }
 }
