@@ -1,5 +1,6 @@
 package com.gca.service;
 
+import com.gca.GymTestProvider;
 import com.gca.dao.TrainerDAO;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
@@ -8,12 +9,11 @@ import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
 import com.gca.service.common.UserProfileService;
 import com.gca.service.impl.TrainerServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import com.gca.GymTestProvider;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,6 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class TrainerServiceTest {
 
     @Mock
@@ -32,11 +33,6 @@ class TrainerServiceTest {
 
     @InjectMocks
     private TrainerServiceImpl service;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void createTrainer_success() {
