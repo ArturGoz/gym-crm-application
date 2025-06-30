@@ -20,16 +20,16 @@ import static org.mockito.Mockito.when;
 
 class TraineeDAOTest {
 
-    private TraineeDAOImpl dao;
-    private StorageRegistry storageRegistryMock;
-    private Map<Long, Trainee> traineeStorage;
-
     private static final String TRAINEE_ADDRESS = "Some address";
     private static final String TRAINEE_USERNAME = "testuser";
     private static final String TRAINEE_FIRSTNAME = "John";
     private static final String TRAINEE_LASTNAME = "Doe";
     private static final String TRAINEE_PASSWORD = "pass";
     private static final LocalDate TRAINEE_BIRTHDAY = LocalDate.of(2000, 1, 1);
+
+    private TraineeDAOImpl dao;
+    private StorageRegistry storageRegistryMock;
+    private Map<Long, Trainee> traineeStorage;
 
     @BeforeEach
     void setUp() {

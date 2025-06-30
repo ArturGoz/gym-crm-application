@@ -18,15 +18,15 @@ import static org.mockito.Mockito.when;
 
 class TrainerDAOTest {
 
-    private TrainerDAOImpl dao;
-    private StorageRegistry storageRegistryMock;
-    private Map<Long, Trainer> trainerStorage;
-
     private static final String TRAINER_SPECIALIZATION = "Fitness";
     private static final String TRAINER_USERNAME = "traineruser";
     private static final String TRAINER_FIRSTNAME = "Jane";
     private static final String TRAINER_LASTNAME = "Smith";
     private static final String TRAINER_PASSWORD = "trainerpass";
+
+    private TrainerDAOImpl dao;
+    private StorageRegistry storageRegistryMock;
+    private Map<Long, Trainer> trainerStorage;
 
     @BeforeEach
     void setUp() {

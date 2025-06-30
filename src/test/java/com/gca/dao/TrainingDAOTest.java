@@ -22,16 +22,16 @@ import static org.mockito.Mockito.when;
 
 class TrainingDAOTest {
 
-    private TrainingDAOImpl dao;
-    private StorageRegistry storageRegistryMock;
-    private Map<Long, Training> trainingStorage;
-
     private static final Long TRAINER_ID = 1L;
     private static final Long TRAINEE_ID = 2L;
     private static final LocalDate TRAINING_DATE = LocalDate.of(2025, 6, 27);
     private static final Duration TRAINING_DURATION = Duration.ofHours(1);
     private static final String TRAINING_NAME = "Morning Yoga";
     private static final TrainingType TRAINING_TYPE = new TrainingType("Yoga");
+
+    private TrainingDAOImpl dao;
+    private StorageRegistry storageRegistryMock;
+    private Map<Long, Training> trainingStorage;
 
     @BeforeEach
     void setUp() {
