@@ -21,6 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 class UsernameGeneratorTest {
 
     private UsernameGenerator sut;
@@ -45,7 +48,7 @@ class UsernameGeneratorTest {
 
         String result = sut.generate("John", "Doe");
 
-        assertEquals("John.Doe", result);
+        assertEquals("john.doe", result);
     }
 
     @Test
@@ -55,7 +58,7 @@ class UsernameGeneratorTest {
 
         String result = sut.generate("John", "Doe");
 
-        assertEquals("John.Doe1", result);
+        assertEquals("john.doe1", result);
     }
 
     @Test
@@ -65,22 +68,33 @@ class UsernameGeneratorTest {
 
         String result = sut.generate("John", "Doe");
 
-        assertEquals("John.Doe3", result);
+        assertEquals("john.doe3", result);
     }
 
     @Test
-    void generate_shouldBeCaseSensitive() {
+    void generate_shouldTreatCaseAsTheSame() {
         when(traineeDAO.getAllUsernames()).thenReturn(Collections.singletonList("john.doe"));
         when(trainerDAO.getAllUsernames()).thenReturn(emptyList());
 
         String result = sut.generate("John", "Doe");
 
-        assertEquals("John.Doe", result);
+        assertEquals("john.doe1", result);
     }
 
     @Test
-    void generate_shouldLogIfUsernameExist() {
-        when(traineeDAO.getAllUsernames()).thenReturn(List.of("john.doe"));
+    void generate_shouldTreatCaseAsTheSame_multipleVariants() {
+        when(traineeDAO.getAllUsernames()).thenReturn(Arrays.asList("JOHN.DOE", "John.Doe1"));
+        when(trainerDAO.getAllUsernames()).thenReturn(Collections.singletonList("john.doe2"));
+
+        String result = sut.generate("John", "Doe");
+
+        assertEquals("john.doe3", result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"John.doE", "john.doe", "John.doe", "JOHN.DOE", "JohN.doE"})
+    void generate_shouldLogIfUsernameExist(String username) {
+        when(traineeDAO.getAllUsernames()).thenReturn(List.of("John.doE"));
         when(trainerDAO.getAllUsernames()).thenReturn(emptyList());
 
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
@@ -93,7 +107,6 @@ class UsernameGeneratorTest {
 
         ILoggingEvent secondLog = listAppender.list.get(1);
         assertEquals(Level.WARN, secondLog.getLevel());
-
         String msg = secondLog.getFormattedMessage();
         assertTrue(msg.equalsIgnoreCase("User with username john.doe already exists, generated alternative username: john.doe1"));
     }

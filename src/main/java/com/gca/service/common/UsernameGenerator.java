@@ -7,8 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class UsernameGenerator {
@@ -29,10 +30,8 @@ public class UsernameGenerator {
 
     public String generate(String firstName, String lastName) {
         logger.debug("Generating username");
-        String base = firstName + "." + lastName;
-        Set<String> allUsernames = new HashSet<>();
-        allUsernames.addAll(traineeDAO.getAllUsernames());
-        allUsernames.addAll(trainerDAO.getAllUsernames());
+        String base = (firstName + "." + lastName).toLowerCase();
+        Set<String> allUsernames = retrieveAllExistUsernames();
 
         String candidate = base;
         int suffix = 1;
@@ -46,5 +45,11 @@ public class UsernameGenerator {
         }
 
         return candidate;
+    }
+
+    private Set<String> retrieveAllExistUsernames() {
+        return Stream.concat(traineeDAO.getAllUsernames().stream(), trainerDAO.getAllUsernames().stream())
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
     }
 }
