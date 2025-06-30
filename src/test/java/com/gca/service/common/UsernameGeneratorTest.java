@@ -26,9 +26,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class UsernameGeneratorTest {
 
-    private UsernameGenerator sut;
     private TraineeDAO traineeDAO;
     private TrainerDAO trainerDAO;
+    private UsernameGenerator sut;
 
     @BeforeEach
     void setUp() {
