@@ -13,6 +13,7 @@ import java.util.Set;
 @Component
 public class UsernameGenerator {
     private static final Logger logger = LoggerFactory.getLogger(UsernameGenerator.class);
+
     private TraineeDAO traineeDAO;
     private TrainerDAO trainerDAO;
 

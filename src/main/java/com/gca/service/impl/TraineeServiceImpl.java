@@ -39,6 +39,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeResponse createTrainee(TraineeCreateRequest request) {
+        logger.debug("Creating trainee: {} {}", request.getFirstName(), request.getLastName());
         Trainee trainee = traineeMapper.toEntity(request);
         String username = userProfileService.generateUsername(trainee.getFirstName(), trainee.getLastName());
         String password = userProfileService.generatePassword();
@@ -49,7 +50,6 @@ public class TraineeServiceImpl implements TraineeService {
                 .isActive(true)
                 .build();
 
-        logger.debug("Creating trainee: {}", username);
         Trainee created = traineeDAO.create(trainee);
         logger.info("Created trainee: {}", created);
 
@@ -58,13 +58,14 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
+        logger.debug("Updating trainee");
+
         Trainee existing = traineeDAO.getById(request.getUserId());
 
         if (existing == null) {
             throw new ServiceException("Trainee not found");
         }
 
-        logger.debug("Updating trainee: {}", existing.getUsername());
         Trainee updated = traineeDAO.update(existing);
         logger.info("Updated trainee: {}", updated);
 

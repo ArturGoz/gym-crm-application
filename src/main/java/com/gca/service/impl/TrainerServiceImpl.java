@@ -39,6 +39,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerResponse createTrainer(TrainerCreateRequest request) {
+        logger.debug("Creating trainer {} {}", request.getFirstName(), request.getLastName());
         Trainer trainer = trainerMapper.toEntity(request);
         String username = userProfileService.generateUsername(trainer.getFirstName(), trainer.getLastName());
         String password = userProfileService.generatePassword();
@@ -49,7 +50,6 @@ public class TrainerServiceImpl implements TrainerService {
                 .isActive(true)
                 .build();
 
-        logger.debug("Creating trainer: {}", username);
         Trainer created = trainerDAO.create(trainer);
         logger.info("Created trainer: {}", created);
 
@@ -58,13 +58,13 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
+        logger.debug("Updating trainer");
         Trainer existing = trainerDAO.getById(request.getUserId());
 
         if (existing == null) {
             throw new ServiceException("Trainer not found");
         }
 
-        logger.debug("Updating trainer: {}", existing.getUsername());
         Trainer updated = trainerDAO.update(existing);
         logger.info("Updated trainer: {}", updated);
 
