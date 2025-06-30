@@ -2,9 +2,9 @@ package com.gca.dao;
 
 import com.gca.dao.impl.TraineeDAOImpl;
 import com.gca.model.Trainee;
-import com.gca.storage.StorageRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -14,9 +14,6 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TraineeDAOTest {
 
@@ -28,18 +25,14 @@ class TraineeDAOTest {
     private static final LocalDate TRAINEE_BIRTHDAY = LocalDate.of(2000, 1, 1);
 
     private TraineeDAOImpl dao;
-    private StorageRegistry storageRegistryMock;
     private Map<Long, Trainee> traineeStorage;
 
     @BeforeEach
     void setUp() {
         traineeStorage = new HashMap<>();
-        storageRegistryMock = mock(StorageRegistry.class);
-        when(storageRegistryMock.getStorage(any()))
-                .thenReturn((Map) traineeStorage);
-
         dao = new TraineeDAOImpl();
-        dao.setStorage(storageRegistryMock);
+
+        ReflectionTestUtils.setField(dao, "storage", traineeStorage);
     }
 
     @Test

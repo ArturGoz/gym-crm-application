@@ -2,9 +2,9 @@ package com.gca.dao;
 
 import com.gca.dao.impl.TrainerDAOImpl;
 import com.gca.model.Trainer;
-import com.gca.storage.StorageRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,9 +12,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TrainerDAOTest {
 
@@ -25,18 +22,14 @@ class TrainerDAOTest {
     private static final String TRAINER_PASSWORD = "trainerpass";
 
     private TrainerDAOImpl dao;
-    private StorageRegistry storageRegistryMock;
     private Map<Long, Trainer> trainerStorage;
 
     @BeforeEach
     void setUp() {
         trainerStorage = new HashMap<>();
-        storageRegistryMock = mock(StorageRegistry.class);
-        when(storageRegistryMock.getStorage(any()))
-                .thenReturn((Map) trainerStorage);
-
         dao = new TrainerDAOImpl();
-        dao.setStorage(storageRegistryMock);
+
+        ReflectionTestUtils.setField(dao, "storage", trainerStorage);
     }
 
     @Test
