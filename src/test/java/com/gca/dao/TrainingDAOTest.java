@@ -93,6 +93,22 @@ class TrainingDAOTest {
         assertNull(actual);
     }
 
+    @Test
+    void testEqualsAndHashCodeAndToString() {
+        TrainingDAOImpl dao1 = new TrainingDAOImpl();
+        TrainingDAOImpl dao2 = new TrainingDAOImpl();
+
+        dao1.setStorage(storageRegistryMock);
+        dao2.setStorage(storageRegistryMock);
+
+        assertEquals(dao1, dao1);
+        assertEquals(dao1, dao2);
+        assertEquals(dao2, dao1);
+        assertEquals(dao1.hashCode(), dao2.hashCode());
+        assertEquals(dao1, dao2);
+        assertNotNull(dao1.toString());
+    }
+
     private Training buildTraining() {
         return Training.builder()
                 .trainerId(TRAINER_ID)
