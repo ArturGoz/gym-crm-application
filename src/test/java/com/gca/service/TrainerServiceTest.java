@@ -36,18 +36,18 @@ class TrainerServiceTest {
 
     @Test
     void createTrainer_success() {
-        TrainerCreateRequest request = GymTestProvider.trainerCreateRequest();
-        Trainer trainer = GymTestProvider.trainer().toBuilder().userId(null).username(null).password(null).isActive(false).build();
+        TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
+        Trainer trainer = GymTestProvider.constructTrainer();
 
         when(mapper.toEntity(request)).thenReturn(trainer);
         when(userProfileService.generateUsername("Anna", "Ivanova")).thenReturn("anna.ivanova");
         when(userProfileService.generatePassword()).thenReturn("pass123");
 
-        Trainer trainerWithCreds = GymTestProvider.trainer();
+        Trainer trainerWithCreds = GymTestProvider.constructTrainer();
 
         when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
 
-        TrainerResponse expected = GymTestProvider.trainerResponse();
+        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
 
         when(mapper.toResponse(any(Trainer.class))).thenReturn(expected);
 
@@ -64,10 +64,10 @@ class TrainerServiceTest {
 
     @Test
     void updateTrainer_success() {
-        TrainerUpdateRequest updateRequest = GymTestProvider.trainerUpdateRequest();
-        Trainer existing = GymTestProvider.trainerInactive();
-        Trainer updated = GymTestProvider.trainerUpdated();
-        TrainerResponse expected = GymTestProvider.trainerResponseUpdated();
+        TrainerUpdateRequest updateRequest = GymTestProvider.createTrainerUpdateRequest();
+        Trainer existing = GymTestProvider.constructInactiveTrainer();
+        Trainer updated = GymTestProvider.constructUpdatedTrainer();
+        TrainerResponse expected = GymTestProvider.constructUpdatedTrainerResponse();
 
         when(dao.getById(2L)).thenReturn(existing);
         when(dao.update(existing)).thenReturn(updated);
@@ -86,7 +86,7 @@ class TrainerServiceTest {
 
     @Test
     void updateTrainer_notFound_throwsException() {
-        TrainerUpdateRequest updateRequest = GymTestProvider.trainerUpdateRequestNotFound();
+        TrainerUpdateRequest updateRequest = GymTestProvider.createTrainerUpdateRequestNotFound();
 
         when(dao.getById(3L)).thenReturn(null);
 
@@ -98,8 +98,8 @@ class TrainerServiceTest {
 
     @Test
     void getTrainerById_success() {
-        Trainer trainer = GymTestProvider.trainer();
-        TrainerResponse expected = GymTestProvider.trainerResponse();
+        Trainer trainer = GymTestProvider.constructTrainer();
+        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
 
         when(dao.getById(2L)).thenReturn(trainer);
         when(mapper.toResponse(trainer)).thenReturn(expected);
@@ -116,8 +116,8 @@ class TrainerServiceTest {
 
     @Test
     void getTrainerByUsername_success() {
-        Trainer trainer = GymTestProvider.trainer();
-        TrainerResponse expected = GymTestProvider.trainerResponse();
+        Trainer trainer = GymTestProvider.constructTrainer();
+        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
 
         when(dao.getByUsername("anna.ivanova")).thenReturn(trainer);
         when(mapper.toResponse(trainer)).thenReturn(expected);

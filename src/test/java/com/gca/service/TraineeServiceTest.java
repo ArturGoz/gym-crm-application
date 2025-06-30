@@ -36,10 +36,10 @@ class TraineeServiceTest {
 
     @Test
     void createTrainee_success() {
-        TraineeCreateRequest request = GymTestProvider.traineeCreateRequest();
-        Trainee trainee = GymTestProvider.trainee().toBuilder().userId(null).username(null).password(null).isActive(false).build();
-        Trainee traineeWithCreds = GymTestProvider.trainee();
-        TraineeResponse expected = GymTestProvider.traineeResponse();
+        TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
+        Trainee trainee = GymTestProvider.constructTrainee();
+        Trainee traineeWithCreds = GymTestProvider.constructTrainee();
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(mapper.toEntity(request)).thenReturn(trainee);
         when(userProfileService.generateUsername("John", "Doe")).thenReturn("john.doe");
@@ -59,10 +59,10 @@ class TraineeServiceTest {
 
     @Test
     void updateTrainee_success() {
-        TraineeUpdateRequest updateRequest = GymTestProvider.traineeUpdateRequest();
-        Trainee existing = GymTestProvider.trainee().toBuilder().isActive(false).build();
+        TraineeUpdateRequest updateRequest = GymTestProvider.createTraineeUpdateRequest();
+        Trainee existing = GymTestProvider.constructTrainee().toBuilder().isActive(false).build();
         Trainee updated = existing.toBuilder().isActive(true).build();
-        TraineeResponse expected = GymTestProvider.traineeResponse();
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(dao.getById(1L)).thenReturn(existing);
         when(dao.update(existing)).thenReturn(updated);
@@ -85,7 +85,8 @@ class TraineeServiceTest {
         when(dao.getById(2L)).thenReturn(null);
 
 
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> service.updateTrainee(updateRequest));
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> service.updateTrainee(updateRequest));
         assertEquals("Trainee not found", ex.getMessage());
     }
 
@@ -98,8 +99,8 @@ class TraineeServiceTest {
 
     @Test
     void getTraineeById_success() {
-        Trainee trainee = GymTestProvider.trainee();
-        TraineeResponse expected = GymTestProvider.traineeResponse();
+        Trainee trainee = GymTestProvider.constructTrainee();
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(dao.getById(1L)).thenReturn(trainee);
         when(mapper.toResponse(trainee)).thenReturn(expected);
@@ -115,8 +116,8 @@ class TraineeServiceTest {
 
     @Test
     void getTraineeByUsername_success() {
-        Trainee trainee = GymTestProvider.trainee();
-        TraineeResponse expected = GymTestProvider.traineeResponse();
+        Trainee trainee = GymTestProvider.constructTrainee();
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(dao.getByUsername("john.doe")).thenReturn(trainee);
         when(mapper.toResponse(trainee)).thenReturn(expected);

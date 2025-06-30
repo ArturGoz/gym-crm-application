@@ -37,8 +37,8 @@ class TrainingAppFacadeTest {
 
     @Test
     void createTrainee_delegatesToService() {
-        TraineeCreateRequest request = GymTestProvider.traineeCreateRequest();
-        TraineeResponse expected = GymTestProvider.traineeResponse();
+        TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(traineeService.createTrainee(request)).thenReturn(expected);
 
@@ -52,8 +52,8 @@ class TrainingAppFacadeTest {
 
     @Test
     void updateTrainee_delegatesToService() {
-        TraineeUpdateRequest request = GymTestProvider.traineeUpdateRequest();
-        TraineeResponse expected = GymTestProvider.traineeResponse();
+        TraineeUpdateRequest request = GymTestProvider.createTraineeUpdateRequest();
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(traineeService.updateTrainee(request)).thenReturn(expected);
 
@@ -74,7 +74,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void getTraineeById_delegatesToService() {
-        TraineeResponse expected = GymTestProvider.traineeResponse();
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(traineeService.getTraineeById(1L)).thenReturn(expected);
 
@@ -88,7 +88,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void getTraineeByUsername_delegatesToService() {
-        TraineeResponse expected = GymTestProvider.traineeResponse();
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(traineeService.getTraineeByUsername("john.doe")).thenReturn(expected);
 
@@ -102,8 +102,8 @@ class TrainingAppFacadeTest {
 
     @Test
     void createTrainer_delegatesToService() {
-        TrainerCreateRequest request = GymTestProvider.trainerCreateRequest();
-        TrainerResponse expected = GymTestProvider.trainerResponse();
+        TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
+        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
 
         when(trainerService.createTrainer(request)).thenReturn(expected);
 
@@ -117,8 +117,8 @@ class TrainingAppFacadeTest {
 
     @Test
     void updateTrainer_delegatesToService() {
-        TrainerUpdateRequest request = GymTestProvider.trainerUpdateRequest();
-        TrainerResponse expected = GymTestProvider.trainerResponseUpdated();
+        TrainerUpdateRequest request = GymTestProvider.createTrainerUpdateRequest();
+        TrainerResponse expected = GymTestProvider.constructUpdatedTrainerResponse();
 
         when(trainerService.updateTrainer(request)).thenReturn(expected);
 
@@ -132,7 +132,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void getTrainerById_delegatesToService() {
-        TrainerResponse expected = GymTestProvider.trainerResponse();
+        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
 
         when(trainerService.getTrainerById(2L)).thenReturn(expected);
 
@@ -146,7 +146,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void getTrainerByUsername_delegatesToService() {
-        TrainerResponse expected = GymTestProvider.trainerResponse();
+        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
 
         when(trainerService.getTrainerByUsername("anna.ivanova")).thenReturn(expected);
 
@@ -160,8 +160,8 @@ class TrainingAppFacadeTest {
 
     @Test
     void createTraining_delegatesToService() {
-        TrainingCreateRequest request = GymTestProvider.trainingCreateRequest();
-        TrainingResponse expected = GymTestProvider.trainingResponse();
+        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
+        TrainingResponse expected = GymTestProvider.constructTrainingResponse();
 
         when(trainingService.createTraining(request)).thenReturn(expected);
 
@@ -175,7 +175,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void getTrainingById_delegatesToService() {
-        TrainingResponse expected = GymTestProvider.trainingResponseStrength();
+        TrainingResponse expected = GymTestProvider.constructStrengthTrainingResponse();
 
         when(trainingService.getTrainingById(2L)).thenReturn(expected);
 

@@ -56,7 +56,8 @@ class StorageInitializerTest {
                 () -> assertEquals("alice.johnson", trainee.getUsername()),
                 () -> assertEquals("pass789", trainee.getPassword()),
                 () -> assertTrue(trainee.isActive()),
-                () -> assertEquals(LocalDate.of(1990, 1, 1), trainee.getDateOfBirth()),
+                () -> assertEquals(LocalDate.of(1990, 1, 1),
+                        trainee.getDateOfBirth()),
                 () -> assertEquals("123 Main St", trainee.getAddress())
         );
 
@@ -68,8 +69,10 @@ class StorageInitializerTest {
                 () -> assertEquals(1L, training.getId()),
                 () -> assertEquals(1L, training.getTrainerId()),
                 () -> assertEquals(1L, training.getTraineeId()),
-                () -> assertEquals(LocalDate.of(2023, 1, 1), training.getTrainingDate()),
-                () -> assertEquals(Duration.parse("PT1H"), training.getTrainingDuration()),
+                () -> assertEquals(LocalDate.of(2023, 1, 1),
+                        training.getTrainingDate()),
+                () -> assertEquals(Duration.parse("PT1H"),
+                        training.getTrainingDuration()),
                 () -> assertEquals("Beginner Cardio", training.getTrainingName()),
                 () -> assertEquals("CARDIO", training.getTrainingType().getName())
         );

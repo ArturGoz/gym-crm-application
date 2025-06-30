@@ -18,7 +18,7 @@ import java.time.LocalDate;
 
 public class GymTestProvider {
 
-    public static TraineeCreateRequest traineeCreateRequest() {
+    public static TraineeCreateRequest createTraineeCreateRequest() {
         return TraineeCreateRequest.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -27,7 +27,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static Trainee trainee() {
+    public static Trainee constructTrainee() {
         return Trainee.builder()
                 .userId(1L)
                 .firstName("John")
@@ -40,7 +40,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TraineeResponse traineeResponse() {
+    public static TraineeResponse constructTraineeResponse() {
         return TraineeResponse.builder()
                 .userId(1L)
                 .firstName("John")
@@ -52,7 +52,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TraineeUpdateRequest traineeUpdateRequest() {
+    public static TraineeUpdateRequest createTraineeUpdateRequest() {
         return TraineeUpdateRequest.builder()
                 .userId(1L)
                 .isActive(true)
@@ -61,7 +61,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerCreateRequest trainerCreateRequest() {
+    public static TrainerCreateRequest createTrainerCreateRequest() {
         return TrainerCreateRequest.builder()
                 .firstName("Anna")
                 .lastName("Ivanova")
@@ -69,7 +69,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static Trainer trainer() {
+    public static Trainer constructTrainer() {
         return Trainer.builder()
                 .userId(2L)
                 .firstName("Anna")
@@ -81,7 +81,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static Trainer trainerInactive() {
+    public static Trainer constructInactiveTrainer() {
         return Trainer.builder()
                 .userId(2L)
                 .firstName("Anna")
@@ -93,7 +93,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static Trainer trainerUpdated() {
+    public static Trainer constructUpdatedTrainer() {
         return Trainer.builder()
                 .userId(2L)
                 .firstName("Anna")
@@ -105,7 +105,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerResponse trainerResponse() {
+    public static TrainerResponse constructTrainerResponse() {
         return TrainerResponse.builder()
                 .userId(2L)
                 .firstName("Anna")
@@ -116,7 +116,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerResponse trainerResponseUpdated() {
+    public static TrainerResponse constructUpdatedTrainerResponse() {
         return TrainerResponse.builder()
                 .userId(2L)
                 .firstName("Anna")
@@ -127,7 +127,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerUpdateRequest trainerUpdateRequest() {
+    public static TrainerUpdateRequest createTrainerUpdateRequest() {
         return TrainerUpdateRequest.builder()
                 .userId(2L)
                 .isActive(true)
@@ -135,7 +135,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerUpdateRequest trainerUpdateRequestNotFound() {
+    public static TrainerUpdateRequest createTrainerUpdateRequestNotFound() {
         return TrainerUpdateRequest.builder()
                 .userId(3L)
                 .isActive(true)
@@ -143,30 +143,30 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingType trainingTypeCardio() {
+    public static TrainingType constructCardioTrainingType() {
         return TrainingType.builder()
                 .name("Cardio")
                 .build();
     }
 
-    public static TrainingType trainingTypeStrength() {
+    public static TrainingType constructStrengthTrainingType() {
         return TrainingType.builder()
                 .name("Strength")
                 .build();
     }
 
-    public static TrainingCreateRequest trainingCreateRequest() {
+    public static TrainingCreateRequest createTrainingCreateRequest() {
         return TrainingCreateRequest.builder()
                 .trainerId(10L)
                 .traineeId(20L)
                 .trainingDate(LocalDate.of(2025, 6, 29))
                 .trainingDuration(Duration.ofMinutes(60))
                 .trainingName("Morning Cardio")
-                .trainingType(trainingTypeCardio())
+                .trainingType(constructCardioTrainingType())
                 .build();
     }
 
-    public static Training training() {
+    public static Training constructTraining() {
         return Training.builder()
                 .id(1L)
                 .trainerId(10L)
@@ -174,22 +174,22 @@ public class GymTestProvider {
                 .trainingDate(LocalDate.of(2025, 6, 29))
                 .trainingDuration(Duration.ofMinutes(60))
                 .trainingName("Morning Cardio")
-                .trainingType(trainingTypeCardio())
+                .trainingType(constructCardioTrainingType())
                 .build();
     }
 
-    public static Training trainingWithoutId() {
+    public static Training constructTrainingWithoutId() {
         return Training.builder()
                 .trainerId(10L)
                 .traineeId(20L)
                 .trainingDate(LocalDate.of(2025, 6, 29))
                 .trainingDuration(Duration.ofMinutes(60))
                 .trainingName("Morning Cardio")
-                .trainingType(trainingTypeCardio())
+                .trainingType(constructCardioTrainingType())
                 .build();
     }
 
-    public static TrainingResponse trainingResponse() {
+    public static TrainingResponse constructTrainingResponse() {
         return TrainingResponse.builder()
                 .id(1L)
                 .trainerId(10L)
@@ -197,11 +197,11 @@ public class GymTestProvider {
                 .trainingDate(LocalDate.of(2025, 6, 29))
                 .trainingDuration(Duration.ofMinutes(60))
                 .trainingName("Morning Cardio")
-                .trainingType(trainingTypeCardio())
+                .trainingType(constructCardioTrainingType())
                 .build();
     }
 
-    public static Training trainingStrength() {
+    public static Training constructStrengthTraining() {
         return Training.builder()
                 .id(2L)
                 .trainerId(11L)
@@ -209,11 +209,11 @@ public class GymTestProvider {
                 .trainingDate(LocalDate.of(2025, 7, 1))
                 .trainingDuration(Duration.ofMinutes(45))
                 .trainingName("Evening Strength")
-                .trainingType(trainingTypeStrength())
+                .trainingType(constructStrengthTrainingType())
                 .build();
     }
 
-    public static TrainingResponse trainingResponseStrength() {
+    public static TrainingResponse constructStrengthTrainingResponse() {
         return TrainingResponse.builder()
                 .id(2L)
                 .trainerId(11L)
@@ -221,7 +221,7 @@ public class GymTestProvider {
                 .trainingDate(LocalDate.of(2025, 7, 1))
                 .trainingDuration(Duration.ofMinutes(45))
                 .trainingName("Evening Strength")
-                .trainingType(trainingTypeStrength())
+                .trainingType(constructStrengthTrainingType())
                 .build();
     }
 }

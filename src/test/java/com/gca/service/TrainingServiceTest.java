@@ -31,10 +31,10 @@ class TrainingServiceTest {
 
     @Test
     void createTraining_success() {
-        TrainingCreateRequest request = GymTestProvider.trainingCreateRequest();
-        Training training = GymTestProvider.trainingWithoutId();
-        Training created = GymTestProvider.training();
-        TrainingResponse expected = GymTestProvider.trainingResponse();
+        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
+        Training training = GymTestProvider.constructTrainingWithoutId();
+        Training created = GymTestProvider.constructTraining();
+        TrainingResponse expected = GymTestProvider.constructTrainingResponse();
 
         when(mapper.toEntity(request)).thenReturn(training);
         when(dao.create(any(Training.class))).thenReturn(created);
@@ -52,8 +52,8 @@ class TrainingServiceTest {
 
     @Test
     void getTrainingById_success() {
-        Training training = GymTestProvider.trainingStrength();
-        TrainingResponse expected = GymTestProvider.trainingResponseStrength();
+        Training training = GymTestProvider.constructStrengthTraining();
+        TrainingResponse expected = GymTestProvider.constructStrengthTrainingResponse();
 
         when(dao.getById(2L)).thenReturn(training);
         when(mapper.toResponse(training)).thenReturn(expected);
