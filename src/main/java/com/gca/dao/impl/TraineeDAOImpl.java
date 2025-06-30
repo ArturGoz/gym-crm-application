@@ -12,7 +12,7 @@ import static com.gca.storage.Namespace.TRAINEE;
 public class TraineeDAOImpl extends AbstractUserDAOImpl<Trainee> implements TraineeDAO {
     @Autowired
     @Override
-    public void setStorage(StorageRegistry storageRegistry) {
+    protected void setStorage(StorageRegistry storageRegistry) {
         this.storage = storageRegistry.getStorage(TRAINEE);
     }
 

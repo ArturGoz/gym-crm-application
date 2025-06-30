@@ -14,10 +14,8 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.function.Supplier;
 
 @Component
 @Data
@@ -26,18 +24,6 @@ public class StorageInitializer {
 
     @Value("${storage.init.file}")
     private String initFilePath;
-
-    private Supplier<Reader> readerSupplier;
-
-    public StorageInitializer() {
-        this.readerSupplier = () -> {
-            try {
-                return new InputStreamReader(new ClassPathResource(initFilePath).getInputStream());
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to create reader for file: " + initFilePath, e);
-            }
-        };
-    }
 
     public InitializedData initializeData() {
         logger.info("Initializing data from file: {}", initFilePath);
@@ -54,7 +40,8 @@ public class StorageInitializer {
     private InitializedData initializeDataFromFile(String filePath) throws IOException {
         InitializedData data = new InitializedData();
 
-        try (BufferedReader reader = new BufferedReader(readerSupplier.get())) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new ClassPathResource(filePath).getInputStream()))) {
             String currentSection = null;
             String line;
 
