@@ -12,4 +12,15 @@ import java.time.LocalDate;
 public class Trainee extends User {
     private final LocalDate dateOfBirth;
     private final String address;
+
+    @Override
+    public String toString() {
+        return "Trainee{" +
+                "userId=" + getUserId() +
+                ", firstName='" + getFirstName() + '\'' +
+                ", lastName='" + getLastName() + '\'' +
+                ", username='" + getUsername() + '\'' +
+                ", isActive=" + isActive() +
+                '}';
+    }
 }

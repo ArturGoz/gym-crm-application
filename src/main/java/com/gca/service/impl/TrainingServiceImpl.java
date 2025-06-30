@@ -32,15 +32,18 @@ public class TrainingServiceImpl implements TrainingService {
     public TrainingResponse createTraining(TrainingCreateRequest request) {
         Training training = trainingMapper.toEntity(request);
 
-        logger.info("Creating training for trainee: {}, trainer: {}",
+        logger.debug("Creating training for trainee: {}, trainer: {}",
                 training.getTraineeId(), training.getTrainerId());
         Training created = trainingDAO.create(training);
+        logger.info("Created training: {}", created);
+
 
         return trainingMapper.toResponse(created);
     }
 
     @Override
     public TrainingResponse getTrainingById(Long id) {
+        logger.debug("Retrieving training for id: {}", id);
         return trainingMapper.toResponse(trainingDAO.getById(id));
     }
 }

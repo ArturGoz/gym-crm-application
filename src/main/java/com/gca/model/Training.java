@@ -16,6 +16,19 @@ public class Training {
     private final Duration trainingDuration;
     private final String trainingName;
     private final TrainingType trainingType;
+
+    @Override
+    public String toString() {
+        return "Training{" +
+                "id=" + getId() +
+                ", trainerId=" + getTrainerId() +
+                ", traineeId=" + getTraineeId() +
+                ", trainingDate=" + getTrainingDate() +
+                ", trainingDuration=" + getTrainingDuration() +
+                ", trainingName='" + getTrainingName() + '\'' +
+                ", trainingType=" + getTrainingType() +
+                '}';
+    }
 }
 
 

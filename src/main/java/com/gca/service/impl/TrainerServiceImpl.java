@@ -4,6 +4,7 @@ import com.gca.dao.TrainerDAO;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
 import com.gca.service.TrainerService;
@@ -48,8 +49,9 @@ public class TrainerServiceImpl implements TrainerService {
                 .isActive(true)
                 .build();
 
-        logger.info("Creating trainer: {}", username);
+        logger.debug("Creating trainer: {}", username);
         Trainer created = trainerDAO.create(trainer);
+        logger.info("Created trainer: {}", created);
 
         return trainerMapper.toResponse(created);
     }
@@ -57,23 +59,27 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
         Trainer existing = trainerDAO.getById(request.getUserId());
+
         if (existing == null) {
-            throw new RuntimeException("Trainer not found");
+            throw new ServiceException("Trainer not found");
         }
 
-        logger.info("Updating trainer: {}", existing.getUsername());
+        logger.debug("Updating trainer: {}", existing.getUsername());
         Trainer updated = trainerDAO.update(existing);
+        logger.info("Updated trainer: {}", updated);
 
         return trainerMapper.toResponse(updated);
     }
 
     @Override
     public TrainerResponse getTrainerById(Long id) {
+        logger.debug("Retrieving trainer by id: {}", id);
         return trainerMapper.toResponse(trainerDAO.getById(id));
     }
 
     @Override
     public TrainerResponse getTrainerByUsername(String username) {
+        logger.debug("Retrieving trainer by username: {}", username);
         return trainerMapper.toResponse(trainerDAO.getByUsername(username));
     }
 }

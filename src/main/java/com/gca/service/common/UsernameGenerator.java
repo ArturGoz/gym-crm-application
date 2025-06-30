@@ -2,6 +2,8 @@ package com.gca.service.common;
 
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,7 @@ import java.util.Set;
 
 @Component
 public class UsernameGenerator {
+    private static final Logger logger = LoggerFactory.getLogger(UsernameGenerator.class);
     private TraineeDAO traineeDAO;
     private TrainerDAO trainerDAO;
 
@@ -24,6 +27,7 @@ public class UsernameGenerator {
     }
 
     public String generate(String firstName, String lastName) {
+        logger.debug("Generating username");
         String base = firstName + "." + lastName;
         Set<String> allUsernames = new HashSet<>();
         allUsernames.addAll(traineeDAO.getAllUsernames());
@@ -34,6 +38,10 @@ public class UsernameGenerator {
 
         while (allUsernames.contains(candidate)) {
             candidate = base + suffix++;
+        }
+
+        if (!candidate.equalsIgnoreCase(base)) {
+            logger.warn("User with username {} already exists, generated alternative username: {}", base, candidate);
         }
 
         return candidate;
