@@ -1,4 +1,4 @@
-package service;
+package com.gca.service;
 
 import com.gca.dao.TraineeDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
@@ -13,14 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import provider.GymTestProvider;
+import com.gca.GymTestProvider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 
 class TraineeServiceTest {
 

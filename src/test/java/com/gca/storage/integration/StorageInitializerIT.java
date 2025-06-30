@@ -1,4 +1,4 @@
-package integration;
+package com.gca.storage.integration;
 
 import com.gca.config.StorageConfig;
 import com.gca.model.Trainee;

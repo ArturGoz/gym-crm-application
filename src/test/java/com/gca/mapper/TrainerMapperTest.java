@@ -1,10 +1,8 @@
-package mapper;
+package com.gca.mapper;
 
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
-import com.gca.mapper.TrainerMapper;
-import com.gca.mapper.TrainerMapperImpl;
 import com.gca.model.Trainer;
 import org.junit.jupiter.api.Test;
 

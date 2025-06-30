@@ -1,4 +1,4 @@
-package integration;
+package com.gca.dao.integration;
 
 import com.gca.config.StorageConfig;
 import com.gca.dao.TraineeDAO;

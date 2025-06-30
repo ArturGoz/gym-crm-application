@@ -1,4 +1,4 @@
-package service;
+package com.gca.service;
 
 import com.gca.dao.TrainerDAO;
 import com.gca.dto.trainer.TrainerCreateRequest;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import provider.GymTestProvider;
+import com.gca.GymTestProvider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,7 +40,6 @@ class TrainerServiceTest {
 
     @Test
     void createTrainer_success() {
-        // given
         TrainerCreateRequest request = GymTestProvider.trainerCreateRequest();
         Trainer trainer = GymTestProvider.trainer().toBuilder().userId(null).username(null).password(null).isActive(false).build();
 
@@ -51,14 +50,15 @@ class TrainerServiceTest {
         Trainer trainerWithCreds = GymTestProvider.trainer();
         when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
 
-        TrainerResponse expectedResponse = GymTestProvider.trainerResponse();
-        when(mapper.toResponse(any(Trainer.class))).thenReturn(expectedResponse);
+        TrainerResponse expected = GymTestProvider.trainerResponse();
+        when(mapper.toResponse(any(Trainer.class))).thenReturn(expected);
 
-        // when
-        TrainerResponse response = service.createTrainer(request);
+        TrainerResponse actual = service.createTrainer(request);
 
-        // then
-        assertEquals(expectedResponse, response);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.isActive(), actual.isActive());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(mapper).toEntity(request);
         verify(dao).create(any(Trainer.class));
         verify(mapper).toResponse(any(Trainer.class));
@@ -66,21 +66,21 @@ class TrainerServiceTest {
 
     @Test
     void updateTrainer_success() {
-        // given
         TrainerUpdateRequest updateRequest = GymTestProvider.trainerUpdateRequest();
         Trainer existing = GymTestProvider.trainerInactive();
         Trainer updated = GymTestProvider.trainerUpdated();
-        TrainerResponse expectedResponse = GymTestProvider.trainerResponseUpdated();
+        TrainerResponse expected = GymTestProvider.trainerResponseUpdated();
 
         when(dao.getById(2L)).thenReturn(existing);
         when(dao.update(existing)).thenReturn(updated);
-        when(mapper.toResponse(updated)).thenReturn(expectedResponse);
+        when(mapper.toResponse(updated)).thenReturn(expected);
 
-        // when
-        TrainerResponse result = service.updateTrainer(updateRequest);
+        TrainerResponse actual = service.updateTrainer(updateRequest);
 
-        // then
-        assertEquals(expectedResponse, result);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.isActive(), actual.isActive());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(dao).getById(2L);
         verify(dao).update(existing);
         verify(mapper).toResponse(updated);
@@ -88,11 +88,9 @@ class TrainerServiceTest {
 
     @Test
     void updateTrainer_notFound_throwsException() {
-        // given
         TrainerUpdateRequest updateRequest = GymTestProvider.trainerUpdateRequestNotFound();
         when(dao.getById(3L)).thenReturn(null);
 
-        // when + then
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainer(updateRequest));
         assertEquals("Trainer not found", ex.getMessage());
@@ -100,36 +98,36 @@ class TrainerServiceTest {
 
     @Test
     void getTrainerById_success() {
-        // given
         Trainer trainer = GymTestProvider.trainer();
-        TrainerResponse response = GymTestProvider.trainerResponse();
+        TrainerResponse expected = GymTestProvider.trainerResponse();
 
         when(dao.getById(2L)).thenReturn(trainer);
-        when(mapper.toResponse(trainer)).thenReturn(response);
+        when(mapper.toResponse(trainer)).thenReturn(expected);
 
-        // when
-        TrainerResponse result = service.getTrainerById(2L);
+        TrainerResponse actual = service.getTrainerById(2L);
 
-        // then
-        assertEquals(response, result);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.isActive(), actual.isActive());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(dao).getById(2L);
         verify(mapper).toResponse(trainer);
     }
 
     @Test
     void getTrainerByUsername_success() {
-        // given
         Trainer trainer = GymTestProvider.trainer();
-        TrainerResponse response = GymTestProvider.trainerResponse();
+        TrainerResponse expected = GymTestProvider.trainerResponse();
 
         when(dao.getByUsername("anna.ivanova")).thenReturn(trainer);
-        when(mapper.toResponse(trainer)).thenReturn(response);
+        when(mapper.toResponse(trainer)).thenReturn(expected);
 
-        // when
-        TrainerResponse result = service.getTrainerByUsername("anna.ivanova");
+        TrainerResponse actual = service.getTrainerByUsername("anna.ivanova");
 
-        // then
-        assertEquals(response, result);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.isActive(), actual.isActive());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(dao).getByUsername("anna.ivanova");
         verify(mapper).toResponse(trainer);
     }

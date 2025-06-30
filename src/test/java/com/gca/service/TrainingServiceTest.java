@@ -1,4 +1,4 @@
-package service;
+package com.gca.service;
 
 import com.gca.dao.TrainingDAO;
 import com.gca.dto.training.TrainingCreateRequest;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import provider.GymTestProvider;
+import com.gca.GymTestProvider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,21 +35,20 @@ class TrainingServiceTest {
 
     @Test
     void createTraining_success() {
-        // given
         TrainingCreateRequest request = GymTestProvider.trainingCreateRequest();
         Training training = GymTestProvider.trainingWithoutId();
         Training created = GymTestProvider.training();
-        TrainingResponse expectedResponse = GymTestProvider.trainingResponse();
+        TrainingResponse expected = GymTestProvider.trainingResponse();
 
         when(mapper.toEntity(request)).thenReturn(training);
         when(dao.create(any(Training.class))).thenReturn(created);
-        when(mapper.toResponse(any(Training.class))).thenReturn(expectedResponse);
+        when(mapper.toResponse(any(Training.class))).thenReturn(expected);
 
-        // when
-        TrainingResponse response = service.createTraining(request);
+        TrainingResponse actual = service.createTraining(request);
 
-        // then
-        assertEquals(expectedResponse, response);
+        assertEquals(expected, actual);
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getTrainingType(), actual.getTrainingType());
         verify(mapper).toEntity(request);
         verify(dao).create(any(Training.class));
         verify(mapper).toResponse(any(Training.class));
@@ -57,18 +56,17 @@ class TrainingServiceTest {
 
     @Test
     void getTrainingById_success() {
-        // given
         Training training = GymTestProvider.trainingStrength();
-        TrainingResponse response = GymTestProvider.trainingResponseStrength();
+        TrainingResponse expected = GymTestProvider.trainingResponseStrength();
 
         when(dao.getById(2L)).thenReturn(training);
-        when(mapper.toResponse(training)).thenReturn(response);
+        when(mapper.toResponse(training)).thenReturn(expected);
 
-        // when
-        TrainingResponse result = service.getTrainingById(2L);
+        TrainingResponse actual = service.getTrainingById(2L);
 
-        // then
-        assertEquals(response, result);
+        assertEquals(expected, actual);
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getTrainingType(), actual.getTrainingType());
         verify(dao).getById(2L);
         verify(mapper).toResponse(training);
     }

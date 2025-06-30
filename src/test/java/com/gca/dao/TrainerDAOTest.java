@@ -1,7 +1,6 @@
-package dao;
+package com.gca.dao;
 
 import com.gca.dao.impl.TrainerDAOImpl;
-import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.storage.StorageRegistry;
 import org.junit.jupiter.api.BeforeEach;

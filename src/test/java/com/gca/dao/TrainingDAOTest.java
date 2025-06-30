@@ -1,4 +1,4 @@
-package dao;
+package com.gca.dao;
 
 import com.gca.dao.impl.TrainingDAOImpl;
 import com.gca.model.Training;

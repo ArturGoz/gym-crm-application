@@ -1,4 +1,4 @@
-package provider;
+package com.gca;
 
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
