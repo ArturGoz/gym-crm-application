@@ -59,6 +59,7 @@ class StorageInitializerPostProcessorTest {
     void testPostProcessAfterInitialization_withNonRegistryBean() {
         Object someBean = new Object();
         Object result = postProcessor.postProcessAfterInitialization(someBean, "notARegistry");
+
         assertSame(someBean, result);
         verify(storageInitializerMock, never()).initializeData();
     }

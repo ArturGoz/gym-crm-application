@@ -85,7 +85,9 @@ class TraineeServiceTest {
         TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder()
                 .userId(2L)
                 .build();
+
         when(dao.getById(2L)).thenReturn(null);
+
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.updateTrainee(updateRequest));
         assertEquals("Trainee not found", ex.getMessage());

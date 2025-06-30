@@ -48,9 +48,11 @@ class TrainerServiceTest {
         when(userProfileService.generatePassword()).thenReturn("pass123");
 
         Trainer trainerWithCreds = GymTestProvider.trainer();
+
         when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
 
         TrainerResponse expected = GymTestProvider.trainerResponse();
+
         when(mapper.toResponse(any(Trainer.class))).thenReturn(expected);
 
         TrainerResponse actual = service.createTrainer(request);
@@ -89,10 +91,12 @@ class TrainerServiceTest {
     @Test
     void updateTrainer_notFound_throwsException() {
         TrainerUpdateRequest updateRequest = GymTestProvider.trainerUpdateRequestNotFound();
+
         when(dao.getById(3L)).thenReturn(null);
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainer(updateRequest));
+
         assertEquals("Trainer not found", ex.getMessage());
     }
 

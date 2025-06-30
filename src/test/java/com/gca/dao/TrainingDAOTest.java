@@ -36,11 +36,13 @@ class TrainingDAOTest {
     @BeforeEach
     void setUp() {
         trainingStorage = new HashMap<>();
+        dao = new TrainingDAOImpl();
+
         storageRegistryMock = mock(StorageRegistry.class);
+
         when(storageRegistryMock.getStorage(any()))
                 .thenReturn((Map) trainingStorage);
 
-        dao = new TrainingDAOImpl();
         dao.setStorage(storageRegistryMock);
     }
 

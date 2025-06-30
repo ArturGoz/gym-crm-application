@@ -45,6 +45,7 @@ class TrainingAppFacadeTest {
         TraineeResponse expected = GymTestProvider.traineeResponse();
 
         when(traineeService.createTrainee(request)).thenReturn(expected);
+
         TraineeResponse actual = facade.createTrainee(request);
 
         assertEquals(expected, actual);
@@ -59,6 +60,7 @@ class TrainingAppFacadeTest {
         TraineeResponse expected = GymTestProvider.traineeResponse();
 
         when(traineeService.updateTrainee(request)).thenReturn(expected);
+
         TraineeResponse actual = facade.updateTrainee(request);
 
         assertEquals(expected, actual);
@@ -79,6 +81,7 @@ class TrainingAppFacadeTest {
         TraineeResponse expected = GymTestProvider.traineeResponse();
 
         when(traineeService.getTraineeById(1L)).thenReturn(expected);
+
         TraineeResponse actual = facade.getTraineeById(1L);
 
         assertEquals(expected, actual);
@@ -92,6 +95,7 @@ class TrainingAppFacadeTest {
         TraineeResponse expected = GymTestProvider.traineeResponse();
 
         when(traineeService.getTraineeByUsername("john.doe")).thenReturn(expected);
+
         TraineeResponse actual = facade.getTraineeByUsername("john.doe");
 
         assertEquals(expected, actual);
@@ -106,6 +110,7 @@ class TrainingAppFacadeTest {
         TrainerResponse expected = GymTestProvider.trainerResponse();
 
         when(trainerService.createTrainer(request)).thenReturn(expected);
+
         TrainerResponse actual = facade.createTrainer(request);
 
         assertEquals(expected, actual);
@@ -120,6 +125,7 @@ class TrainingAppFacadeTest {
         TrainerResponse expected = GymTestProvider.trainerResponseUpdated();
 
         when(trainerService.updateTrainer(request)).thenReturn(expected);
+
         TrainerResponse actual = facade.updateTrainer(request);
 
         assertEquals(expected, actual);
@@ -133,6 +139,7 @@ class TrainingAppFacadeTest {
         TrainerResponse expected = GymTestProvider.trainerResponse();
 
         when(trainerService.getTrainerById(2L)).thenReturn(expected);
+
         TrainerResponse actual = facade.getTrainerById(2L);
 
         assertEquals(expected, actual);
@@ -146,6 +153,7 @@ class TrainingAppFacadeTest {
         TrainerResponse expected = GymTestProvider.trainerResponse();
 
         when(trainerService.getTrainerByUsername("anna.ivanova")).thenReturn(expected);
+
         TrainerResponse actual = facade.getTrainerByUsername("anna.ivanova");
 
         assertEquals(expected, actual);
@@ -160,6 +168,7 @@ class TrainingAppFacadeTest {
         TrainingResponse expected = GymTestProvider.trainingResponse();
 
         when(trainingService.createTraining(request)).thenReturn(expected);
+
         TrainingResponse actual = facade.createTraining(request);
 
         assertEquals(expected, actual);
@@ -173,6 +182,7 @@ class TrainingAppFacadeTest {
         TrainingResponse expected = GymTestProvider.trainingResponseStrength();
 
         when(trainingService.getTrainingById(2L)).thenReturn(expected);
+
         TrainingResponse actual = facade.getTrainingById(2L);
 
         assertEquals(expected, actual);
