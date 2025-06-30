@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import provider.GymTestProvider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,43 +40,24 @@ class TrainerServiceTest {
 
     @Test
     void createTrainer_success() {
-        TrainerCreateRequest request = TrainerCreateRequest.builder()
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .specialization("Yoga")
-                .build();
-
-        Trainer trainer = Trainer.builder()
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .specialization("Yoga")
-                .build();
+        // given
+        TrainerCreateRequest request = GymTestProvider.trainerCreateRequest();
+        Trainer trainer = GymTestProvider.trainer().toBuilder().userId(null).username(null).password(null).isActive(false).build();
 
         when(mapper.toEntity(request)).thenReturn(trainer);
         when(userProfileService.generateUsername("Anna", "Ivanova")).thenReturn("anna.ivanova");
         when(userProfileService.generatePassword()).thenReturn("pass123");
 
-        Trainer trainerWithCreds = trainer.toBuilder()
-                .username("anna.ivanova")
-                .password("pass123")
-                .isActive(true)
-                .build();
-
+        Trainer trainerWithCreds = GymTestProvider.trainer();
         when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
 
-        TrainerResponse expectedResponse = TrainerResponse.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .isActive(true)
-                .specialization("Yoga")
-                .build();
-
+        TrainerResponse expectedResponse = GymTestProvider.trainerResponse();
         when(mapper.toResponse(any(Trainer.class))).thenReturn(expectedResponse);
 
+        // when
         TrainerResponse response = service.createTrainer(request);
 
+        // then
         assertEquals(expectedResponse, response);
         verify(mapper).toEntity(request);
         verify(dao).create(any(Trainer.class));
@@ -84,43 +66,20 @@ class TrainerServiceTest {
 
     @Test
     void updateTrainer_success() {
-        TrainerUpdateRequest updateRequest = TrainerUpdateRequest.builder()
-                .userId(2L)
-                .isActive(true)
-                .specialization("Pilates")
-                .build();
-
-        Trainer existing = Trainer.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .password("pass123")
-                .isActive(false)
-                .specialization("Yoga")
-                .build();
-
-        Trainer updated = existing.toBuilder()
-                .isActive(true)
-                .specialization("Pilates")
-                .build();
+        // given
+        TrainerUpdateRequest updateRequest = GymTestProvider.trainerUpdateRequest();
+        Trainer existing = GymTestProvider.trainerInactive();
+        Trainer updated = GymTestProvider.trainerUpdated();
+        TrainerResponse expectedResponse = GymTestProvider.trainerResponseUpdated();
 
         when(dao.getById(2L)).thenReturn(existing);
         when(dao.update(existing)).thenReturn(updated);
-
-        TrainerResponse expectedResponse = TrainerResponse.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .isActive(true)
-                .specialization("Pilates")
-                .build();
-
         when(mapper.toResponse(updated)).thenReturn(expectedResponse);
 
+        // when
         TrainerResponse result = service.updateTrainer(updateRequest);
 
+        // then
         assertEquals(expectedResponse, result);
         verify(dao).getById(2L);
         verify(dao).update(existing);
@@ -129,14 +88,11 @@ class TrainerServiceTest {
 
     @Test
     void updateTrainer_notFound_throwsException() {
-        TrainerUpdateRequest updateRequest = TrainerUpdateRequest.builder()
-                .userId(3L)
-                .isActive(true)
-                .specialization("Crossfit")
-                .build();
-
+        // given
+        TrainerUpdateRequest updateRequest = GymTestProvider.trainerUpdateRequestNotFound();
         when(dao.getById(3L)).thenReturn(null);
 
+        // when + then
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainer(updateRequest));
         assertEquals("Trainer not found", ex.getMessage());
@@ -144,30 +100,17 @@ class TrainerServiceTest {
 
     @Test
     void getTrainerById_success() {
-        Trainer trainer = Trainer.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .password("pass123")
-                .isActive(true)
-                .specialization("Yoga")
-                .build();
-
-        TrainerResponse response = TrainerResponse.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .isActive(true)
-                .specialization("Yoga")
-                .build();
+        // given
+        Trainer trainer = GymTestProvider.trainer();
+        TrainerResponse response = GymTestProvider.trainerResponse();
 
         when(dao.getById(2L)).thenReturn(trainer);
         when(mapper.toResponse(trainer)).thenReturn(response);
 
+        // when
         TrainerResponse result = service.getTrainerById(2L);
 
+        // then
         assertEquals(response, result);
         verify(dao).getById(2L);
         verify(mapper).toResponse(trainer);
@@ -175,30 +118,17 @@ class TrainerServiceTest {
 
     @Test
     void getTrainerByUsername_success() {
-        Trainer trainer = Trainer.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .password("pass123")
-                .isActive(true)
-                .specialization("Yoga")
-                .build();
-
-        TrainerResponse response = TrainerResponse.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .isActive(true)
-                .specialization("Yoga")
-                .build();
+        // given
+        Trainer trainer = GymTestProvider.trainer();
+        TrainerResponse response = GymTestProvider.trainerResponse();
 
         when(dao.getByUsername("anna.ivanova")).thenReturn(trainer);
         when(mapper.toResponse(trainer)).thenReturn(response);
 
+        // when
         TrainerResponse result = service.getTrainerByUsername("anna.ivanova");
 
+        // then
         assertEquals(response, result);
         verify(dao).getByUsername("anna.ivanova");
         verify(mapper).toResponse(trainer);

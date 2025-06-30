@@ -13,14 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.time.LocalDate;
+import provider.GymTestProvider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 
 class TraineeServiceTest {
 
@@ -41,48 +41,22 @@ class TraineeServiceTest {
 
     @Test
     void createTrainee_success() {
-        // Arrange
-        TraineeCreateRequest request = TraineeCreateRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
-
-        Trainee trainee = Trainee.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
+        TraineeCreateRequest request = GymTestProvider.traineeCreateRequest();
+        Trainee trainee = GymTestProvider.trainee().toBuilder().userId(null).username(null).password(null).isActive(false).build();
+        Trainee traineeWithCreds = GymTestProvider.trainee();
+        TraineeResponse expected = GymTestProvider.traineeResponse();
 
         when(mapper.toEntity(request)).thenReturn(trainee);
         when(userProfileService.generateUsername("John", "Doe")).thenReturn("john.doe");
         when(userProfileService.generatePassword()).thenReturn("pass123");
-
-        Trainee traineeWithCreds = trainee.toBuilder()
-                .username("john.doe")
-                .password("pass123")
-                .isActive(true)
-                .build();
-
         when(dao.create(any(Trainee.class))).thenReturn(traineeWithCreds);
+        when(mapper.toResponse(any(Trainee.class))).thenReturn(expected);
 
-        TraineeResponse expectedResponse = TraineeResponse.builder()
-                .userId(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
+        TraineeResponse actual = service.createTrainee(request);
 
-        when(mapper.toResponse(any(Trainee.class))).thenReturn(expectedResponse);
-
-        TraineeResponse response = service.createTrainee(request);
-
-        assertEquals(expectedResponse, response);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getAddress(), actual.getAddress());
         verify(mapper).toEntity(request);
         verify(dao).create(any(Trainee.class));
         verify(mapper).toResponse(any(Trainee.class));
@@ -90,46 +64,18 @@ class TraineeServiceTest {
 
     @Test
     void updateTrainee_success() {
-        TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder()
-                .userId(1L)
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
-
-        Trainee existing = Trainee.builder()
-                .userId(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
-                .password("pass123")
-                .isActive(false)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
-
-        Trainee updated = existing.toBuilder()
-                .isActive(true)
-                .build();
+        TraineeUpdateRequest updateRequest = GymTestProvider.traineeUpdateRequest();
+        Trainee existing = GymTestProvider.trainee().toBuilder().isActive(false).build();
+        Trainee updated = existing.toBuilder().isActive(true).build();
+        TraineeResponse expected = GymTestProvider.traineeResponse();
 
         when(dao.getById(1L)).thenReturn(existing);
         when(dao.update(existing)).thenReturn(updated);
+        when(mapper.toResponse(updated)).thenReturn(expected);
 
-        TraineeResponse expectedResponse = TraineeResponse.builder()
-                .userId(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
+        TraineeResponse actual = service.updateTrainee(updateRequest);
 
-        when(mapper.toResponse(updated)).thenReturn(expectedResponse);
-
-        TraineeResponse result = service.updateTrainee(updateRequest);
-
-        assertEquals(expectedResponse, result);
+        assertEquals(expected, actual);
         verify(dao).getById(1L);
         verify(dao).update(existing);
         verify(mapper).toResponse(updated);
@@ -155,66 +101,34 @@ class TraineeServiceTest {
 
     @Test
     void getTraineeById_success() {
-        Trainee trainee = Trainee.builder()
-                .userId(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
-                .password("pass123")
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
-
-        TraineeResponse response = TraineeResponse.builder()
-                .userId(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
+        Trainee trainee = GymTestProvider.trainee();
+        TraineeResponse expected = GymTestProvider.traineeResponse();
 
         when(dao.getById(1L)).thenReturn(trainee);
-        when(mapper.toResponse(trainee)).thenReturn(response);
+        when(mapper.toResponse(trainee)).thenReturn(expected);
 
-        TraineeResponse result = service.getTraineeById(1L);
+        TraineeResponse actual = service.getTraineeById(1L);
 
-        assertEquals(response, result);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getAddress(), actual.getAddress());
         verify(dao).getById(1L);
         verify(mapper).toResponse(trainee);
     }
 
     @Test
     void getTraineeByUsername_success() {
-        Trainee trainee = Trainee.builder()
-                .userId(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
-                .password("pass123")
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
-
-        TraineeResponse response = TraineeResponse.builder()
-                .userId(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
+        Trainee trainee = GymTestProvider.trainee();
+        TraineeResponse expected = GymTestProvider.traineeResponse();
 
         when(dao.getByUsername("john.doe")).thenReturn(trainee);
-        when(mapper.toResponse(trainee)).thenReturn(response);
+        when(mapper.toResponse(trainee)).thenReturn(expected);
 
-        TraineeResponse result = service.getTraineeByUsername("john.doe");
+        TraineeResponse actual = service.getTraineeByUsername("john.doe");
 
-        assertEquals(response, result);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getAddress(), actual.getAddress());
         verify(dao).getByUsername("john.doe");
         verify(mapper).toResponse(trainee);
     }
