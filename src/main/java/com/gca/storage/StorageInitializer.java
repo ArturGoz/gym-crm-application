@@ -26,7 +26,7 @@ public class StorageInitializer {
     private String initFilePath;
 
     public InitializedData initializeData() {
-        logger.info("Initializing data from file: {}", initFilePath);
+        logger.debug("Initializing data from file: {}", initFilePath);
 
         try {
             InitializedData data = initializeDataFromFile(initFilePath);

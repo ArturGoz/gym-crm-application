@@ -9,4 +9,16 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 public class Trainer extends User {
     private final String specialization;
+
+    @Override
+    public String toString() {
+        return "Trainer{" +
+                "userId=" + getUserId() +
+                ", firstName='" + getFirstName() + '\'' +
+                ", lastName='" + getLastName() + '\'' +
+                ", username='" + getUsername() + '\'' +
+                ", isActive=" + isActive() +
+                ", specialization='" + getSpecialization() + '\'' +
+                '}';
+    }
 }
