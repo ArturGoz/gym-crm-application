@@ -1,10 +1,8 @@
-package mapper;
+package com.gca.mapper;
 
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
-import com.gca.mapper.TraineeMapper;
-import com.gca.mapper.TraineeMapperImpl;
 import com.gca.model.Trainee;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TraineeMapperTest {
-    TraineeMapper traineeMapper = new TraineeMapperImpl();
+    TraineeMapper mapper = new TraineeMapperImpl();
 
     @Test
     void testToEntity_fromCreateRequest() {
@@ -26,7 +24,7 @@ public class TraineeMapperTest {
                 .address("Kyiv")
                 .build();
 
-        Trainee entity = traineeMapper.toEntity(request);
+        Trainee entity = mapper.toEntity(request);
 
         assertEquals("John", entity.getFirstName());
         assertEquals("Doe", entity.getLastName());
@@ -43,7 +41,7 @@ public class TraineeMapperTest {
                 .address("Lviv")
                 .build();
 
-        Trainee entity = traineeMapper.toEntity(request);
+        Trainee entity = mapper.toEntity(request);
 
         assertEquals(10L, entity.getUserId());
         assertFalse(entity.isActive());
@@ -63,7 +61,7 @@ public class TraineeMapperTest {
                 .address("Dnipro")
                 .build();
 
-        TraineeResponse response = traineeMapper.toResponse(entity);
+        TraineeResponse response = mapper.toResponse(entity);
 
         assertEquals(15L, response.getUserId());
         assertEquals("Alice", response.getFirstName());

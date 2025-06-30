@@ -1,0 +1,126 @@
+package com.gca.dao;
+
+import com.gca.dao.impl.TrainerDAOImpl;
+import com.gca.model.Trainer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class TrainerDAOTest {
+
+    private static final String TRAINER_SPECIALIZATION = "Fitness";
+    private static final String TRAINER_USERNAME = "traineruser";
+    private static final String TRAINER_FIRSTNAME = "Jane";
+    private static final String TRAINER_LASTNAME = "Smith";
+    private static final String TRAINER_PASSWORD = "trainerpass";
+
+    private TrainerDAOImpl dao;
+    private Map<Long, Trainer> trainerStorage;
+
+    @BeforeEach
+    void setUp() {
+        trainerStorage = new HashMap<>();
+        dao = new TrainerDAOImpl();
+
+        ReflectionTestUtils.setField(dao, "storage", trainerStorage);
+    }
+
+    @Test
+    void shouldSuccessfullyCreateTrainer() {
+        Trainer expected = buildTrainer(1L);
+
+        Trainer actual = dao.create(expected);
+
+        assertNotNull(actual.getUserId());
+        assertEquals(expected.getUserId(), actual.getUserId());
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
+        assertEquals(actual, trainerStorage.get(expected.getUserId()));
+    }
+
+    @Test
+    void shouldReturnTrainerById() {
+        Long id = 1L;
+        Trainer expected = buildTrainer(id);
+        trainerStorage.put(id, expected);
+
+        Trainer actual = dao.getById(id);
+
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+    }
+
+    @Test
+    void shouldReturnTrainerByUsername() {
+        Long id = 2L;
+        Trainer expected = buildTrainer(id);
+        trainerStorage.put(id, expected);
+
+        Trainer actual = dao.getByUsername(expected.getUsername());
+
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getPassword(), actual.getPassword());
+    }
+
+    @Test
+    void shouldReturnAllTrainerUsernames() {
+        List<String> expected = List.of("trainer1", "trainer2");
+        Trainer t1 = buildTrainer(3L, expected.get(0));
+        Trainer t2 = buildTrainer(4L, expected.get(1));
+        trainerStorage.put(3L, t1);
+        trainerStorage.put(4L, t2);
+
+        List<String> actual = dao.getAllUsernames();
+
+        assertEquals(expected, actual);
+        assertEquals(expected.size(), actual.size());
+    }
+
+    @Test
+    void shouldUpdateTrainer() {
+        Long id = 5L;
+        Trainer trainer = buildTrainer(id);
+        trainerStorage.put(id, trainer);
+        Trainer expected = trainer.toBuilder().specialization("Yoga").build();
+
+        Trainer actual = dao.update(expected);
+
+        assertEquals("Yoga", actual.getSpecialization());
+        assertEquals(expected, actual);
+    }
+
+    private Trainer buildTrainer(Long id, String username) {
+        return Trainer.builder()
+                .userId(id)
+                .username(username)
+                .firstName(TRAINER_FIRSTNAME)
+                .lastName(TRAINER_LASTNAME)
+                .password(TRAINER_PASSWORD)
+                .specialization(TRAINER_SPECIALIZATION)
+                .isActive(true)
+                .build();
+    }
+
+    private Trainer buildTrainer(Long id) {
+        return Trainer.builder()
+                .userId(id)
+                .username(TRAINER_USERNAME)
+                .firstName(TRAINER_FIRSTNAME)
+                .lastName(TRAINER_LASTNAME)
+                .password(TRAINER_PASSWORD)
+                .specialization(TRAINER_SPECIALIZATION)
+                .isActive(true)
+                .build();
+    }
+}
