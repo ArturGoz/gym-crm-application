@@ -29,7 +29,8 @@ class TrainingMapperTest {
 
         assertEquals(1L, entity.getTrainerId());
         assertEquals(2L, entity.getTraineeId());
-        assertEquals(LocalDate.of(2025, 6, 28), entity.getTrainingDate());
+        assertEquals(LocalDate.of(2025, 6, 28),
+                entity.getTrainingDate());
         assertEquals(Duration.ofMinutes(90), entity.getTrainingDuration());
         assertEquals("Functional Training", entity.getTrainingName());
         assertNotNull(entity.getTrainingType());
@@ -53,7 +54,8 @@ class TrainingMapperTest {
         assertEquals(10L, response.getId());
         assertEquals(1L, response.getTrainerId());
         assertEquals(2L, response.getTraineeId());
-        assertEquals(LocalDate.of(2025, 6, 29), response.getTrainingDate());
+        assertEquals(LocalDate.of(2025, 6, 29),
+                response.getTrainingDate());
         assertEquals(Duration.ofHours(2), response.getTrainingDuration());
         assertEquals("Morning Yoga", response.getTrainingName());
         assertNotNull(response.getTrainingType());

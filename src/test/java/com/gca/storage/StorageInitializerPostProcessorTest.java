@@ -34,7 +34,8 @@ class StorageInitializerPostProcessorTest {
         Map<Long, Trainer> trainerStorage = new HashMap<>();
         Map<Long, Trainee> traineeStorage = new HashMap<>();
 
-        StorageRegistry registry = new StorageRegistry(trainingStorage, trainerStorage, traineeStorage);
+        StorageRegistry registry = new StorageRegistry(trainingStorage,
+                trainerStorage, traineeStorage);
 
         Training training = Training.builder().id(1L).build();
         Trainer trainer = Trainer.builder().userId(2L).build();
@@ -47,7 +48,8 @@ class StorageInitializerPostProcessorTest {
 
         when(storageInitializerMock.initializeData()).thenReturn(initializedData);
 
-        Object result = postProcessor.postProcessAfterInitialization(registry, "storageRegistry");
+        Object result = postProcessor.
+                postProcessAfterInitialization(registry, "storageRegistry");
 
         assertSame(registry, result);
         assertEquals(training, trainingStorage.get(1L));
@@ -58,7 +60,8 @@ class StorageInitializerPostProcessorTest {
     @Test
     void testPostProcessAfterInitialization_withNonRegistryBean() {
         Object someBean = new Object();
-        Object result = postProcessor.postProcessAfterInitialization(someBean, "notARegistry");
+        Object result = postProcessor.
+                postProcessAfterInitialization(someBean, "notARegistry");
 
         assertSame(someBean, result);
         verify(storageInitializerMock, never()).initializeData();

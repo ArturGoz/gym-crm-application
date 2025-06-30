@@ -24,7 +24,8 @@ class TrainingDAOTest {
 
     private static final Long TRAINER_ID = 1L;
     private static final Long TRAINEE_ID = 2L;
-    private static final LocalDate TRAINING_DATE = LocalDate.of(2025, 6, 27);
+    private static final LocalDate TRAINING_DATE =
+            LocalDate.of(2025, 6, 27);
     private static final Duration TRAINING_DURATION = Duration.ofHours(1);
     private static final String TRAINING_NAME = "Morning Yoga";
     private static final TrainingType TRAINING_TYPE = new TrainingType("Yoga");

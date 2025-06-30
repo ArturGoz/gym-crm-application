@@ -18,7 +18,8 @@ class StorageRegistryTest {
         Map<Long, Trainer> trainerStorage = new HashMap<>();
         Map<Long, Trainee> traineeStorage = new HashMap<>();
 
-        StorageRegistry registry = new StorageRegistry(trainingStorage, trainerStorage, traineeStorage);
+        StorageRegistry registry =
+                new StorageRegistry(trainingStorage, trainerStorage, traineeStorage);
 
         Training training = Training.builder().id(11L).build();
         Trainer trainer = Trainer.builder().userId(22L).build();

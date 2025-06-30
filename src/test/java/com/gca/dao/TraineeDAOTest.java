@@ -22,7 +22,8 @@ class TraineeDAOTest {
     private static final String TRAINEE_FIRSTNAME = "John";
     private static final String TRAINEE_LASTNAME = "Doe";
     private static final String TRAINEE_PASSWORD = "pass";
-    private static final LocalDate TRAINEE_BIRTHDAY = LocalDate.of(2000, 1, 1);
+    private static final LocalDate TRAINEE_BIRTHDAY =
+            LocalDate.of(2000, 1, 1);
 
     private TraineeDAOImpl dao;
     private Map<Long, Trainee> traineeStorage;

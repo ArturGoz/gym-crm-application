@@ -15,8 +15,10 @@ class RandomPasswordGeneratorTest {
         String password = sut.generatePassword();
 
         assertNotNull(password, "Password should not be null");
-        assertEquals(10, password.length(), "Password should be 10 characters long");
-        assertTrue(password.matches("^[A-Za-z0-9]{10}$"), "Password should be alphanumeric (A-Za-z0-9)");
+        assertEquals(10, password.length(),
+                "Password should be 10 characters long");
+        assertTrue(password.matches("^[A-Za-z0-9]{10}$"),
+                "Password should be alphanumeric (A-Za-z0-9)");
     }
 
     @Test
