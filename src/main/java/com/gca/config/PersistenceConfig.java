@@ -1,5 +1,7 @@
 package com.gca.config;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -9,12 +11,14 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
 @ComponentScan(basePackages = "com.gca")
+@EnableTransactionManagement
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class PersistenceConfig {
 
