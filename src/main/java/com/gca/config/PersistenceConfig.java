@@ -47,23 +47,22 @@ public class PersistenceConfig {
 
     @Bean
     public DataSource dataSource() {
-        PGSimpleDataSource ds = new PGSimpleDataSource();
-        ds.setUrl(dbUrl);
-        ds.setUser(dbUsername);
-        ds.setPassword(dbPassword);
-        return ds;
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        dataSource.setUrl(dbUrl);
+        dataSource.setUser(dbUsername);
+        dataSource.setPassword(dbPassword);
+
+        return dataSource;
     }
 
     @Bean
     public SessionFactory sessionFactory() {
         Properties settings = hibernateProperties();
-
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(settings)
                 .build();
 
         MetadataSources sources = new MetadataSources(serviceRegistry);
-
         Metadata metadata = sources.buildMetadata();
 
         return metadata.buildSessionFactory();
@@ -79,6 +78,7 @@ public class PersistenceConfig {
         properties.put(Environment.HBM2DDL_AUTO, ddlAuto);
         properties.put(Environment.SHOW_SQL, String.valueOf(SHOW_SQL));
         properties.put(Environment.FORMAT_SQL, String.valueOf(FORMAT_SQL));
+
         return properties;
     }
 }

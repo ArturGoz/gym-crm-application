@@ -22,6 +22,6 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected String getServletName() {
-        return "mainDispatcher"; // Ensure uniqueness
+        return "mainDispatcher";
     }
 }
