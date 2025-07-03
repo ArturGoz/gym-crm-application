@@ -42,10 +42,10 @@ public class PersistenceConfig {
     @Value("${spring.datasource.driver-class-name}")
     private String dbDriver;
 
-    @Value("${spring.jpa.database-platform}")
+    @Value("${hibernate.dialect}")
     private String hibernateDialect;
 
-    @Value("${spring.jpa.hibernate.ddl-auto}")
+    @Value("${hibernate.hbm2ddl-auto}")
     private String ddlAuto;
 
     @Bean
