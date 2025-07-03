@@ -10,7 +10,6 @@ import org.hibernate.service.ServiceRegistry;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -18,7 +17,6 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = "com.gca")
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class PersistenceConfig {
 
@@ -65,8 +63,7 @@ public class PersistenceConfig {
                 .applySettings(settings)
                 .build();
 
-        MetadataSources sources = new MetadataSources(serviceRegistry)
-                .addAnnotatedClass(User.class);
+        MetadataSources sources = new MetadataSources(serviceRegistry);
 
         Metadata metadata = sources.buildMetadata();
 
