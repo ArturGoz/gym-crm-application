@@ -5,14 +5,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.gca")
+@ComponentScan(basePackages = "com.gca.controller")
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
-        registry.jsp("/WEB-INF/views/", ".jsp");
+        InternalResourceViewResolver ivr = new InternalResourceViewResolver();
+        ivr.setPrefix("/WEB-INF/jsp/");
+        ivr.setSuffix(".jsp");
+        ivr.setExposeContextBeansAsAttributes(true);
+
+        registry.viewResolver(ivr);
     }
 }

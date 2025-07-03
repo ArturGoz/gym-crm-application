@@ -1,6 +1,5 @@
 package com.gca.config;
 
-import com.gca.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -10,7 +9,6 @@ import org.hibernate.service.ServiceRegistry;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -18,7 +16,6 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = "com.gca")
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class PersistenceConfig {
 
@@ -50,24 +47,22 @@ public class PersistenceConfig {
 
     @Bean
     public DataSource dataSource() {
-        PGSimpleDataSource ds = new PGSimpleDataSource();
-        ds.setUrl(dbUrl);
-        ds.setUser(dbUsername);
-        ds.setPassword(dbPassword);
-        return ds;
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        dataSource.setUrl(dbUrl);
+        dataSource.setUser(dbUsername);
+        dataSource.setPassword(dbPassword);
+
+        return dataSource;
     }
 
     @Bean
     public SessionFactory sessionFactory() {
         Properties settings = hibernateProperties();
-
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(settings)
                 .build();
 
-        MetadataSources sources = new MetadataSources(serviceRegistry)
-                .addAnnotatedClass(User.class);
-
+        MetadataSources sources = new MetadataSources(serviceRegistry);
         Metadata metadata = sources.buildMetadata();
 
         return metadata.buildSessionFactory();
@@ -83,6 +78,7 @@ public class PersistenceConfig {
         properties.put(Environment.HBM2DDL_AUTO, ddlAuto);
         properties.put(Environment.SHOW_SQL, String.valueOf(SHOW_SQL));
         properties.put(Environment.FORMAT_SQL, String.valueOf(FORMAT_SQL));
+
         return properties;
     }
 }
