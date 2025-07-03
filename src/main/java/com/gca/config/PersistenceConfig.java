@@ -7,13 +7,14 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
+import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.apache.tomcat.jdbc.pool.DataSource;
 
+import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
@@ -49,10 +50,9 @@ public class PersistenceConfig {
 
     @Bean
     public DataSource dataSource() {
-        DataSource ds = new DataSource();
-        ds.setDriverClassName(dbDriver);
+        PGSimpleDataSource ds = new PGSimpleDataSource();
         ds.setUrl(dbUrl);
-        ds.setUsername(dbUsername);
+        ds.setUser(dbUsername);
         ds.setPassword(dbPassword);
         return ds;
     }
