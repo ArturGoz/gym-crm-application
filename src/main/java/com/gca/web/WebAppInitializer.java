@@ -19,4 +19,9 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     protected String[] getServletMappings() {
         return new String[]{"/"};
     }
+
+    @Override
+    protected String getServletName() {
+        return "mainDispatcher"; // Ensure uniqueness
+    }
 }
