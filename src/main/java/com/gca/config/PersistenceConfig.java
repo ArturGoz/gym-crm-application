@@ -1,6 +1,5 @@
 package com.gca.config;
 
-import com.gca.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
