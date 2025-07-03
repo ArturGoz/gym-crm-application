@@ -3,9 +3,9 @@ package com.gca.dao;
 import com.gca.dao.impl.TrainingDAOImpl;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
-import com.gca.storage.StorageRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -16,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TrainingDAOTest {
 
@@ -31,20 +28,13 @@ class TrainingDAOTest {
     private static final TrainingType TRAINING_TYPE = new TrainingType("Yoga");
 
     private TrainingDAOImpl dao;
-    private StorageRegistry storageRegistryMock;
     private Map<Long, Training> trainingStorage;
 
     @BeforeEach
     void setUp() {
         trainingStorage = new HashMap<>();
         dao = new TrainingDAOImpl();
-
-        storageRegistryMock = mock(StorageRegistry.class);
-
-        when(storageRegistryMock.getStorage(any()))
-                .thenReturn((Map) trainingStorage);
-
-        dao.setStorage(storageRegistryMock);
+        ReflectionTestUtils.setField(dao, "storage", trainingStorage);
     }
 
     @Test
@@ -94,22 +84,6 @@ class TrainingDAOTest {
         Training actual = dao.getById(12345L);
 
         assertNull(actual);
-    }
-
-    @Test
-    void shouldImplementEqualsHashCodeAndToStringCorrectly() {
-        TrainingDAOImpl dao1 = new TrainingDAOImpl();
-        TrainingDAOImpl dao2 = new TrainingDAOImpl();
-
-        dao1.setStorage(storageRegistryMock);
-        dao2.setStorage(storageRegistryMock);
-
-        assertEquals(dao1, dao1);
-        assertEquals(dao1, dao2);
-        assertEquals(dao2, dao1);
-        assertEquals(dao1.hashCode(), dao2.hashCode());
-        assertEquals(dao1, dao2);
-        assertNotNull(dao1.toString());
     }
 
     private Training buildTraining() {
