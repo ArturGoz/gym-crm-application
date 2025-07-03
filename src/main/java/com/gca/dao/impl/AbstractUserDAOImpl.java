@@ -2,7 +2,6 @@ package com.gca.dao.impl;
 
 import com.gca.dao.UserDAO;
 import com.gca.model.User;
-import com.gca.storage.StorageRegistry;
 import lombok.Data;
 
 import java.util.List;
@@ -12,8 +11,6 @@ import java.util.stream.Collectors;
 @Data
 public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> {
     protected Map<Long, T> storage;
-
-    protected abstract void setStorage(StorageRegistry storageRegistry);
 
     @Override
     @SuppressWarnings("unchecked")
