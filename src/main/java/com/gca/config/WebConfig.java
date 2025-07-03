@@ -18,6 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
         ivr.setPrefix("/WEB-INF/jsp/");
         ivr.setSuffix(".jsp");
         ivr.setExposeContextBeansAsAttributes(true);
+
         registry.viewResolver(ivr);
     }
 }
