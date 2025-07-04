@@ -5,7 +5,6 @@ import com.gca.model.Trainee;
 import com.gca.model.User;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -25,16 +24,6 @@ public class TraineeDAOImpl implements TraineeDAO {
     @Override
     public User getById(Long id) {
         return null;
-    }
-
-    @Override
-    public User getByUsername(String username) {
-        return null;
-    }
-
-    @Override
-    public List<String> getAllUsernames() {
-        return List.of();
     }
 
     @Override

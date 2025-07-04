@@ -31,7 +31,7 @@ public class TrainingAppFacade {
     }
 
     public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
-        logger.info("Facade: Updating trainee with ID {}", request.getUserId());
+        logger.info("Facade: Updating trainee with ID {}", request.getId());
         return traineeService.updateTrainee(request);
     }
 
@@ -56,7 +56,7 @@ public class TrainingAppFacade {
     }
 
     public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
-        logger.info("Facade: Updating trainer with ID {}", request.getUserId());
+        logger.info("Facade: Updating trainer with ID {}", request.getId());
         return trainerService.updateTrainer(request);
     }
 
