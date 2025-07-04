@@ -13,7 +13,6 @@ public class UserDAOImpl implements UserDAO {
     protected Map<Long, User> storage;
 
     @Override
-    @SuppressWarnings("unchecked")
     public User create(User entity) {
         Long id = getNextId();
 
