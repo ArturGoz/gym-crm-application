@@ -1,6 +1,5 @@
 package com.gca.dao;
 
-import com.gca.dao.impl.TraineeDAOImpl;
 import com.gca.dao.impl.TrainerDAOImpl;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

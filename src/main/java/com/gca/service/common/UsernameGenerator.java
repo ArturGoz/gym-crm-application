@@ -1,7 +1,5 @@
 package com.gca.service.common;
 
-import com.gca.dao.TraineeDAO;
-import com.gca.dao.TrainerDAO;
 import com.gca.dao.UserDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class UsernameGenerator {
@@ -19,7 +16,7 @@ public class UsernameGenerator {
     private UserDAO userDAO;
 
     @Autowired
-    public void setTraineeDAO(UserDAO userDAO) {
+    public void setUserDAO(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
 
