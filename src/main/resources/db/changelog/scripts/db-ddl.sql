@@ -1,4 +1,3 @@
--- Table: users
 CREATE TABLE users
 (
     id         BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -9,14 +8,12 @@ CREATE TABLE users
     is_active  BOOLEAN      NOT NULL
 );
 
--- Table: training_types
 CREATE TABLE training_types
 (
     id                 BIGINT PRIMARY KEY AUTO_INCREMENT,
     training_type_name VARCHAR(100) NOT NULL UNIQUE
 );
 
--- Table: trainers
 CREATE TABLE trainers
 (
     id                BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -26,7 +23,6 @@ CREATE TABLE trainers
     CONSTRAINT fk_trainer_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
--- Table: trainees
 CREATE TABLE trainees
 (
     id            BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -36,7 +32,6 @@ CREATE TABLE trainees
     CONSTRAINT fk_trainee_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
--- Table: trainings
 CREATE TABLE trainings
 (
     id                BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -51,7 +46,6 @@ CREATE TABLE trainings
     CONSTRAINT fk_training_type FOREIGN KEY (type_id) REFERENCES training_types (id)
 );
 
--- Table: trainee_trainer (Many-to-Many)
 CREATE TABLE trainee_trainer
 (
     trainee_id BIGINT NOT NULL,
