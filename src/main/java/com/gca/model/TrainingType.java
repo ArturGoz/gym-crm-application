@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "training_types")
@@ -31,4 +35,7 @@ public class TrainingType {
 
     @Column(name = "training_type_name", nullable = false, unique = true, length = 100)
     private String name;
+
+    @OneToMany(mappedBy = "type")
+    private List<Training> trainings = new ArrayList<>();
 }
