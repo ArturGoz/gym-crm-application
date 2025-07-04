@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,8 @@ public class TrainingType {
     @Column(name = "training_type_name", nullable = false, unique = true, length = 100)
     private String name;
 
+    @ToString.Exclude
+    @Builder.Default
     @OneToMany(mappedBy = "type")
     private List<Training> trainings = new ArrayList<>();
 }
