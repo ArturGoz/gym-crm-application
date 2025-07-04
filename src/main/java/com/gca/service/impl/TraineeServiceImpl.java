@@ -39,21 +39,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeResponse createTrainee(TraineeCreateRequest request) {
-        logger.debug("Creating trainee: {} {}", request.getFirstName(), request.getLastName());
-        Trainee trainee = traineeMapper.toEntity(request);
-        String username = userProfileService.generateUsername(trainee.getFirstName(), trainee.getLastName());
-        String password = userProfileService.generatePassword();
-
-        trainee = trainee.toBuilder()
-                .username(username)
-                .password(password)
-                .isActive(true)
-                .build();
-
-        Trainee created = traineeDAO.create(trainee);
-        logger.info("Created trainee: {}", created);
-
-        return traineeMapper.toResponse(created);
+        return null;
     }
 
     @Override
@@ -88,6 +74,6 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public TraineeResponse getTraineeByUsername(String username) {
         logger.debug("Retrieving trainee with username: {}", username);
-        return traineeMapper.toResponse(traineeDAO.getByUsername(username));
+        return null;
     }
 }
