@@ -69,6 +69,7 @@ class TrainerDAOTest {
         Long userId = 20L;
         String username = "user10";
         Trainer expected = buildTrainer(trainerId, userId, username);
+
         trainerStorage.put(trainerId, expected);
 
         Trainer actual = dao.getById(trainerId);
