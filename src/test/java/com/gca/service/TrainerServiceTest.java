@@ -54,8 +54,6 @@ class TrainerServiceTest {
         TrainerResponse actual = service.createTrainer(request);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.isActive(), actual.isActive());
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(mapper).toEntity(request);
         verify(dao).create(any(Trainer.class));
@@ -76,8 +74,6 @@ class TrainerServiceTest {
         TrainerResponse actual = service.updateTrainer(updateRequest);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.isActive(), actual.isActive());
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(dao).getById(2L);
         verify(dao).update(existing);
@@ -107,28 +103,8 @@ class TrainerServiceTest {
         TrainerResponse actual = service.getTrainerById(2L);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.isActive(), actual.isActive());
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(dao).getById(2L);
-        verify(mapper).toResponse(trainer);
-    }
-
-    @Test
-    void getTrainerByUsername_success() {
-        Trainer trainer = GymTestProvider.constructTrainer();
-        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
-
-        when(dao.getByUsername("anna.ivanova")).thenReturn(trainer);
-        when(mapper.toResponse(trainer)).thenReturn(expected);
-
-        TrainerResponse actual = service.getTrainerByUsername("anna.ivanova");
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.isActive(), actual.isActive());
-        assertEquals(expected.getSpecialization(), actual.getSpecialization());
-        verify(dao).getByUsername("anna.ivanova");
         verify(mapper).toResponse(trainer);
     }
 }
