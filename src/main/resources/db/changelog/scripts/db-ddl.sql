@@ -57,6 +57,6 @@ CREATE TABLE trainee_trainer
     trainee_id BIGINT NOT NULL,
     trainer_id BIGINT NOT NULL,
     PRIMARY KEY (trainee_id, trainer_id),
-    CONSTRAINT fk_tt_trainee FOREIGN KEY (trainee_id) REFERENCES trainees (id),
-    CONSTRAINT fk_tt_trainer FOREIGN KEY (trainer_id) REFERENCES trainers (id)
+    CONSTRAINT fk_trainees_trainee_trainer FOREIGN KEY (trainee_id) REFERENCES trainees (id),
+    CONSTRAINT fk_trainers_trainee_trainer FOREIGN KEY (trainer_id) REFERENCES trainers (id)
 );
