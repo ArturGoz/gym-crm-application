@@ -12,6 +12,5 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class TrainerUpdateRequest {
     private Long id;
-    private Boolean isActive;
     private TrainingType specialization;
 }

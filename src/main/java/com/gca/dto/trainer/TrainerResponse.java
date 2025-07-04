@@ -12,9 +12,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class TrainerResponse {
     private Long id;
-    private String firstName;
-    private String lastName;
-    private String username;
-    private Boolean isActive;
+    private Long userId;
     private TrainingType specialization;
+
 }

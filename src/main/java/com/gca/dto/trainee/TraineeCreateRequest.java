@@ -12,8 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TraineeCreateRequest {
-    private String firstName;
-    private String lastName;
+    private Long userId;
     private LocalDate dateOfBirth;
     private String address;
 }

@@ -26,12 +26,12 @@ public class TrainingAppFacade {
     private final TrainingService trainingService;
 
     public TraineeResponse createTrainee(TraineeCreateRequest request) {
-        logger.info("Facade: Creating trainee {} {}", request.getFirstName(), request.getLastName());
+        logger.info("Facade: Creating trainee {} ", request.getUserId());
         return traineeService.createTrainee(request);
     }
 
     public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
-        logger.info("Facade: Updating trainee with ID {}", request.getId());
+        logger.info("Facade: Updating trainee with ID {}", request.getUserId());
         return traineeService.updateTrainee(request);
     }
 
@@ -51,7 +51,7 @@ public class TrainingAppFacade {
     }
 
     public TrainerResponse createTrainer(TrainerCreateRequest request) {
-        logger.info("Facade: Creating trainer {} {}", request.getFirstName(), request.getLastName());
+        logger.info("Facade: Creating trainer {}", request.getUserId());
         return trainerService.createTrainer(request);
     }
 

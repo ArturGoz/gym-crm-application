@@ -16,8 +16,8 @@ import java.time.LocalDate;
 public class TrainingCreateRequest {
     private Long trainerId;
     private Long traineeId;
+    private Long trainingTypeId;
     private LocalDate trainingDate;
     private Long trainingDuration;
     private String trainingName;
-    private TrainingType trainingType;
 }

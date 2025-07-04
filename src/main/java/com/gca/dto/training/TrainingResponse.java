@@ -17,6 +17,7 @@ public class TrainingResponse {
     private Long id;
     private Long trainerId;
     private Long traineeId;
+    private Long trainingTypeId;
     private LocalDate trainingDate;
     private Long trainingDuration;
     private String trainingName;
