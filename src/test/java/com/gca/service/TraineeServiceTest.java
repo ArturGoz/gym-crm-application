@@ -22,4 +22,6 @@ class TraineeServiceTest {
     @InjectMocks
     private TraineeServiceImpl service;
 
+
+
 }

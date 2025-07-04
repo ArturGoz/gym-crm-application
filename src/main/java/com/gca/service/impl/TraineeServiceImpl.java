@@ -61,7 +61,7 @@ public class TraineeServiceImpl implements TraineeService {
     public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
         logger.debug("Updating trainee");
 
-        Trainee existing = traineeDAO.getById(request.getUserId());
+        Trainee existing = traineeDAO.getById(request.getId());
 
         if (existing == null) {
             throw new ServiceException("Trainee not found");
