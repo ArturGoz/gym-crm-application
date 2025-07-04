@@ -1,11 +1,12 @@
 package com.gca.dao;
 
+import com.gca.model.Trainer;
 import com.gca.model.User;
 
 public interface TrainerDAO {
-    User create(User entity);
+    Trainer create(Trainer entity);
 
-    User update(User entity);
+    Trainer update(Trainer entity);
 
-    User getById(Long id);
+    Trainer getById(Long id);
 }
