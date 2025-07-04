@@ -9,16 +9,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
-public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> {
-    protected Map<Long, T> storage;
+public class UserDAOImpl implements UserDAO {
+    protected Map<Long, User> storage;
 
     @Override
     @SuppressWarnings("unchecked")
-    public T create(T entity) {
+    public User create(User entity) {
         Long id = getNextId();
 
-        entity = (T) entity.toBuilder()
-                .userId(id)
+        entity = entity.toBuilder()
+                .id(id)
                 .build();
 
         storage.put(id, entity);
@@ -27,24 +27,24 @@ public abstract class AbstractUserDAOImpl<T extends User> implements UserDAO<T> 
     }
 
     @Override
-    public T update(T entity) {
-        if (!storage.containsKey(entity.getUserId())) {
+    public User update(User entity) {
+        if (!storage.containsKey(entity.getId())) {
             throw new RuntimeException(String.format("%s not found with id: %s",
                     this.getClass().getSimpleName(),
-                    entity.getUserId()));
+                    entity.getId()));
         }
-        storage.put(entity.getUserId(), entity);
+        storage.put(entity.getId(), entity);
 
         return entity;
     }
 
     @Override
-    public T getById(Long id) {
+    public User getById(Long id) {
         return storage.get(id);
     }
 
     @Override
-    public T getByUsername(String username) {
+    public User getByUsername(String username) {
         return storage.values().stream()
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst()

@@ -1,6 +1,17 @@
 package com.gca.dao;
 
-import com.gca.model.Trainer;
+import com.gca.model.User;
 
-public interface TrainerDAO extends UserDAO<Trainer> {
+import java.util.List;
+
+public interface TrainerDAO {
+    User create(User entity);
+
+    User update(User entity);
+
+    User getById(Long id);
+
+    User getByUsername(String username);
+
+    List<String> getAllUsernames();
 }

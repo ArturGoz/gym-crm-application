@@ -4,14 +4,14 @@ import com.gca.model.User;
 
 import java.util.List;
 
-public interface UserDAO<T extends User> {
-    T create(T entity);
+public interface UserDAO {
+    User create(User entity);
 
-    T update(T entity);
+    User update(User entity);
 
-    T getById(Long id);
+    User getById(Long id);
 
-    T getByUsername(String username);
+    User getByUsername(String username);
 
     List<String> getAllUsernames();
 }
