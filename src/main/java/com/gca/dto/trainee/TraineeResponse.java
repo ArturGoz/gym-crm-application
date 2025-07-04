@@ -12,11 +12,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TraineeResponse {
-    private Long userId;
+    private Long id;
     private String firstName;
     private String lastName;
     private String username;
-    private boolean isActive;
+    private Boolean isActive;
     private LocalDate dateOfBirth;
     private String address;
 }

@@ -17,7 +17,7 @@ public class TrainingCreateRequest {
     private Long trainerId;
     private Long traineeId;
     private LocalDate trainingDate;
-    private Duration trainingDuration;
+    private Long trainingDuration;
     private String trainingName;
     private TrainingType trainingType;
 }

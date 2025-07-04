@@ -12,8 +12,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TraineeUpdateRequest {
-    private Long userId;
-    private boolean isActive;
+    private Long id;
+    private Boolean isActive;
     private LocalDate dateOfBirth;
     private String address;
 }
