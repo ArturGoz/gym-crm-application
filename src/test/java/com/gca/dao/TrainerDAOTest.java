@@ -2,6 +2,8 @@ package com.gca.dao;
 
 import com.gca.dao.impl.TrainerDAOImpl;
 import com.gca.model.Trainer;
+import com.gca.model.TrainingType;
+import com.gca.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -15,112 +17,99 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TrainerDAOTest {
 
-    private static final String TRAINER_SPECIALIZATION = "Fitness";
-    private static final String TRAINER_USERNAME = "traineruser";
-    private static final String TRAINER_FIRSTNAME = "Jane";
-    private static final String TRAINER_LASTNAME = "Smith";
-    private static final String TRAINER_PASSWORD = "trainerpass";
+    private static final Long STATIC_USER_ID = 1001L;
+    private static final Long STATIC_TYPE_ID = 991L;
 
-    private TrainerDAOImpl dao;
-    private Map<Long, Trainer> trainerStorage;
+    private static final String STATIC_USERNAME = "traineruser";
+    private static final String STATIC_FIRSTNAME = "Jane";
+    private static final String STATIC_LASTNAME = "Smith";
+    private static final String STATIC_PASSWORD = "trainerpass";
+    private static final String STATIC_TYPE_NAME = "Fitness";
 
-    @BeforeEach
-    void setUp() {
-        trainerStorage = new HashMap<>();
-        dao = new TrainerDAOImpl();
+    private static final boolean STATIC_IS_ACTIVE = true;
 
-        ReflectionTestUtils.setField(dao, "storage", trainerStorage);
-    }
+    private final TrainerDAOImpl dao = new TrainerDAOImpl();
+
+    private final Map<Long, Trainer> trainerStorage = new HashMap<>();
 
     @Test
     void shouldSuccessfullyCreateTrainer() {
-        Trainer expected = buildTrainer(1L);
+        Trainer expected = buildTrainer(1L, STATIC_USER_ID, STATIC_USERNAME);
 
         Trainer actual = dao.create(expected);
 
-        assertNotNull(actual.getUserId());
-        assertEquals(expected.getUserId(), actual.getUserId());
-        assertEquals(expected.getFirstName(), actual.getFirstName());
-        assertEquals(expected.getLastName(), actual.getLastName());
-        assertEquals(expected.getSpecialization(), actual.getSpecialization());
-        assertEquals(actual, trainerStorage.get(expected.getUserId()));
+        assertNotNull(actual.getId());
+        assertEquals(expected.getId(), actual.getId());
+
+        assertNotNull(actual.getUser());
+        assertEquals(expected.getUser().getId(), actual.getUser().getId());
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+        assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
+        assertEquals(expected.getUser().getLastName(), actual.getUser().getLastName());
+        assertEquals(expected.getUser().getPassword(), actual.getUser().getPassword());
+        assertEquals(expected.getUser().getIsActive(), actual.getUser().getIsActive());
+
+        assertNotNull(actual.getSpecialization());
+        assertEquals(expected.getSpecialization().getId(), actual.getSpecialization().getId());
+        assertEquals(expected.getSpecialization().getName(), actual.getSpecialization().getName());
+
+        assertEquals(actual, trainerStorage.get(expected.getId()));
     }
 
     @Test
     void shouldReturnTrainerById() {
-        Long id = 1L;
-        Trainer expected = buildTrainer(id);
-        trainerStorage.put(id, expected);
+        Long trainerId = 10L;
+        Long userId = 20L;
+        String username = "user10";
+        Trainer expected = buildTrainer(trainerId, userId, username);
+        trainerStorage.put(trainerId, expected);
 
-        Trainer actual = dao.getById(id);
-
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-    }
-
-    @Test
-    void shouldReturnTrainerByUsername() {
-        Long id = 2L;
-        Trainer expected = buildTrainer(id);
-        trainerStorage.put(id, expected);
-
-        Trainer actual = dao.getByUsername(expected.getUsername());
+        Trainer actual = dao.getById(trainerId);
 
         assertNotNull(actual);
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.getPassword(), actual.getPassword());
-    }
-
-    @Test
-    void shouldReturnAllTrainerUsernames() {
-        List<String> expected = List.of("trainer1", "trainer2");
-        Trainer t1 = buildTrainer(3L, expected.get(0));
-        Trainer t2 = buildTrainer(4L, expected.get(1));
-        trainerStorage.put(3L, t1);
-        trainerStorage.put(4L, t2);
-
-        List<String> actual = dao.getAllUsernames();
-
-        assertEquals(expected, actual);
-        assertEquals(expected.size(), actual.size());
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
     }
 
     @Test
     void shouldUpdateTrainer() {
-        Long id = 5L;
-        Trainer trainer = buildTrainer(id);
-        trainerStorage.put(id, trainer);
-        Trainer expected = trainer.toBuilder().specialization("Yoga").build();
+        Long trainerId = 5L;
+        Long userId = 105L;
+        String username = "upduser";
+        Trainer trainer = buildTrainer(trainerId, userId, username);
+
+        trainerStorage.put(trainerId, trainer);
+
+        TrainingType newType = TrainingType.builder()
+                .id(123L)
+                .name("Yoga")
+                .build();
+
+        Trainer expected = trainer.toBuilder()
+                .specialization(newType)
+                .build();
 
         Trainer actual = dao.update(expected);
 
-        assertEquals("Yoga", actual.getSpecialization());
+        assertEquals("Yoga", actual.getSpecialization().getName());
         assertEquals(expected, actual);
     }
 
-    private Trainer buildTrainer(Long id, String username) {
+    private Trainer buildTrainer(Long trainerId, Long userId, String username) {
         return Trainer.builder()
-                .userId(id)
-                .username(username)
-                .firstName(TRAINER_FIRSTNAME)
-                .lastName(TRAINER_LASTNAME)
-                .password(TRAINER_PASSWORD)
-                .specialization(TRAINER_SPECIALIZATION)
-                .isActive(true)
-                .build();
-    }
-
-    private Trainer buildTrainer(Long id) {
-        return Trainer.builder()
-                .userId(id)
-                .username(TRAINER_USERNAME)
-                .firstName(TRAINER_FIRSTNAME)
-                .lastName(TRAINER_LASTNAME)
-                .password(TRAINER_PASSWORD)
-                .specialization(TRAINER_SPECIALIZATION)
-                .isActive(true)
+                .id(trainerId)
+                .user(User.builder()
+                        .id(userId)
+                        .username(username)
+                        .firstName(STATIC_FIRSTNAME)
+                        .lastName(STATIC_LASTNAME)
+                        .password(STATIC_PASSWORD)
+                        .isActive(STATIC_IS_ACTIVE)
+                        .build())
+                .specialization(TrainingType.builder()
+                        .id(STATIC_TYPE_ID)
+                        .name(STATIC_TYPE_NAME)
+                        .build())
                 .build();
     }
 }
