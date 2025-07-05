@@ -1,6 +1,6 @@
 CREATE TABLE users
 (
-    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id         BIGSERIAL PRIMARY KEY,
     first_name VARCHAR(50)  NOT NULL,
     last_name  VARCHAR(50)  NOT NULL,
     username   VARCHAR(50)  NOT NULL UNIQUE,
@@ -10,13 +10,13 @@ CREATE TABLE users
 
 CREATE TABLE training_types
 (
-    id                 BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id                 BIGSERIAL PRIMARY KEY,
     training_type_name VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE trainers
 (
-    id                BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id                BIGSERIAL PRIMARY KEY,
     specialization_id BIGINT NOT NULL,
     user_id           BIGINT NOT NULL,
     CONSTRAINT fk_trainer_specialization FOREIGN KEY (specialization_id) REFERENCES training_types (id),
@@ -25,7 +25,7 @@ CREATE TABLE trainers
 
 CREATE TABLE trainees
 (
-    id            BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id            BIGSERIAL PRIMARY KEY,
     date_of_birth DATE,
     address       VARCHAR(255),
     user_id       BIGINT NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE trainees
 
 CREATE TABLE trainings
 (
-    id                BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id                BIGSERIAL PRIMARY KEY,
     training_name     VARCHAR(100) NOT NULL,
     training_date     DATE         NOT NULL,
     training_duration BIGINT       NOT NULL,
