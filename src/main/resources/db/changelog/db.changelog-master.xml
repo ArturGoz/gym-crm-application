@@ -8,6 +8,4 @@
 
     <include file="db/changelog/init/init-changeset.xml"/>
 
-    <include file="db/changelog/2025/base-changeset.xml"/>
-
 </databaseChangeLog>
