@@ -2,13 +2,13 @@ package com.gca.dao;
 
 import com.gca.dao.impl.TraineeDAOImpl;
 import com.gca.model.Trainee;
+import com.gca.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,16 +17,18 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class TraineeDAOTest {
 
-    private static final String TRAINEE_ADDRESS = "Some address";
-    private static final String TRAINEE_USERNAME = "testuser";
-    private static final String TRAINEE_FIRSTNAME = "John";
-    private static final String TRAINEE_LASTNAME = "Doe";
-    private static final String TRAINEE_PASSWORD = "pass";
-    private static final LocalDate TRAINEE_BIRTHDAY =
-            LocalDate.of(2000, 1, 1);
+    private static final Long USER_ID = 111L;
+    private static final String USERNAME = "testuser";
+    private static final String FIRSTNAME = "John";
+    private static final String LASTNAME = "Doe";
+    private static final String PASSWORD = "pass";
+    private static final LocalDate BIRTHDAY = LocalDate.of(2000, 1, 1);
+    private static final String ADDRESS = "Some address";
+    private static final boolean IS_ACTIVE = true;
+
+    private Map<Long, Trainee> traineeStorage;
 
     private TraineeDAOImpl dao;
-    private Map<Long, Trainee> traineeStorage;
 
     @BeforeEach
     void setUp() {
@@ -38,65 +40,54 @@ class TraineeDAOTest {
 
     @Test
     void shouldSuccessfullyCreateTrainee() {
-        Trainee expected = buildTrainee(1L);
+        Trainee expected = buildTrainee(1L, USER_ID, USERNAME);
 
         Trainee actual = dao.create(expected);
 
-        assertNotNull(actual.getUserId());
-        assertEquals(expected.getUserId(), actual.getUserId());
-        assertEquals(expected.getFirstName(), actual.getFirstName());
-        assertEquals(expected.getLastName(), actual.getLastName());
+        assertNotNull(actual.getId());
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
         assertEquals(expected.getAddress(), actual.getAddress());
-        assertEquals(actual, traineeStorage.get(expected.getUserId()));
+
+        assertNotNull(actual.getUser());
+        assertEquals(expected.getUser().getId(), actual.getUser().getId());
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+        assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
+        assertEquals(expected.getUser().getLastName(), actual.getUser().getLastName());
+        assertEquals(expected.getUser().getPassword(), actual.getUser().getPassword());
+        assertEquals(expected.getUser().getIsActive(), actual.getUser().getIsActive());
+
+        assertEquals(actual, traineeStorage.get(expected.getId()));
     }
 
     @Test
     void shouldReturnTraineeById() {
-        Long id = 1L;
-        Trainee expected = buildTrainee(id);
-        traineeStorage.put(id, expected);
+        Long traineeId = 10L;
+        Long userId = 20L;
+        String username = "user10";
+        Trainee expected = buildTrainee(traineeId, userId, username);
 
-        Trainee actual = dao.getById(id);
+        traineeStorage.put(traineeId, expected);
 
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-    }
-
-    @Test
-    void shouldReturnTraineeByUsername() {
-        Long id = 2L;
-        Trainee expected = buildTrainee(id);
-        traineeStorage.put(id, expected);
-
-        Trainee actual = dao.getByUsername(expected.getUsername());
+        Trainee actual = dao.getById(traineeId);
 
         assertNotNull(actual);
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.getPassword(), actual.getPassword());
-    }
-
-    @Test
-    void shouldReturnAllUsernames() {
-        List<String> expected = List.of("user1", "user2");
-        Trainee t1 = buildTrainee(3L, expected.get(0));
-        Trainee t2 = buildTrainee(4L, expected.get(1));
-        traineeStorage.put(3L, t1);
-        traineeStorage.put(4L, t2);
-
-        List<String> actual = dao.getAllUsernames();
-
-        assertEquals(expected, actual);
-        assertEquals(expected.size(), actual.size());
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
     }
 
     @Test
     void shouldUpdateTrainee() {
-        Long id = 5L;
-        Trainee trainee = buildTrainee(id);
-        traineeStorage.put(id, trainee);
-        Trainee expected = trainee.toBuilder().address("new address").build();
+        Long traineeId = 5L;
+        Long userId = 105L;
+        String username = "upduser";
+        Trainee trainee = buildTrainee(traineeId, userId, username);
+
+        traineeStorage.put(traineeId, trainee);
+
+        Trainee expected = trainee.toBuilder()
+                .address("new address")
+                .build();
 
         Trainee actual = dao.update(expected);
 
@@ -106,38 +97,35 @@ class TraineeDAOTest {
 
     @Test
     void shouldDeleteTraineeById() {
-        Long id = 6L;
-        Trainee trainee = buildTrainee(id);
-        traineeStorage.put(id, trainee);
+        Long traineeId = 6L;
+        Long userId = 106L;
+        String username = "deluser";
+        Trainee trainee = buildTrainee(traineeId, userId, username);
 
-        dao.delete(id);
+        traineeStorage.put(traineeId, trainee);
 
-        assertNull(traineeStorage.get(id));
+        dao.delete(traineeId);
+
+        assertNull(traineeStorage.get(traineeId));
     }
 
-    private Trainee buildTrainee(Long id, String username) {
+    private Trainee buildTrainee(Long traineeId, Long userId, String username) {
         return Trainee.builder()
-                .userId(id)
-                .username(username)
-                .dateOfBirth(TRAINEE_BIRTHDAY)
-                .address(TRAINEE_ADDRESS)
-                .firstName(TRAINEE_FIRSTNAME)
-                .lastName(TRAINEE_LASTNAME)
-                .password(TRAINEE_PASSWORD)
-                .isActive(true)
+                .id(traineeId)
+                .dateOfBirth(BIRTHDAY)
+                .address(ADDRESS)
+                .user(buildUser(userId, username))
                 .build();
     }
 
-    private Trainee buildTrainee(Long id) {
-        return Trainee.builder()
-                .userId(id)
-                .dateOfBirth(TRAINEE_BIRTHDAY)
-                .address(TRAINEE_ADDRESS)
-                .username(TRAINEE_USERNAME)
-                .firstName(TRAINEE_FIRSTNAME)
-                .lastName(TRAINEE_LASTNAME)
-                .password(TRAINEE_PASSWORD)
-                .isActive(true)
+    private User buildUser(Long userId, String username) {
+        return User.builder()
+                .id(userId)
+                .username(username)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .password(PASSWORD)
+                .isActive(IS_ACTIVE)
                 .build();
     }
 }

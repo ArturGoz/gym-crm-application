@@ -46,7 +46,6 @@ class TrainingAppFacadeTest {
 
         assertEquals(expected, actual);
         assertEquals(expected.getAddress(), actual.getAddress());
-        assertEquals(expected.getUsername(), actual.getUsername());
         verify(traineeService).createTrainee(request);
     }
 
@@ -61,7 +60,6 @@ class TrainingAppFacadeTest {
 
         assertEquals(expected, actual);
         assertEquals(expected.getAddress(), actual.getAddress());
-        assertEquals(expected.getUsername(), actual.getUsername());
         verify(traineeService).updateTrainee(request);
     }
 
@@ -82,22 +80,7 @@ class TrainingAppFacadeTest {
 
         assertEquals(expected, actual);
         assertEquals(expected.getAddress(), actual.getAddress());
-        assertEquals(expected.getUsername(), actual.getUsername());
         verify(traineeService).getTraineeById(1L);
-    }
-
-    @Test
-    void getTraineeByUsername_delegatesToService() {
-        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
-
-        when(traineeService.getTraineeByUsername("john.doe")).thenReturn(expected);
-
-        TraineeResponse actual = facade.getTraineeByUsername("john.doe");
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getAddress(), actual.getAddress());
-        assertEquals(expected.getUsername(), actual.getUsername());
-        verify(traineeService).getTraineeByUsername("john.doe");
     }
 
     @Test
@@ -110,7 +93,6 @@ class TrainingAppFacadeTest {
         TrainerResponse actual = facade.createTrainer(request);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(trainerService).createTrainer(request);
     }
@@ -125,7 +107,6 @@ class TrainingAppFacadeTest {
         TrainerResponse actual = facade.updateTrainer(request);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(trainerService).updateTrainer(request);
     }
@@ -139,23 +120,8 @@ class TrainingAppFacadeTest {
         TrainerResponse actual = facade.getTrainerById(2L);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(trainerService).getTrainerById(2L);
-    }
-
-    @Test
-    void getTrainerByUsername_delegatesToService() {
-        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
-
-        when(trainerService.getTrainerByUsername("anna.ivanova")).thenReturn(expected);
-
-        TrainerResponse actual = facade.getTrainerByUsername("anna.ivanova");
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.getSpecialization(), actual.getSpecialization());
-        verify(trainerService).getTrainerByUsername("anna.ivanova");
     }
 
     @Test
@@ -168,8 +134,8 @@ class TrainingAppFacadeTest {
         TrainingResponse actual = facade.createTraining(request);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getTrainingType(), actual.getTrainingType());
-        assertEquals(expected.getTrainingDate(), actual.getTrainingDate());
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getDate(), actual.getDate());
         verify(trainingService).createTraining(request);
     }
 
@@ -182,8 +148,8 @@ class TrainingAppFacadeTest {
         TrainingResponse actual = facade.getTrainingById(2L);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getTrainingType(), actual.getTrainingType());
-        assertEquals(expected.getTrainingDate(), actual.getTrainingDate());
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getDate(), actual.getDate());
         verify(trainingService).getTrainingById(2L);
     }
 }

@@ -2,12 +2,12 @@ package com.gca.service;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.TraineeDAO;
+import com.gca.dao.UserDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
-import com.gca.service.common.UserProfileService;
 import com.gca.service.impl.TraineeServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +27,7 @@ class TraineeServiceTest {
     @Mock
     private TraineeDAO dao;
     @Mock
-    private UserProfileService userProfileService;
+    private UserDAO userDAO;
     @Mock
     private TraineeMapper mapper;
 
@@ -42,15 +42,12 @@ class TraineeServiceTest {
         TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(mapper.toEntity(request)).thenReturn(trainee);
-        when(userProfileService.generateUsername("John", "Doe")).thenReturn("john.doe");
-        when(userProfileService.generatePassword()).thenReturn("pass123");
         when(dao.create(any(Trainee.class))).thenReturn(traineeWithCreds);
         when(mapper.toResponse(any(Trainee.class))).thenReturn(expected);
 
         TraineeResponse actual = service.createTrainee(request);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getAddress(), actual.getAddress());
         verify(mapper).toEntity(request);
         verify(dao).create(any(Trainee.class));
@@ -60,8 +57,8 @@ class TraineeServiceTest {
     @Test
     void updateTrainee_success() {
         TraineeUpdateRequest updateRequest = GymTestProvider.createTraineeUpdateRequest();
-        Trainee existing = GymTestProvider.constructTrainee().toBuilder().isActive(false).build();
-        Trainee updated = existing.toBuilder().isActive(true).build();
+        Trainee existing = GymTestProvider.constructTrainee().toBuilder().address("1232").build();
+        Trainee updated = existing.toBuilder().address("Kyiv, Khreschatyk 10").build();
         TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(dao.getById(1L)).thenReturn(existing);
@@ -79,7 +76,7 @@ class TraineeServiceTest {
     @Test
     void updateTrainee_notFound_throwsException() {
         TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder()
-                .userId(2L)
+                .id(2L)
                 .build();
 
         when(dao.getById(2L)).thenReturn(null);
@@ -108,26 +105,8 @@ class TraineeServiceTest {
         TraineeResponse actual = service.getTraineeById(1L);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getAddress(), actual.getAddress());
         verify(dao).getById(1L);
-        verify(mapper).toResponse(trainee);
-    }
-
-    @Test
-    void getTraineeByUsername_success() {
-        Trainee trainee = GymTestProvider.constructTrainee();
-        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
-
-        when(dao.getByUsername("john.doe")).thenReturn(trainee);
-        when(mapper.toResponse(trainee)).thenReturn(expected);
-
-        TraineeResponse actual = service.getTraineeByUsername("john.doe");
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getUsername(), actual.getUsername());
-        assertEquals(expected.getAddress(), actual.getAddress());
-        verify(dao).getByUsername("john.doe");
         verify(mapper).toResponse(trainee);
     }
 }

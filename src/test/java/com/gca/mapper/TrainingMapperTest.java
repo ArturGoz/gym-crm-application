@@ -2,63 +2,74 @@ package com.gca.mapper;
 
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
+import com.gca.model.Trainee;
+import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TrainingMapperTest {
+    private static final Long TRAINER_ID = 1L;
+    private static final Long TRAINEE_ID = 2L;
+    private static final Long TYPE_ID = 7L;
+    private static final String TYPE_NAME = "Functional";
+    private static final String TYPE_NAME_YOGA = "Yoga";
+
     TrainingMapper mapper = new TrainingMapperImpl();
 
     @Test
     void testToEntity_fromCreateRequest() {
-        TrainingCreateRequest request = new TrainingCreateRequest();
-        request.setTrainerId(1L);
-        request.setTraineeId(2L);
-        request.setTrainingDate(LocalDate.of(2025, 6, 28));
-        request.setTrainingDuration(Duration.ofMinutes(90));
-        request.setTrainingName("Functional Training");
-        request.setTrainingType(new TrainingType("Functional"));
+        TrainingCreateRequest request = TrainingCreateRequest.builder()
+                .trainerId(TRAINER_ID)
+                .traineeId(TRAINEE_ID)
+                .trainingTypeId(TYPE_ID)
+                .date(LocalDate.of(2025, 6, 28))
+                .duration(90L)
+                .name(TYPE_NAME)
+                .build();
 
-        Training entity = mapper.toEntity(request);
+        Training actual = mapper.toEntity(request);
 
-        assertEquals(1L, entity.getTrainerId());
-        assertEquals(2L, entity.getTraineeId());
-        assertEquals(LocalDate.of(2025, 6, 28),
-                entity.getTrainingDate());
-        assertEquals(Duration.ofMinutes(90), entity.getTrainingDuration());
-        assertEquals("Functional Training", entity.getTrainingName());
-        assertNotNull(entity.getTrainingType());
-        assertEquals("Functional", entity.getTrainingType().getName());
+        assertEquals(LocalDate.of(2025, 6, 28), actual.getDate());
+        assertEquals(90L, actual.getDuration());
+        assertEquals(TYPE_NAME, actual.getName());
     }
 
     @Test
     void testToResponse() {
+        TrainingType type = buildTrainingType();
+
+        Trainer trainer = Trainer.builder().id(TRAINER_ID).build();
+        Trainee trainee = Trainee.builder().id(TRAINEE_ID).build();
+
         Training training = Training.builder()
                 .id(10L)
-                .trainerId(1L)
-                .traineeId(2L)
-                .trainingDate(LocalDate.of(2025, 6, 29))
-                .trainingDuration(Duration.ofHours(2))
-                .trainingName("Morning Yoga")
-                .trainingType(new TrainingType("Yoga"))
+                .trainer(trainer)
+                .trainee(trainee)
+                .type(type)
+                .date(LocalDate.of(2025, 6, 29))
+                .duration(120L)
+                .name("Morning Yoga")
                 .build();
 
-        TrainingResponse response = mapper.toResponse(training);
+        TrainingResponse actual = mapper.toResponse(training);
 
-        assertEquals(10L, response.getId());
-        assertEquals(1L, response.getTrainerId());
-        assertEquals(2L, response.getTraineeId());
-        assertEquals(LocalDate.of(2025, 6, 29),
-                response.getTrainingDate());
-        assertEquals(Duration.ofHours(2), response.getTrainingDuration());
-        assertEquals("Morning Yoga", response.getTrainingName());
-        assertNotNull(response.getTrainingType());
-        assertEquals("Yoga", response.getTrainingType().getName());
+        assertNotNull(actual);
+        assertEquals(10L, actual.getId());
+        assertEquals(LocalDate.of(2025, 6, 29), actual.getDate());
+        assertEquals(120L, actual.getDuration());
+        assertEquals("Morning Yoga", actual.getName());
+    }
+
+    private static TrainingType buildTrainingType() {
+        return TrainingType.builder()
+                .id(TYPE_ID)
+                .name(TYPE_NAME_YOGA)
+                .build();
     }
 }

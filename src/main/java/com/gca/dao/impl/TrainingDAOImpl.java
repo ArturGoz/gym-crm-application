@@ -2,13 +2,11 @@ package com.gca.dao.impl;
 
 import com.gca.dao.TrainingDAO;
 import com.gca.model.Training;
-import lombok.Data;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 
 @Repository
-@Data
 public class TrainingDAOImpl implements TrainingDAO {
     private static Long idCounter = 0L;
 

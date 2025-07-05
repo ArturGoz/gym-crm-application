@@ -10,6 +10,4 @@ public interface TrainerService {
     TrainerResponse updateTrainer(TrainerUpdateRequest request);
 
     TrainerResponse getTrainerById(Long id);
-
-    TrainerResponse getTrainerByUsername(String username);
 }

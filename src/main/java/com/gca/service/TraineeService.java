@@ -12,6 +12,4 @@ public interface TraineeService {
     void deleteTrainee(Long id);
 
     TraineeResponse getTraineeById(Long id);
-
-    TraineeResponse getTraineeByUsername(String username);
 }

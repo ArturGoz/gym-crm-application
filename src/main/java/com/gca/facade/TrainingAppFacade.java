@@ -26,7 +26,7 @@ public class TrainingAppFacade {
     private final TrainingService trainingService;
 
     public TraineeResponse createTrainee(TraineeCreateRequest request) {
-        logger.info("Facade: Creating trainee {} {}", request.getFirstName(), request.getLastName());
+        logger.info("Facade: Creating trainee {} ", request.getUserId());
         return traineeService.createTrainee(request);
     }
 
@@ -45,29 +45,19 @@ public class TrainingAppFacade {
         return traineeService.getTraineeById(id);
     }
 
-    public TraineeResponse getTraineeByUsername(String username) {
-        logger.info("Facade: Retrieving trainee with username {}", username);
-        return traineeService.getTraineeByUsername(username);
-    }
-
     public TrainerResponse createTrainer(TrainerCreateRequest request) {
-        logger.info("Facade: Creating trainer {} {}", request.getFirstName(), request.getLastName());
+        logger.info("Facade: Creating trainer {}", request.getUserId());
         return trainerService.createTrainer(request);
     }
 
     public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
-        logger.info("Facade: Updating trainer with ID {}", request.getUserId());
+        logger.info("Facade: Updating trainer with ID {}", request.getId());
         return trainerService.updateTrainer(request);
     }
 
     public TrainerResponse getTrainerById(Long id) {
         logger.info("Facade: Retrieving trainer with ID {}", id);
         return trainerService.getTrainerById(id);
-    }
-
-    public TrainerResponse getTrainerByUsername(String username) {
-        logger.info("Facade: Retrieving trainer with username {}", username);
-        return trainerService.getTrainerByUsername(username);
     }
 
     public TrainingResponse createTraining(TrainingCreateRequest request) {

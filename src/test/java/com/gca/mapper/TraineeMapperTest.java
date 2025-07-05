@@ -4,30 +4,34 @@ import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.model.Trainee;
+import com.gca.model.User;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TraineeMapperTest {
+class TraineeMapperTest {
+    private static final Long USER_ID = 42L;
+    private static final String USERNAME = "testuser";
+    private static final String FIRSTNAME = "John";
+    private static final String LASTNAME = "Doe";
+    private static final boolean IS_ACTIVE = true;
+
     TraineeMapper mapper = new TraineeMapperImpl();
 
     @Test
     void testToEntity_fromCreateRequest() {
         TraineeCreateRequest request = TraineeCreateRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
+                .userId(USER_ID)
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
                 .address("Kyiv")
                 .build();
 
         Trainee entity = mapper.toEntity(request);
 
-        assertEquals("John", entity.getFirstName());
-        assertEquals("Doe", entity.getLastName());
+        assertNotNull(entity);
         assertEquals(LocalDate.of(2000, 1, 1), entity.getDateOfBirth());
         assertEquals("Kyiv", entity.getAddress());
     }
@@ -35,40 +39,43 @@ public class TraineeMapperTest {
     @Test
     void testToEntity_fromUpdateRequest() {
         TraineeUpdateRequest request = TraineeUpdateRequest.builder()
-                .userId(10L)
-                .isActive(false)
+                .userId(USER_ID)
                 .dateOfBirth(LocalDate.of(1999, 5, 5))
                 .address("Lviv")
                 .build();
 
         Trainee entity = mapper.toEntity(request);
 
-        assertEquals(10L, entity.getUserId());
-        assertFalse(entity.isActive());
+        assertNotNull(entity);
         assertEquals(LocalDate.of(1999, 5, 5), entity.getDateOfBirth());
         assertEquals("Lviv", entity.getAddress());
     }
 
     @Test
     void testToResponse() {
+        User user = buildUser();
         Trainee entity = Trainee.builder()
-                .userId(15L)
-                .firstName("Alice")
-                .lastName("Smith")
-                .username("alice.smith")
-                .isActive(true)
+                .id(42L)
+                .user(user)
                 .dateOfBirth(LocalDate.of(1998, 12, 12))
                 .address("Dnipro")
                 .build();
 
         TraineeResponse response = mapper.toResponse(entity);
 
-        assertEquals(15L, response.getUserId());
-        assertEquals("Alice", response.getFirstName());
-        assertEquals("Smith", response.getLastName());
-        assertEquals("alice.smith", response.getUsername());
-        assertTrue(response.isActive());
-        assertEquals(LocalDate.of(1998, 12, 12), response.getDateOfBirth());
+        assertNotNull(response);
+        assertEquals(42L, response.getId());
         assertEquals("Dnipro", response.getAddress());
+        assertEquals(LocalDate.of(1998, 12, 12), response.getDateOfBirth());
+    }
+
+    private User buildUser() {
+        return User.builder()
+                .id(USER_ID)
+                .username(USERNAME)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .isActive(IS_ACTIVE)
+                .build();
     }
 }

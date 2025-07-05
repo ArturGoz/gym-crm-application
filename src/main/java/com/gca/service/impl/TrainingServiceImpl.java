@@ -30,7 +30,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingResponse createTraining(TrainingCreateRequest request) {
-        logger.debug("Creating training {}", request.getTrainingName());
+        logger.debug("Creating training {}", request.getName());
 
         Training training = trainingMapper.toEntity(request);
         Training created = trainingDAO.create(training);

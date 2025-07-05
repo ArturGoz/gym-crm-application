@@ -1,7 +1,6 @@
 package com.gca.service.common;
 
-import com.gca.dao.TraineeDAO;
-import com.gca.dao.TrainerDAO;
+import com.gca.dao.UserDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,23 +8,16 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class UsernameGenerator {
     private static final Logger logger = LoggerFactory.getLogger(UsernameGenerator.class);
 
-    private TraineeDAO traineeDAO;
-    private TrainerDAO trainerDAO;
+    private UserDAO userDAO;
 
     @Autowired
-    public void setTraineeDAO(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
-    }
-
-    @Autowired
-    public void setTrainerDAO(TrainerDAO trainerDAO) {
-        this.trainerDAO = trainerDAO;
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     public String generate(String firstName, String lastName) {
@@ -48,7 +40,7 @@ public class UsernameGenerator {
     }
 
     private Set<String> retrieveAllExistUsernames() {
-        return Stream.concat(traineeDAO.getAllUsernames().stream(), trainerDAO.getAllUsernames().stream())
+        return userDAO.getAllUsernames().stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toSet());
     }
