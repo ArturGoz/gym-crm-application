@@ -6,8 +6,10 @@
       http://www.liquibase.org/xml/ns/dbchangelog
       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.18.xsd">
 
-    <include file="db/changelog/init/init-changeset.xml"/>
-
-    <include file="db/changelog/2025/base-changeset.xml"/>
+    <changeSet id="GCA-35-update-data" author="ArturGoz">
+        <sqlFile path="update-password.sql"
+                 relativeToChangelogFile="true"
+                 encoding="UTF-8"/>
+    </changeSet>
 
 </databaseChangeLog>
