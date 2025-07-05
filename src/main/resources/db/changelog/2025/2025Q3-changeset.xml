@@ -6,7 +6,12 @@
       http://www.liquibase.org/xml/ns/dbchangelog
       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.18.xsd">
 
-    <include file="db/changelog/init/init-changeset.xml"/>
-    <include file="db/changelog/2025/2025Q3-changeset.xml"/>
+    <changeSet id="GCA-35-update-data" author="ArturGoz">
+        <sql>
+            UPDATE users
+            SET password = 'hashed_password_trainee32'
+            WHERE password = 'hashed_password_trainee';
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>
