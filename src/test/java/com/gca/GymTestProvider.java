@@ -12,216 +12,162 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
+import com.gca.model.User;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 public class GymTestProvider {
 
-    public static TraineeCreateRequest createTraineeCreateRequest() {
-        return TraineeCreateRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
-    }
-
-    public static Trainee constructTrainee() {
-        return Trainee.builder()
-                .userId(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
-                .password("pass123")
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
-    }
-
-    public static TraineeResponse constructTraineeResponse() {
-        return TraineeResponse.builder()
-                .userId(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
-    }
-
-    public static TraineeUpdateRequest createTraineeUpdateRequest() {
-        return TraineeUpdateRequest.builder()
-                .userId(1L)
-                .isActive(true)
-                .dateOfBirth(LocalDate.of(2000, 1, 1))
-                .address("address")
-                .build();
-    }
-
     public static TrainerCreateRequest createTrainerCreateRequest() {
         return TrainerCreateRequest.builder()
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .specialization("Yoga")
-                .build();
-    }
-
-    public static Trainer constructTrainer() {
-        return Trainer.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .password("pass123")
-                .isActive(true)
-                .specialization("Yoga")
-                .build();
-    }
-
-    public static Trainer constructInactiveTrainer() {
-        return Trainer.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .password("pass123")
-                .isActive(false)
-                .specialization("Yoga")
-                .build();
-    }
-
-    public static Trainer constructUpdatedTrainer() {
-        return Trainer.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .password("pass123")
-                .isActive(true)
-                .specialization("Pilates")
-                .build();
-    }
-
-    public static TrainerResponse constructTrainerResponse() {
-        return TrainerResponse.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .isActive(true)
-                .specialization("Yoga")
-                .build();
-    }
-
-    public static TrainerResponse constructUpdatedTrainerResponse() {
-        return TrainerResponse.builder()
-                .userId(2L)
-                .firstName("Anna")
-                .lastName("Ivanova")
-                .username("anna.ivanova")
-                .isActive(true)
-                .specialization("Pilates")
+                .userId(10L)
+                .specialization(TrainingType.builder().name("Yoga").build())
                 .build();
     }
 
     public static TrainerUpdateRequest createTrainerUpdateRequest() {
         return TrainerUpdateRequest.builder()
-                .userId(2L)
-                .isActive(true)
-                .specialization("Pilates")
+                .id(2L)
+                .specialization(TrainingType.builder().name("Pilates").build())
                 .build();
     }
 
     public static TrainerUpdateRequest createTrainerUpdateRequestNotFound() {
         return TrainerUpdateRequest.builder()
-                .userId(3L)
-                .isActive(true)
-                .specialization("Crossfit")
+                .id(3L)
+                .specialization(TrainingType.builder().name("Boxing").build())
                 .build();
     }
 
-    public static TrainingType constructCardioTrainingType() {
-        return TrainingType.builder()
-                .name("Cardio")
+    public static Trainer constructTrainer() {
+        return Trainer.builder()
+                .id(2L)
+                .specialization(TrainingType.builder().name("Yoga").build())
+                .user(User.builder().id(10L).build())
                 .build();
     }
 
-    public static TrainingType constructStrengthTrainingType() {
-        return TrainingType.builder()
-                .name("Strength")
+    public static Trainer constructInactiveTrainer() {
+        return Trainer.builder()
+                .id(2L)
+                .specialization(TrainingType.builder().name("Pilates").build())
+                .user(User.builder().id(2L).build())
+                .build();
+    }
+
+    public static Trainer constructUpdatedTrainer() {
+        return Trainer.builder()
+                .id(2L)
+                .specialization(TrainingType.builder().name("Pilates").build())
+                .user(User.builder().id(2L).build())
+                .build();
+    }
+
+    public static TrainerResponse constructTrainerResponse() {
+        return TrainerResponse.builder()
+                .id(2L)
+                .userId(10L)
+                .specialization(TrainingType.builder().name("Yoga").build())
+                .build();
+    }
+
+    public static TrainerResponse constructUpdatedTrainerResponse() {
+        return TrainerResponse.builder()
+                .id(2L)
+                .userId(2L)
+                .specialization(TrainingType.builder().name("Pilates").build())
+                .build();
+    }
+
+    public static TraineeCreateRequest createTraineeCreateRequest() {
+        return TraineeCreateRequest.builder()
+                .userId(1L)
+                .address("Kyiv, Shevchenka 1")
+                .build();
+    }
+
+    public static TraineeUpdateRequest createTraineeUpdateRequest() {
+        return TraineeUpdateRequest.builder()
+                .id(1L)
+                .userId(1L)
+                .address("Kyiv, Khreschatyk 10")
+                .build();
+    }
+
+    public static Trainee constructTrainee() {
+        return Trainee.builder()
+                .id(1L)
+                .user(User.builder().id(1L).build())
+                .address("Kyiv, Shevchenka 1")
+                .build();
+    }
+
+    public static TraineeResponse constructTraineeResponse() {
+        return TraineeResponse.builder()
+                .id(1L)
+                .userId(1L)
+                .address("Kyiv, Shevchenka 1")
                 .build();
     }
 
     public static TrainingCreateRequest createTrainingCreateRequest() {
         return TrainingCreateRequest.builder()
-                .trainerId(10L)
-                .traineeId(20L)
-                .trainingDate(LocalDate.of(2025, 6, 29))
-                .trainingDuration(Duration.ofMinutes(60))
-                .trainingName("Morning Cardio")
-                .trainingType(constructCardioTrainingType())
+                .trainerId(1L)
+                .traineeId(1L)
+                .trainingTypeId(1L)
+                .date(LocalDate.of(2025, 7, 4))
+                .duration(60L)
+                .name("Cardio Session")
+                .build();
+    }
+
+    public static Training constructTrainingWithoutId() {
+        return Training.builder()
+                .date(LocalDate.of(2025, 7, 4))
+                .duration(60L)
+                .name("Cardio Session")
                 .build();
     }
 
     public static Training constructTraining() {
         return Training.builder()
                 .id(1L)
-                .trainerId(10L)
-                .traineeId(20L)
-                .trainingDate(LocalDate.of(2025, 6, 29))
-                .trainingDuration(Duration.ofMinutes(60))
-                .trainingName("Morning Cardio")
-                .trainingType(constructCardioTrainingType())
-                .build();
-    }
-
-    public static Training constructTrainingWithoutId() {
-        return Training.builder()
-                .trainerId(10L)
-                .traineeId(20L)
-                .trainingDate(LocalDate.of(2025, 6, 29))
-                .trainingDuration(Duration.ofMinutes(60))
-                .trainingName("Morning Cardio")
-                .trainingType(constructCardioTrainingType())
+                .date(LocalDate.of(2025, 7, 4))
+                .duration(60L)
+                .name("Cardio Session")
                 .build();
     }
 
     public static TrainingResponse constructTrainingResponse() {
         return TrainingResponse.builder()
                 .id(1L)
-                .trainerId(10L)
-                .traineeId(20L)
-                .trainingDate(LocalDate.of(2025, 6, 29))
-                .trainingDuration(Duration.ofMinutes(60))
-                .trainingName("Morning Cardio")
-                .trainingType(constructCardioTrainingType())
+                .trainerId(1L)
+                .traineeId(1L)
+                .trainingTypeId(1L)
+                .date(LocalDate.of(2025, 7, 4))
+                .duration(60L)
+                .name("Cardio Session")
                 .build();
     }
 
     public static Training constructStrengthTraining() {
         return Training.builder()
                 .id(2L)
-                .trainerId(11L)
-                .traineeId(21L)
-                .trainingDate(LocalDate.of(2025, 7, 1))
-                .trainingDuration(Duration.ofMinutes(45))
-                .trainingName("Evening Strength")
-                .trainingType(constructStrengthTrainingType())
+                .date(LocalDate.of(2025, 7, 5))
+                .duration(90L)
+                .name("Strength Training")
                 .build();
     }
 
     public static TrainingResponse constructStrengthTrainingResponse() {
         return TrainingResponse.builder()
                 .id(2L)
-                .trainerId(11L)
-                .traineeId(21L)
-                .trainingDate(LocalDate.of(2025, 7, 1))
-                .trainingDuration(Duration.ofMinutes(45))
-                .trainingName("Evening Strength")
-                .trainingType(constructStrengthTrainingType())
+                .trainerId(2L)
+                .traineeId(2L)
+                .trainingTypeId(2L)
+                .date(LocalDate.of(2025, 7, 5))
+                .duration(90L)
+                .name("Strength Training")
                 .build();
     }
 }

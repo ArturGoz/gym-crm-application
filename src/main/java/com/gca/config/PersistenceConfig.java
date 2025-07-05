@@ -1,5 +1,10 @@
 package com.gca.config;
 
+import com.gca.model.Trainee;
+import com.gca.model.Trainer;
+import com.gca.model.Training;
+import com.gca.model.TrainingType;
+import com.gca.model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -62,7 +67,13 @@ public class PersistenceConfig {
                 .applySettings(settings)
                 .build();
 
-        MetadataSources sources = new MetadataSources(serviceRegistry);
+        MetadataSources sources = new MetadataSources(serviceRegistry)
+                .addAnnotatedClass(Trainee.class)
+                .addAnnotatedClass(Trainer.class)
+                .addAnnotatedClass(Training.class)
+                .addAnnotatedClass(TrainingType.class)
+                .addAnnotatedClass(User.class);
+
         Metadata metadata = sources.buildMetadata();
 
         return metadata.buildSessionFactory();

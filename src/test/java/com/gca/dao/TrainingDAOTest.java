@@ -1,8 +1,11 @@
 package com.gca.dao;
 
 import com.gca.dao.impl.TrainingDAOImpl;
+import com.gca.model.Trainee;
+import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
+import com.gca.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -20,20 +23,36 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class TrainingDAOTest {
 
     private static final Long TRAINER_ID = 1L;
+    private static final String TRAINER_USERNAME = "traineruser";
+    private static final String TRAINER_FIRSTNAME = "Jane";
+    private static final String TRAINER_LASTNAME = "Smith";
+    private static final String TRAINER_PASSWORD = "trainerpass";
+    private static final Long TRAINER_USER_ID = 1001L;
+
     private static final Long TRAINEE_ID = 2L;
-    private static final LocalDate TRAINING_DATE =
-            LocalDate.of(2025, 6, 27);
+    private static final String TRAINEE_USERNAME = "traineeuser";
+    private static final String TRAINEE_FIRSTNAME = "Ivan";
+    private static final String TRAINEE_LASTNAME = "Ivanov";
+    private static final String TRAINEE_PASSWORD = "traineepass";
+    private static final Long TRAINEE_USER_ID = 1002L;
+
+    private static final LocalDate TRAINING_DATE = LocalDate.of(2025, 6, 27);
     private static final Duration TRAINING_DURATION = Duration.ofHours(1);
     private static final String TRAINING_NAME = "Morning Yoga";
-    private static final TrainingType TRAINING_TYPE = new TrainingType("Yoga");
+    private static final Long TRAINING_DURATION_MINUTES = TRAINING_DURATION.toMinutes();
+
+    private static final Long TRAINING_TYPE_ID = 999L;
+    private static final String TRAINING_TYPE_NAME = "Yoga";
 
     private TrainingDAOImpl dao;
+
     private Map<Long, Training> trainingStorage;
 
     @BeforeEach
     void setUp() {
         trainingStorage = new HashMap<>();
         dao = new TrainingDAOImpl();
+
         ReflectionTestUtils.setField(dao, "storage", trainingStorage);
     }
 
@@ -44,12 +63,23 @@ class TrainingDAOTest {
         Training actual = dao.create(expected);
 
         assertNotNull(actual.getId());
-        assertEquals(expected.getTrainerId(), actual.getTrainerId());
-        assertEquals(expected.getTraineeId(), actual.getTraineeId());
-        assertEquals(expected.getTrainingDate(), actual.getTrainingDate());
-        assertEquals(expected.getTrainingDuration(), actual.getTrainingDuration());
-        assertEquals(expected.getTrainingName(), actual.getTrainingName());
-        assertEquals(expected.getTrainingType(), actual.getTrainingType());
+
+        assertNotNull(actual.getTrainer());
+        assertEquals(expected.getTrainer().getId(), actual.getTrainer().getId());
+        assertEquals(expected.getTrainer().getUser().getId(), actual.getTrainer().getUser().getId());
+
+        assertNotNull(actual.getTrainee());
+        assertEquals(expected.getTrainee().getId(), actual.getTrainee().getId());
+        assertEquals(expected.getTrainee().getUser().getId(), actual.getTrainee().getUser().getId());
+
+        assertEquals(expected.getDate(), actual.getDate());
+        assertEquals(expected.getDuration(), actual.getDuration());
+        assertEquals(expected.getName(), actual.getName());
+
+        assertNotNull(actual.getType());
+        assertEquals(expected.getType().getId(), actual.getType().getId());
+        assertEquals(expected.getType().getName(), actual.getType().getName());
+
         assertEquals(actual, trainingStorage.get(actual.getId()));
     }
 
@@ -63,9 +93,9 @@ class TrainingDAOTest {
         assertNotNull(actual);
         assertEquals(created, actual);
         assertEquals(created.getId(), actual.getId());
-        assertEquals(created.getTrainerId(), actual.getTrainerId());
-        assertEquals(created.getTraineeId(), actual.getTraineeId());
-        assertEquals(created.getTrainingDate(), actual.getTrainingDate());
+        assertEquals(created.getTrainer().getId(), actual.getTrainer().getId());
+        assertEquals(created.getTrainee().getId(), actual.getTrainee().getId());
+        assertEquals(created.getDate(), actual.getDate());
     }
 
     @Test
@@ -88,23 +118,62 @@ class TrainingDAOTest {
 
     private Training buildTraining() {
         return Training.builder()
-                .trainerId(TRAINER_ID)
-                .traineeId(TRAINEE_ID)
-                .trainingDate(TRAINING_DATE)
-                .trainingDuration(TRAINING_DURATION)
-                .trainingName(TRAINING_NAME)
-                .trainingType(TRAINING_TYPE)
+                .trainer(buildTrainer())
+                .trainee(buildTrainee())
+                .date(TRAINING_DATE)
+                .duration(TRAINING_DURATION_MINUTES)
+                .name(TRAINING_NAME)
+                .type(buildTrainingType())
                 .build();
     }
 
     private Training buildTraining(String trainingName) {
         return Training.builder()
-                .trainerId(TRAINER_ID)
-                .traineeId(TRAINEE_ID)
-                .trainingDate(TRAINING_DATE)
-                .trainingDuration(TRAINING_DURATION)
-                .trainingName(trainingName)
-                .trainingType(TRAINING_TYPE)
+                .trainer(buildTrainer())
+                .trainee(buildTrainee())
+                .date(TRAINING_DATE)
+                .duration(TRAINING_DURATION_MINUTES)
+                .name(trainingName)
+                .type(buildTrainingType())
+                .build();
+    }
+
+    private Trainer buildTrainer() {
+        return Trainer.builder()
+                .id(TRAINER_ID)
+                .user(User.builder()
+                        .id(TRAINER_USER_ID)
+                        .username(TRAINER_USERNAME)
+                        .firstName(TRAINER_FIRSTNAME)
+                        .lastName(TRAINER_LASTNAME)
+                        .password(TRAINER_PASSWORD)
+                        .isActive(true)
+                        .build())
+                .build();
+    }
+
+    private Trainee buildTrainee() {
+        return Trainee.builder()
+                .id(TRAINEE_ID)
+                .user(buildUser())
+                .build();
+    }
+
+    private User buildUser() {
+        return User.builder()
+                .id(TRAINEE_USER_ID)
+                .username(TRAINEE_USERNAME)
+                .firstName(TRAINEE_FIRSTNAME)
+                .lastName(TRAINEE_LASTNAME)
+                .password(TRAINEE_PASSWORD)
+                .isActive(true)
+                .build();
+    }
+
+    private TrainingType buildTrainingType() {
+        return TrainingType.builder()
+                .id(TRAINING_TYPE_ID)
+                .name(TRAINING_TYPE_NAME)
                 .build();
     }
 }

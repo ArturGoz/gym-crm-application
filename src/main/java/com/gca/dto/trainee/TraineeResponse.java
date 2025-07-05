@@ -12,11 +12,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TraineeResponse {
+    private Long id;
     private Long userId;
-    private String firstName;
-    private String lastName;
-    private String username;
-    private boolean isActive;
     private LocalDate dateOfBirth;
     private String address;
 }

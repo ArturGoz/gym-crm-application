@@ -44,7 +44,7 @@ class TrainingServiceTest {
 
         assertEquals(expected, actual);
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getTrainingType(), actual.getTrainingType());
+        assertEquals(expected.getName(), actual.getName());
         verify(mapper).toEntity(request);
         verify(dao).create(any(Training.class));
         verify(mapper).toResponse(any(Training.class));
@@ -62,7 +62,7 @@ class TrainingServiceTest {
 
         assertEquals(expected, actual);
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getTrainingType(), actual.getTrainingType());
+        assertEquals(expected.getDate(), actual.getDate());
         verify(dao).getById(2L);
         verify(mapper).toResponse(training);
     }

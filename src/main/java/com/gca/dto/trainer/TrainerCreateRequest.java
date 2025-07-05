@@ -1,5 +1,6 @@
 package com.gca.dto.trainer;
 
+import com.gca.model.TrainingType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainerCreateRequest {
-    private String firstName;
-    private String lastName;
-    private String specialization;
+    private Long userId;
+    private TrainingType specialization;
 }

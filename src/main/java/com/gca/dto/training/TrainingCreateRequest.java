@@ -1,12 +1,10 @@
 package com.gca.dto.training;
 
-import com.gca.model.TrainingType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 @Data
@@ -16,8 +14,8 @@ import java.time.LocalDate;
 public class TrainingCreateRequest {
     private Long trainerId;
     private Long traineeId;
-    private LocalDate trainingDate;
-    private Duration trainingDuration;
-    private String trainingName;
-    private TrainingType trainingType;
+    private Long trainingTypeId;
+    private LocalDate date;
+    private Long duration;
+    private String name;
 }
