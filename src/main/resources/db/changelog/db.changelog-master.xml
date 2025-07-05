@@ -13,4 +13,9 @@
                 encoding="UTF-8"/>
     </changeSet>
 
+    <changeSet id="init-data-sql" author="ArturGoz">
+        <sqlFile
+                path="scripts/init-data.sql"
+                relativeToChangelogFile="true"/>
+    </changeSet>
 </databaseChangeLog>
