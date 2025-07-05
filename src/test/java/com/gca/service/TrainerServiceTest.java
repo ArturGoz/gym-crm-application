@@ -36,7 +36,7 @@ class TrainerServiceTest {
     private TrainerServiceImpl service;
 
     @Test
-     void createTrainer_success() {
+    void createTrainer_success() {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
         Trainer trainer = GymTestProvider.constructTrainer();
 

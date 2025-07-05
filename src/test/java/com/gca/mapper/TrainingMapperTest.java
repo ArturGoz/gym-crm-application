@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TrainingMapperTest {
-    TrainingMapper mapper = new TrainingMapperImpl();
-
     private static final Long STATIC_TRAINER_ID = 1L;
     private static final Long STATIC_TRAINEE_ID = 2L;
     private static final Long STATIC_TYPE_ID = 7L;
     private static final String STATIC_TYPE_NAME = "Functional";
     private static final String STATIC_TYPE_NAME_YOGA = "Yoga";
+
+    TrainingMapper mapper = new TrainingMapperImpl();
 
     @Test
     void testToEntity_fromCreateRequest() {

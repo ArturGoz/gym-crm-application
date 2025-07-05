@@ -78,6 +78,7 @@ public class GymTestProvider {
                 .specialization(TrainingType.builder().name("Pilates").build())
                 .build();
     }
+
     public static TraineeCreateRequest createTraineeCreateRequest() {
         return TraineeCreateRequest.builder()
                 .userId(1L)
