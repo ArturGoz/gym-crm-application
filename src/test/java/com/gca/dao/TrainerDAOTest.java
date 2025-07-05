@@ -16,16 +16,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TrainerDAOTest {
 
-    private static final Long STATIC_USER_ID = 1001L;
-    private static final Long STATIC_TYPE_ID = 991L;
+    private static final Long USER_ID = 1001L;
+    private static final Long TYPE_ID = 991L;
 
-    private static final String STATIC_USERNAME = "traineruser";
-    private static final String STATIC_FIRSTNAME = "Jane";
-    private static final String STATIC_LASTNAME = "Smith";
-    private static final String STATIC_PASSWORD = "trainerpass";
-    private static final String STATIC_TYPE_NAME = "Fitness";
+    private static final String USERNAME = "traineruser";
+    private static final String FIRSTNAME = "Jane";
+    private static final String LASTNAME = "Smith";
+    private static final String PASSWORD = "trainerpass";
+    private static final String TYPE_NAME = "Fitness";
 
-    private static final boolean STATIC_IS_ACTIVE = true;
+    private static final boolean IS_ACTIVE = true;
 
     private TrainerDAOImpl dao;
 
@@ -41,7 +41,7 @@ class TrainerDAOTest {
 
     @Test
     void shouldSuccessfullyCreateTrainer() {
-        Trainer expected = buildTrainer(1L, STATIC_USER_ID, STATIC_USERNAME);
+        Trainer expected = buildTrainer(1L, USER_ID, USERNAME);
 
         Trainer actual = dao.create(expected);
 
@@ -106,18 +106,22 @@ class TrainerDAOTest {
     private Trainer buildTrainer(Long trainerId, Long userId, String username) {
         return Trainer.builder()
                 .id(trainerId)
-                .user(User.builder()
-                        .id(userId)
-                        .username(username)
-                        .firstName(STATIC_FIRSTNAME)
-                        .lastName(STATIC_LASTNAME)
-                        .password(STATIC_PASSWORD)
-                        .isActive(STATIC_IS_ACTIVE)
-                        .build())
+                .user(buildUser(userId, username))
                 .specialization(TrainingType.builder()
-                        .id(STATIC_TYPE_ID)
-                        .name(STATIC_TYPE_NAME)
+                        .id(TYPE_ID)
+                        .name(TYPE_NAME)
                         .build())
+                .build();
+    }
+
+    private User buildUser(Long userId, String username) {
+        return User.builder()
+                .id(userId)
+                .username(username)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .password(PASSWORD)
+                .isActive(IS_ACTIVE)
                 .build();
     }
 }

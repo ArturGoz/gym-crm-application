@@ -46,7 +46,7 @@ public class Trainee {
     @Column(name = "date_of_birth", nullable = true)
     private LocalDate dateOfBirth;
 
-    @Column(name = "address", length = 255)
+    @Column(name = "address", length = 255, nullable = true)
     private String address;
 
     @ToString.Exclude

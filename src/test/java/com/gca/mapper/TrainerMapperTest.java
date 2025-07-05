@@ -14,20 +14,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TrainerMapperTest {
-    private static final Long STATIC_USER_ID = 30L;
-    private static final String STATIC_USERNAME = "alice.smith";
-    private static final String STATIC_FIRSTNAME = "Alice";
-    private static final String STATIC_LASTNAME = "Smith";
-    private static final boolean STATIC_IS_ACTIVE = true;
-    private static final Long STATIC_SPECIALIZATION_ID = 42L;
-    private static final String STATIC_SPECIALIZATION_NAME = "Pilates";
+    private static final Long USER_ID = 30L;
+    private static final String USERNAME = "alice.smith";
+    private static final String FIRSTNAME = "Alice";
+    private static final String LASTNAME = "Smith";
+    private static final boolean IS_ACTIVE = true;
+    private static final Long SPECIALIZATION_ID = 42L;
+    private static final String SPECIALIZATION_NAME = "Pilates";
 
     TrainerMapper mapper = new TrainerMapperImpl();
 
     @Test
     void testToEntity_fromCreateRequest() {
         TrainerCreateRequest request = TrainerCreateRequest.builder()
-                .userId(STATIC_USER_ID)
+                .userId(USER_ID)
                 .specialization(buildTrainingType("Crossfit"))
                 .build();
 
@@ -57,7 +57,7 @@ class TrainerMapperTest {
         Trainer entity = Trainer.builder()
                 .id(100L)
                 .user(user)
-                .specialization(buildTrainingType(STATIC_SPECIALIZATION_NAME))
+                .specialization(buildTrainingType(SPECIALIZATION_NAME))
                 .trainings(Collections.emptyList())
                 .trainees(Collections.emptySet())
                 .build();
@@ -66,23 +66,23 @@ class TrainerMapperTest {
 
         assertNotNull(actual);
         assertEquals(100L, actual.getId());
-        assertEquals(STATIC_SPECIALIZATION_ID, actual.getSpecialization().getId());
-        assertEquals(STATIC_SPECIALIZATION_NAME, actual.getSpecialization().getName());
+        assertEquals(SPECIALIZATION_ID, actual.getSpecialization().getId());
+        assertEquals(SPECIALIZATION_NAME, actual.getSpecialization().getName());
     }
 
     private User buildUser() {
         return User.builder()
-                .id(STATIC_USER_ID)
-                .username(STATIC_USERNAME)
-                .firstName(STATIC_FIRSTNAME)
-                .lastName(STATIC_LASTNAME)
-                .isActive(STATIC_IS_ACTIVE)
+                .id(USER_ID)
+                .username(USERNAME)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .isActive(IS_ACTIVE)
                 .build();
     }
 
     private TrainingType buildTrainingType(String name) {
         return TrainingType.builder()
-                .id(STATIC_SPECIALIZATION_ID)
+                .id(SPECIALIZATION_ID)
                 .name(name)
                 .build();
     }

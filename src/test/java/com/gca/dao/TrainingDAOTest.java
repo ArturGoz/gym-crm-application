@@ -155,14 +155,18 @@ class TrainingDAOTest {
     private Trainee buildTrainee() {
         return Trainee.builder()
                 .id(TRAINEE_ID)
-                .user(User.builder()
-                        .id(TRAINEE_USER_ID)
-                        .username(TRAINEE_USERNAME)
-                        .firstName(TRAINEE_FIRSTNAME)
-                        .lastName(TRAINEE_LASTNAME)
-                        .password(TRAINEE_PASSWORD)
-                        .isActive(true)
-                        .build())
+                .user(buildUser())
+                .build();
+    }
+
+    private User buildUser() {
+        return User.builder()
+                .id(TRAINEE_USER_ID)
+                .username(TRAINEE_USERNAME)
+                .firstName(TRAINEE_FIRSTNAME)
+                .lastName(TRAINEE_LASTNAME)
+                .password(TRAINEE_PASSWORD)
+                .isActive(true)
                 .build();
     }
 

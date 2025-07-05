@@ -13,18 +13,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TraineeMapperTest {
-    private static final Long STATIC_USER_ID = 42L;
-    private static final String STATIC_USERNAME = "testuser";
-    private static final String STATIC_FIRSTNAME = "John";
-    private static final String STATIC_LASTNAME = "Doe";
-    private static final boolean STATIC_IS_ACTIVE = true;
+    private static final Long USER_ID = 42L;
+    private static final String USERNAME = "testuser";
+    private static final String FIRSTNAME = "John";
+    private static final String LASTNAME = "Doe";
+    private static final boolean IS_ACTIVE = true;
 
     TraineeMapper mapper = new TraineeMapperImpl();
 
     @Test
     void testToEntity_fromCreateRequest() {
         TraineeCreateRequest request = TraineeCreateRequest.builder()
-                .userId(STATIC_USER_ID)
+                .userId(USER_ID)
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
                 .address("Kyiv")
                 .build();
@@ -39,7 +39,7 @@ class TraineeMapperTest {
     @Test
     void testToEntity_fromUpdateRequest() {
         TraineeUpdateRequest request = TraineeUpdateRequest.builder()
-                .userId(STATIC_USER_ID)
+                .userId(USER_ID)
                 .dateOfBirth(LocalDate.of(1999, 5, 5))
                 .address("Lviv")
                 .build();
@@ -71,11 +71,11 @@ class TraineeMapperTest {
 
     private User buildUser() {
         return User.builder()
-                .id(STATIC_USER_ID)
-                .username(STATIC_USERNAME)
-                .firstName(STATIC_FIRSTNAME)
-                .lastName(STATIC_LASTNAME)
-                .isActive(STATIC_IS_ACTIVE)
+                .id(USER_ID)
+                .username(USERNAME)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .isActive(IS_ACTIVE)
                 .build();
     }
 }

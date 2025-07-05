@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 class TraineeDAOTest {
 
-    private static final Long STATIC_USER_ID = 111L;
-    private static final String STATIC_USERNAME = "testuser";
-    private static final String STATIC_FIRSTNAME = "John";
-    private static final String STATIC_LASTNAME = "Doe";
-    private static final String STATIC_PASSWORD = "pass";
-    private static final LocalDate STATIC_BIRTHDAY = LocalDate.of(2000, 1, 1);
-    private static final String STATIC_ADDRESS = "Some address";
-    private static final boolean STATIC_IS_ACTIVE = true;
+    private static final Long USER_ID = 111L;
+    private static final String USERNAME = "testuser";
+    private static final String FIRSTNAME = "John";
+    private static final String LASTNAME = "Doe";
+    private static final String PASSWORD = "pass";
+    private static final LocalDate BIRTHDAY = LocalDate.of(2000, 1, 1);
+    private static final String ADDRESS = "Some address";
+    private static final boolean IS_ACTIVE = true;
 
     private Map<Long, Trainee> traineeStorage;
 
@@ -40,7 +40,7 @@ class TraineeDAOTest {
 
     @Test
     void shouldSuccessfullyCreateTrainee() {
-        Trainee expected = buildTrainee(1L, STATIC_USER_ID, STATIC_USERNAME);
+        Trainee expected = buildTrainee(1L, USER_ID, USERNAME);
 
         Trainee actual = dao.create(expected);
 
@@ -112,16 +112,20 @@ class TraineeDAOTest {
     private Trainee buildTrainee(Long traineeId, Long userId, String username) {
         return Trainee.builder()
                 .id(traineeId)
-                .dateOfBirth(STATIC_BIRTHDAY)
-                .address(STATIC_ADDRESS)
-                .user(User.builder()
-                        .id(userId)
-                        .username(username)
-                        .firstName(STATIC_FIRSTNAME)
-                        .lastName(STATIC_LASTNAME)
-                        .password(STATIC_PASSWORD)
-                        .isActive(STATIC_IS_ACTIVE)
-                        .build())
+                .dateOfBirth(BIRTHDAY)
+                .address(ADDRESS)
+                .user(buildUser(userId, username))
+                .build();
+    }
+
+    private User buildUser(Long userId, String username) {
+        return User.builder()
+                .id(userId)
+                .username(username)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .password(PASSWORD)
+                .isActive(IS_ACTIVE)
                 .build();
     }
 }

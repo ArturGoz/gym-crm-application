@@ -2,13 +2,11 @@ package com.gca.dao.impl;
 
 import com.gca.dao.UserDAO;
 import com.gca.model.User;
-import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Data
 public class UserDAOImpl implements UserDAO {
     protected Map<Long, User> storage;
 
