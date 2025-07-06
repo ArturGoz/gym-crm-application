@@ -19,7 +19,7 @@ public class TrainingDAOImpl implements TrainingDAO {
 
     @Override
     public Training create(Training training) {
-        Session session = sessionFactory.openSession();
+        Session session = sessionFactory.getCurrentSession();
         session.persist(training);
 
         return training;

@@ -20,7 +20,7 @@ public class TrainerDAOImpl implements TrainerDAO {
 
     @Override
     public Trainer create(Trainer trainer) {
-        Session session = sessionFactory.openSession();
+        Session session = sessionFactory.getCurrentSession();
         session.persist(trainer);
 
         return trainer;
@@ -28,7 +28,7 @@ public class TrainerDAOImpl implements TrainerDAO {
 
     @Override
     public Trainer update(Trainer trainer) {
-        Session session = sessionFactory.openSession();
+        Session session = sessionFactory.getCurrentSession();
         Trainer existingTrainer = session.find(Trainer.class, trainer.getId());
 
         if (existingTrainer == null) {
