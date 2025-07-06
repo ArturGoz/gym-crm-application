@@ -6,20 +6,23 @@ import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
-import org.junit.jupiter.api.BeforeEach;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class TrainingDAOTest {
 
     private static final Long TRAINER_ID = 1L;
@@ -44,74 +47,67 @@ class TrainingDAOTest {
     private static final Long TRAINING_TYPE_ID = 999L;
     private static final String TRAINING_TYPE_NAME = "Yoga";
 
+    @Mock
+    private SessionFactory sessionFactory;
+
+    @Mock
+    private Session session;
+
+    @InjectMocks
     private TrainingDAOImpl dao;
-
-    private Map<Long, Training> trainingStorage;
-
-    @BeforeEach
-    void setUp() {
-        trainingStorage = new HashMap<>();
-        //dao = new TrainingDAOImpl();
-
-        ReflectionTestUtils.setField(dao, "storage", trainingStorage);
-    }
 
     @Test
     void shouldSuccessfullyCreateTraining() {
         Training expected = buildTraining();
 
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
+
         Training actual = dao.create(expected);
 
-        assertNotNull(actual.getId());
+        verify(sessionFactory).getCurrentSession();
+        verify(session).persist(expected);
 
-        assertNotNull(actual.getTrainer());
-        assertEquals(expected.getTrainer().getId(), actual.getTrainer().getId());
-        assertEquals(expected.getTrainer().getUser().getId(), actual.getTrainer().getUser().getId());
-
-        assertNotNull(actual.getTrainee());
-        assertEquals(expected.getTrainee().getId(), actual.getTrainee().getId());
-        assertEquals(expected.getTrainee().getUser().getId(), actual.getTrainee().getUser().getId());
-
+        assertEquals(expected, actual);
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getDate(), actual.getDate());
         assertEquals(expected.getDuration(), actual.getDuration());
-        assertEquals(expected.getName(), actual.getName());
-
-        assertNotNull(actual.getType());
-        assertEquals(expected.getType().getId(), actual.getType().getId());
-        assertEquals(expected.getType().getName(), actual.getType().getName());
-
-        assertEquals(actual, trainingStorage.get(actual.getId()));
+        assertEquals(expected.getType(), actual.getType());
     }
 
     @Test
     void shouldReturnTrainingById() {
+        Long trainingId = 123L;
         Training expected = buildTraining();
-        Training created = dao.create(expected);
+        expected.setId(trainingId);
 
-        Training actual = dao.getById(created.getId());
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
+        when(session.find(Training.class, trainingId)).thenReturn(expected);
 
-        assertNotNull(actual);
-        assertEquals(created, actual);
-        assertEquals(created.getId(), actual.getId());
-        assertEquals(created.getTrainer().getId(), actual.getTrainer().getId());
-        assertEquals(created.getTrainee().getId(), actual.getTrainee().getId());
-        assertEquals(created.getDate(), actual.getDate());
-    }
+        Training actual = dao.getById(trainingId);
 
-    @Test
-    void shouldAssignUniqueIdsForEachCreatedTraining() {
-        Training training1 = buildTraining("T1");
-        Training training2 = buildTraining("T2");
+        verify(sessionFactory).getCurrentSession();
+        verify(session).find(Training.class, trainingId);
 
-        Training actual1 = dao.create(training1);
-        Training actual2 = dao.create(training2);
-
-        assertNotEquals(actual1.getId(), actual2.getId());
+        assertEquals(expected, actual);
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getDate(), actual.getDate());
+        assertEquals(expected.getDuration(), actual.getDuration());
+        assertEquals(expected.getType(), actual.getType());
     }
 
     @Test
     void shouldReturnNullIfTrainingByIdNotFound() {
-        Training actual = dao.getById(12345L);
+        Long trainingId = 9999L;
+
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
+        when(session.find(Training.class, trainingId)).thenReturn(null);
+
+        Training actual = dao.getById(trainingId);
+
+        verify(sessionFactory).getCurrentSession();
+        verify(session).find(Training.class, trainingId);
 
         assertNull(actual);
     }
@@ -123,17 +119,6 @@ class TrainingDAOTest {
                 .date(TRAINING_DATE)
                 .duration(TRAINING_DURATION_MINUTES)
                 .name(TRAINING_NAME)
-                .type(buildTrainingType())
-                .build();
-    }
-
-    private Training buildTraining(String trainingName) {
-        return Training.builder()
-                .trainer(buildTrainer())
-                .trainee(buildTrainee())
-                .date(TRAINING_DATE)
-                .duration(TRAINING_DURATION_MINUTES)
-                .name(trainingName)
                 .type(buildTrainingType())
                 .build();
     }
