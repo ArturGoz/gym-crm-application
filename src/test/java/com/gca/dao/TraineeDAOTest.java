@@ -33,7 +33,7 @@ class TraineeDAOTest {
     @BeforeEach
     void setUp() {
         traineeStorage = new HashMap<>();
-        dao = new TraineeDAOImpl();
+       // dao = new TraineeDAOImpl();
 
         ReflectionTestUtils.setField(dao, "storage", traineeStorage);
     }

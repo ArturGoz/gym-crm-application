@@ -1,53 +1,58 @@
 package com.gca.dao.impl;
 
 import com.gca.dao.TraineeDAO;
+import com.gca.exception.DaoException;
 import com.gca.model.Trainee;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.Map;
 
 @Repository
 public class TraineeDAOImpl implements TraineeDAO {
-    protected Map<Long, Trainee> storage;
 
-    @Override
-    public Trainee create(Trainee entity) {
-        Long id = getNextId();
+    private final SessionFactory sessionFactory;
 
-        entity = entity.toBuilder()
-                .id(id)
-                .build();
-
-        storage.put(id, entity);
-
-        return entity;
+    @Autowired
+    public TraineeDAOImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public Trainee update(Trainee entity) {
-        if (!storage.containsKey(entity.getId())) {
-            throw new RuntimeException(String.format("%s not found with id: %s",
-                    this.getClass().getSimpleName(),
-                    entity.getId()));
-        }
-        storage.put(entity.getId(), entity);
+    public Trainee create(Trainee trainee) {
+        Session session = sessionFactory.getCurrentSession();
+        session.persist(trainee);
 
-        return entity;
+        return trainee;
+    }
+
+    @Override
+    public Trainee update(Trainee trainee) {
+        Session session = sessionFactory.getCurrentSession();
+        Trainee existingTrainee = session.find(Trainee.class, trainee.getId());
+
+        if (existingTrainee == null) {
+            throw new DaoException("Trainee with id: " + trainee.getId() + " not found");
+        }
+
+        return session.merge(trainee);
     }
 
     @Override
     public Trainee getById(Long id) {
-        return storage.get(id);
+        Session session = sessionFactory.getCurrentSession();
+
+        return session.find(Trainee.class, id);
     }
 
     @Override
     public void delete(Long id) {
-        storage.remove(id);
-    }
+        Session session = sessionFactory.getCurrentSession();
+        Trainee trainee = session.find(Trainee.class, id);
 
-    protected Long getNextId() {
-        return storage.keySet().stream()
-                .mapToLong(Long::longValue)
-                .max().orElse(0L) + 1;
+        if (trainee == null) {
+            throw new DaoException("Trainee with id: " + id + " not found");
+        }
+        session.remove(trainee);
     }
 }

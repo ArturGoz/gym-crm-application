@@ -1,63 +1,66 @@
 package com.gca.dao.impl;
 
 import com.gca.dao.UserDAO;
+import com.gca.exception.DaoException;
 import com.gca.model.User;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
+@Repository
 public class UserDAOImpl implements UserDAO {
-    protected Map<Long, User> storage;
+
+    private final SessionFactory sessionFactory;
+
+    @Autowired
+    public UserDAOImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public User create(User entity) {
-        Long id = getNextId();
-
-        entity = entity.toBuilder()
-                .id(id)
-                .build();
-
-        storage.put(id, entity);
-
+        Session session = sessionFactory.getCurrentSession();
+        session.persist(entity);
         return entity;
     }
 
     @Override
     public User update(User entity) {
-        if (!storage.containsKey(entity.getId())) {
-            throw new RuntimeException(String.format("%s not found with id: %s",
-                    this.getClass().getSimpleName(),
-                    entity.getId()));
-        }
-        storage.put(entity.getId(), entity);
+        Session session = sessionFactory.getCurrentSession();
 
-        return entity;
+        User existing = session.find(User.class, entity.getId());
+        if (existing == null) {
+            throw new DaoException("User with id: " + entity.getId() + " not found");
+        }
+
+        return session.merge(entity);
     }
 
     @Override
     public User getById(Long id) {
-        return storage.get(id);
+        Session session = sessionFactory.getCurrentSession();
+        return session.find(User.class, id);
     }
 
     @Override
     public User getByUsername(String username) {
-        return storage.values().stream()
-                .filter(user -> user.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
+        Session session = sessionFactory.getCurrentSession();
+
+        return session.createQuery(
+                        "FROM User u WHERE u.username = :username", User.class)
+                .setParameter("username", username)
+                .uniqueResult();
     }
 
     @Override
     public List<String> getAllUsernames() {
-        return storage.values().stream()
-                .map(User::getUsername)
-                .collect(Collectors.toList());
-    }
+        Session session = sessionFactory.getCurrentSession();
 
-    protected Long getNextId() {
-        return storage.keySet().stream()
-                .mapToLong(Long::longValue)
-                .max().orElse(0L) + 1;
+        return session.createQuery(
+                        "SELECT u.username FROM User u", String.class)
+                .getResultList();
     }
 }

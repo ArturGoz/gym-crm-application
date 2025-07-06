@@ -51,7 +51,7 @@ class TrainingDAOTest {
     @BeforeEach
     void setUp() {
         trainingStorage = new HashMap<>();
-        dao = new TrainingDAOImpl();
+        //dao = new TrainingDAOImpl();
 
         ReflectionTestUtils.setField(dao, "storage", trainingStorage);
     }
