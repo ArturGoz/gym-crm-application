@@ -21,7 +21,6 @@
             SELECT setval('trainers_id_seq', (SELECT MAX(id) FROM trainers), true);
             SELECT setval('trainees_id_seq', (SELECT MAX(id) FROM trainees), true);
             SELECT setval('trainings_id_seq', (SELECT MAX(id) FROM trainings), true);
-
         </sql>
     </changeSet>
 
