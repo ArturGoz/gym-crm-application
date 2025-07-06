@@ -14,4 +14,15 @@
         </sql>
     </changeSet>
 
+    <changeSet id="GCA-29-change-setval" author="ArturGoz">
+        <sql>
+            SELECT setval('users_id_seq', (SELECT MAX(id) FROM users), true);
+            SELECT setval('training_types_id_seq', (SELECT MAX(id) FROM training_types), true);
+            SELECT setval('trainers_id_seq', (SELECT MAX(id) FROM trainers), true);
+            SELECT setval('trainees_id_seq', (SELECT MAX(id) FROM trainees), true);
+            SELECT setval('trainings_id_seq', (SELECT MAX(id) FROM trainings), true);
+
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

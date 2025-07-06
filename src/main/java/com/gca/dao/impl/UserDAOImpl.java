@@ -2,7 +2,6 @@ package com.gca.dao.impl;
 
 import com.gca.dao.UserDAO;
 import com.gca.exception.DaoException;
-import com.gca.model.Trainee;
 import com.gca.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
