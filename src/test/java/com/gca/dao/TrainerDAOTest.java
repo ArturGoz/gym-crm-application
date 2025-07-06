@@ -1,19 +1,26 @@
 package com.gca.dao;
 
 import com.gca.dao.impl.TrainerDAOImpl;
+import com.gca.exception.DaoException;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
-import org.junit.jupiter.api.BeforeEach;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class TrainerDAOTest {
 
     private static final Long USER_ID = 1001L;
@@ -24,69 +31,57 @@ class TrainerDAOTest {
     private static final String LASTNAME = "Smith";
     private static final String PASSWORD = "trainerpass";
     private static final String TYPE_NAME = "Fitness";
-
     private static final boolean IS_ACTIVE = true;
 
+    @Mock
+    private SessionFactory sessionFactory;
+
+    @Mock
+    private Session session;
+
+    @InjectMocks
     private TrainerDAOImpl dao;
-
-    private Map<Long, Trainer> trainerStorage;
-
-    @BeforeEach
-    void setUp() {
-        trainerStorage = new HashMap<>();
-        dao = new TrainerDAOImpl();
-
-        ReflectionTestUtils.setField(dao, "storage", trainerStorage);
-    }
 
     @Test
     void shouldSuccessfullyCreateTrainer() {
         Trainer expected = buildTrainer(1L, USER_ID, USERNAME);
 
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
+
         Trainer actual = dao.create(expected);
 
-        assertNotNull(actual.getId());
+        verify(sessionFactory).getCurrentSession();
+        verify(session).persist(expected);
+
+        assertEquals(expected, actual);
         assertEquals(expected.getId(), actual.getId());
-
-        assertNotNull(actual.getUser());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
         assertEquals(expected.getUser().getId(), actual.getUser().getId());
-        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
-        assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
-        assertEquals(expected.getUser().getLastName(), actual.getUser().getLastName());
-        assertEquals(expected.getUser().getPassword(), actual.getUser().getPassword());
-        assertEquals(expected.getUser().getIsActive(), actual.getUser().getIsActive());
-
-        assertNotNull(actual.getSpecialization());
-        assertEquals(expected.getSpecialization().getId(), actual.getSpecialization().getId());
-        assertEquals(expected.getSpecialization().getName(), actual.getSpecialization().getName());
-
-        assertEquals(actual, trainerStorage.get(expected.getId()));
     }
 
     @Test
     void shouldReturnTrainerById() {
         Long trainerId = 10L;
-        Long userId = 20L;
-        String username = "user10";
-        Trainer expected = buildTrainer(trainerId, userId, username);
+        Trainer expected = buildTrainer(trainerId, 20L, "user10");
 
-        trainerStorage.put(trainerId, expected);
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
+        when(session.find(Trainer.class, trainerId)).thenReturn(expected);
 
         Trainer actual = dao.getById(trainerId);
 
-        assertNotNull(actual);
+        verify(sessionFactory).getCurrentSession();
+        verify(session).find(Trainer.class, trainerId);
+
         assertEquals(expected, actual);
-        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
+        assertEquals(expected.getUser().getId(), actual.getUser().getId());
     }
 
     @Test
     void shouldUpdateTrainer() {
         Long trainerId = 5L;
-        Long userId = 105L;
-        String username = "upduser";
-        Trainer trainer = buildTrainer(trainerId, userId, username);
-
-        trainerStorage.put(trainerId, trainer);
+        Trainer trainer = buildTrainer(trainerId, 105L, "upduser");
 
         TrainingType newType = TrainingType.builder()
                 .id(123L)
@@ -97,10 +92,35 @@ class TrainerDAOTest {
                 .specialization(newType)
                 .build();
 
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
+        when(session.find(Trainer.class, trainerId)).thenReturn(trainer);
+        when(session.merge(expected)).thenReturn(expected);
+
         Trainer actual = dao.update(expected);
 
-        assertEquals("Yoga", actual.getSpecialization().getName());
+        verify(sessionFactory).getCurrentSession();
+        verify(session).find(Trainer.class, trainerId);
+        verify(session).merge(expected);
+
         assertEquals(expected, actual);
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
+        assertEquals(expected.getUser().getId(), actual.getUser().getId());
+    }
+
+    @Test
+    void shouldThrowWhenUpdatingNonExistingTrainer() {
+        Long trainerId = 5L;
+        Trainer trainer = buildTrainer(trainerId, 105L, "upduser");
+
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
+        when(session.find(Trainer.class, trainerId)).thenReturn(null);
+
+        assertThrows(DaoException.class, () -> dao.update(trainer));
+
+        verify(sessionFactory).getCurrentSession();
+        verify(session).find(Trainer.class, trainerId);
+        verify(session, never()).merge(any());
     }
 
     private Trainer buildTrainer(Long trainerId, Long userId, String username) {

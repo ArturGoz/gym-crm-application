@@ -1,48 +1,47 @@
 package com.gca.dao.impl;
 
 import com.gca.dao.TrainerDAO;
+import com.gca.exception.DaoException;
 import com.gca.model.Trainer;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.Map;
 
 @Repository
 public class TrainerDAOImpl implements TrainerDAO {
-    protected Map<Long, Trainer> storage;
 
-    @Override
-    public Trainer create(Trainer entity) {
-        Long id = getNextId();
+    private final SessionFactory sessionFactory;
 
-        entity = entity.toBuilder()
-                .id(id)
-                .build();
-
-        storage.put(id, entity);
-
-        return entity;
+    @Autowired
+    public TrainerDAOImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public Trainer update(Trainer entity) {
-        if (!storage.containsKey(entity.getId())) {
-            throw new RuntimeException(String.format("%s not found with id: %s",
-                    this.getClass().getSimpleName(),
-                    entity.getId()));
-        }
-        storage.put(entity.getId(), entity);
+    public Trainer create(Trainer trainer) {
+        Session session = sessionFactory.getCurrentSession();
+        session.persist(trainer);
 
-        return entity;
+        return trainer;
+    }
+
+    @Override
+    public Trainer update(Trainer trainer) {
+        Session session = sessionFactory.getCurrentSession();
+        Trainer existingTrainer = session.find(Trainer.class, trainer.getId());
+
+        if (existingTrainer == null) {
+            throw new DaoException("Trainer with id: " + trainer.getId() + " not found");
+        }
+
+        return session.merge(trainer);
     }
 
     @Override
     public Trainer getById(Long id) {
-        return storage.get(id);
-    }
+        Session session = sessionFactory.getCurrentSession();
 
-    protected Long getNextId() {
-        return storage.keySet().stream()
-                .mapToLong(Long::longValue)
-                .max().orElse(0L) + 1;
+        return session.find(Trainer.class, id);
     }
 }

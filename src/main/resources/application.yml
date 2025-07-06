@@ -1,7 +1,3 @@
-storage:
-  init:
-    file: init-data.txt
-
 spring:
   datasource:
     url: ${DB_URL}

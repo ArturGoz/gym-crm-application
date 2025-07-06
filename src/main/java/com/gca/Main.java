@@ -11,6 +11,7 @@ public class Main {
 
         context.register(PersistenceConfig.class, LiquibaseConfig.class);
         context.refresh();
+
         context.close();
     }
 }
