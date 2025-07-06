@@ -2,6 +2,7 @@ package com.gca.dao.impl;
 
 import com.gca.dao.UserDAO;
 import com.gca.exception.DaoException;
+import com.gca.model.Trainee;
 import com.gca.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -43,6 +44,17 @@ public class UserDAOImpl implements UserDAO {
     public User getById(Long id) {
         Session session = sessionFactory.getCurrentSession();
         return session.find(User.class, id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Session session = sessionFactory.getCurrentSession();
+        User user = session.find(User.class, id);
+
+        if (user == null) {
+            throw new DaoException("User with id: " + id + " not found");
+        }
+        session.remove(user);
     }
 
     @Override
