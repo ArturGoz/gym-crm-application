@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ContextConfiguration(classes = TrainerDAOImpl.class)
 @DataSet(value = "dataset/trainer/trainer-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-public class TrainerDAOTest extends BaseIntegrationTest<TrainerDAOImpl> {
+public class TrainerDAOImplTest extends BaseIntegrationTest<TrainerDAOImpl> {
 
     @Test
     void shouldSuccessfullyFindTrainer() {

@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
     username: test
     password: test
     driver-class-name: org.h2.Driver
@@ -12,5 +12,5 @@ hibernate:
   format_sql: true
 
 liquibase:
-  changelog: classpath:db/changelog/test-db.changelog-master.xml
+  changelog: classpath:db/changelog/db.changelog-master.xml
 
