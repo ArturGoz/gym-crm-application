@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ContextConfiguration(classes = UserDAOImpl.class)
 @DataSet(value = "dataset/user/user-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-public class UserDAOIT extends AbstractDaoIntegrationTest<UserDAOImpl> {
+public class UserDAOIT extends AbstractDAOIT<UserDAOImpl> {
     private static final Long EXISTING_ID = 1L;
     private static final String EXISTING_USERNAME = "john.doe";
 

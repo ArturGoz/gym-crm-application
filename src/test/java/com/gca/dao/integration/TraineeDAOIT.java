@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ContextConfiguration(classes = TraineeDAOImpl.class)
 @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-class TraineeDAOIT  extends AbstractDaoIntegrationTest<TraineeDAOImpl> {
+class TraineeDAOIT  extends AbstractDAOIT<TraineeDAOImpl> {
 
     private static final LocalDate BIRTHDAY = LocalDate.of(2000, 1, 1);
     private static final String ADDRESS = "Some address";

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ContextConfiguration(classes = TrainerDAOImpl.class)
 @DataSet(value = "dataset/trainer/trainer-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-public class TrainerDAOIT extends AbstractDaoIntegrationTest<TrainerDAOImpl> {
+public class TrainerDAOIT extends AbstractDAOIT<TrainerDAOImpl> {
 
     @Autowired
     void setDao(TrainerDAOImpl dao) {

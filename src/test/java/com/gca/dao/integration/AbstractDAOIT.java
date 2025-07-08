@@ -22,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles("test")
 @DBRider
 @DBUnit(cacheConnection = true, leakHunter = true, caseSensitiveTableNames = false, schema = "PUBLIC")
-public abstract class AbstractDaoIntegrationTest<T> {
+public abstract class AbstractDAOIT<T> {
 
     @Autowired
     protected SessionFactory sessionFactory;
@@ -32,7 +32,7 @@ public abstract class AbstractDaoIntegrationTest<T> {
     protected T dao;
 
     @BeforeEach
-    void startTransaction() throws Exception {
+    void startTransaction() {
         transaction = sessionFactory.getCurrentSession().beginTransaction();
     }
 
