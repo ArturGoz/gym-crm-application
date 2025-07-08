@@ -5,7 +5,6 @@ import com.gca.exception.DaoException;
 import com.gca.model.User;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 
@@ -15,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ContextConfiguration(classes = UserDAOImpl.class)
 @DataSet(value = "dataset/user/user-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
 public class UserDAOImplTest extends BaseIntegrationTest<UserDAOImpl> {
     private static final Long EXISTING_ID = 1L;

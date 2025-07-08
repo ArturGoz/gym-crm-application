@@ -8,7 +8,6 @@ import com.gca.model.TrainingType;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.time.LocalDate;
 
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 
-@ContextConfiguration(classes = TrainingDAOImpl.class)
 @DataSet(value = "dataset/training/training-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
 public class TrainingDAOImplTest extends BaseIntegrationTest<TrainingDAOImpl> {
 

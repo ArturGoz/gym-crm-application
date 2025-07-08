@@ -7,13 +7,11 @@ import com.gca.model.User;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@ContextConfiguration(classes = TrainerDAOImpl.class)
 @DataSet(value = "dataset/trainer/trainer-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
 public class TrainerDAOImplTest extends BaseIntegrationTest<TrainerDAOImpl> {
 
