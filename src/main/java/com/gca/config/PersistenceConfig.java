@@ -60,6 +60,7 @@ public class PersistenceConfig {
         dataSource.setUrl(dbUrl);
         dataSource.setUser(dbUsername);
         dataSource.setPassword(dbPassword);
+
         return dataSource;
     }
 
