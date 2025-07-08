@@ -11,12 +11,12 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
-import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -24,7 +24,7 @@ import java.util.Properties;
 @Configuration
 @ComponentScan(basePackages = "com.gca.dao")
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
-public class PersistenceConfig {
+public class PersistenceConfigTest extends PersistenceConfig {
 
     private static final boolean SHOW_SQL = true;
     private static final boolean FORMAT_SQL = true;
@@ -56,10 +56,11 @@ public class PersistenceConfig {
 
     @Bean
     public DataSource dataSource() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setUrl(dbUrl);
-        dataSource.setUser(dbUsername);
+        dataSource.setUsername(dbUsername);
         dataSource.setPassword(dbPassword);
+        dataSource.setDriverClassName(dbDriver);
         return dataSource;
     }
 

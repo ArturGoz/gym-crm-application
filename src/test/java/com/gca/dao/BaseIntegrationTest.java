@@ -1,7 +1,7 @@
-package com.gca.dao.integration;
+package com.gca.dao;
 
 import com.gca.config.LiquibaseConfigTest;
-import com.gca.config.PersistenceConfig;
+import com.gca.config.PersistenceConfigTest;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.spring.api.DBRider;
 import org.hibernate.SessionFactory;
@@ -16,20 +16,21 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
-        PersistenceConfig.class,
+        PersistenceConfigTest.class,
         LiquibaseConfigTest.class
 })
 @ActiveProfiles("test")
 @DBRider
 @DBUnit(cacheConnection = true, leakHunter = true, caseSensitiveTableNames = false, schema = "PUBLIC")
-public abstract class AbstractDAOIT<T> {
+public abstract class BaseIntegrationTest<T> {
 
     @Autowired
     protected SessionFactory sessionFactory;
 
-    protected Transaction transaction;
-
+    @Autowired
     protected T dao;
+
+    protected Transaction transaction;
 
     @BeforeEach
     void startTransaction() {

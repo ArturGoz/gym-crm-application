@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
-@Import(PersistenceConfig.class)
+@Import(PersistenceConfigTest.class)
 public class LiquibaseConfigTest {
 
     @Value("${liquibase.changelog}")

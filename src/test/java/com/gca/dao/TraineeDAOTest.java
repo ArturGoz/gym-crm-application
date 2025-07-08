@@ -1,139 +1,93 @@
 package com.gca.dao;
 
 import com.gca.dao.impl.TraineeDAOImpl;
-import com.gca.exception.DaoException;
 import com.gca.model.Trainee;
 import com.gca.model.User;
+import com.github.database.rider.core.api.dataset.DataSet;
+import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-class TraineeDAOTest extends AbstractDAOTest {
+@ContextConfiguration(classes = TraineeDAOImpl.class)
+@DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
+class TraineeDAOTest extends BaseIntegrationTest<TraineeDAOImpl> {
 
-    private static final Long USER_ID = 111L;
-    private static final String USERNAME = "testuser";
-    private static final String FIRSTNAME = "John";
-    private static final String LASTNAME = "Doe";
-    private static final String PASSWORD = "pass";
     private static final LocalDate BIRTHDAY = LocalDate.of(2000, 1, 1);
     private static final String ADDRESS = "Some address";
-    private static final boolean IS_ACTIVE = true;
-
-    @InjectMocks
-    private TraineeDAOImpl dao;
 
     @Test
-    void shouldSuccessfullyCreateTrainee() {
-        Trainee expected = buildTrainee(1L, USER_ID, USERNAME);
+    void shouldSuccessfullyFindTrainee() {
+        Trainee expected = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
 
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
+        Trainee actual = dao.getById(expected.getId());
 
-        Trainee actual = dao.create(expected);
-
-        verify(sessionFactory).getCurrentSession();
-        verify(session).persist(expected);
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getAddress(), actual.getAddress());
+        assertNotNull(actual, "Loaded expected should not be null");
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+        assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
+        assertEquals(expected.getUser().getLastName(), actual.getUser().getLastName());
         assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
     }
 
     @Test
-    void shouldReturnTraineeById() {
-        Long traineeId = 10L;
-        Trainee expected = buildTrainee(traineeId, 20L, "user10");
+    void shouldNotFindTrainee() {
+        Trainee found = dao.getById(99L);
+        assertNull(found, "Found trainee should  be null");
+    }
 
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
-        when(session.find(Trainee.class, traineeId)).thenReturn(expected);
+    @Test
+    @DataSet(value = "dataset/trainee/trainee-creation-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
+    void shouldCreateTrainee() {
+        Trainee expected = buildTraineeFromExistingUser();
 
-        Trainee actual = dao.getById(traineeId);
+        Trainee actual = dao.create(expected);
 
-        verify(sessionFactory).getCurrentSession();
-        verify(session).find(Trainee.class, traineeId);
+        assertNotNull(actual.getId(), "Created expected should have ID");
 
-        assertEquals(expected, actual);
         assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getAddress(), actual.getAddress());
-        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
+        assertEquals(expected.getUser(), actual.getUser());
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+        assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
     }
 
     @Test
     void shouldUpdateTrainee() {
-        Long traineeId = 5L;
-        Trainee expected = buildTrainee(traineeId, 105L, "upduser");
-
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
-        when(session.find(Trainee.class, traineeId)).thenReturn(expected);
-        when(session.merge(expected)).thenReturn(expected);
+        Trainee expected = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
+        expected.setAddress("Updated Address");
 
         Trainee actual = dao.update(expected);
 
-        verify(sessionFactory).getCurrentSession();
-        verify(session).find(Trainee.class, traineeId);
-        verify(session).merge(expected);
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getAddress(), actual.getAddress());
-        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
-    }
-
-    @Test
-    void shouldThrowWhenUpdatingNonExistingTrainee() {
-        Long traineeId = 5L;
-        Trainee trainee = buildTrainee(traineeId, 105L, "upduser");
-
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
-        when(session.find(Trainee.class, traineeId)).thenReturn(null);
-
-        assertThrows(DaoException.class, () -> dao.update(trainee));
-
-        verify(sessionFactory).getCurrentSession();
-        verify(session).find(Trainee.class, traineeId);
-        verify(session, never()).merge(any());
+        assertEquals(expected.getUser(), actual.getUser());
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+        assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
     }
 
     @Test
     void shouldDeleteTraineeById() {
-        Long traineeId = 6L;
-        Trainee trainee = buildTrainee(traineeId, 106L, "deluser");
+        Trainee existing = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
+        assertNotNull(existing, "Trainee should exist before delete");
 
-        when(sessionFactory.getCurrentSession()).thenReturn(session);
-        when(session.find(Trainee.class, traineeId)).thenReturn(trainee);
+        dao.delete(1L);
 
-        dao.delete(traineeId);
+        Trainee deleted = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
 
-        verify(sessionFactory).getCurrentSession();
-        verify(session).find(Trainee.class, traineeId);
-        verify(session).remove(trainee);
+        assertNull(deleted, "Trainee should be deleted from DB");
     }
 
-    private Trainee buildTrainee(Long traineeId, Long userId, String username) {
+    private Trainee buildTraineeFromExistingUser() {
+        Session session = sessionFactory.getCurrentSession();
+        User existingUser = session.find(User.class, 2L);
         return Trainee.builder()
-                .id(traineeId)
                 .dateOfBirth(BIRTHDAY)
                 .address(ADDRESS)
-                .user(buildUser(userId, username))
-                .build();
-    }
-
-    private User buildUser(Long userId, String username) {
-        return User.builder()
-                .id(userId)
-                .username(username)
-                .firstName(FIRSTNAME)
-                .lastName(LASTNAME)
-                .password(PASSWORD)
-                .isActive(IS_ACTIVE)
+                .user(existingUser)
                 .build();
     }
 }
+
