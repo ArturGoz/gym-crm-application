@@ -4,13 +4,8 @@ import com.gca.dao.impl.TraineeDAOImpl;
 import com.gca.exception.DaoException;
 import com.gca.model.Trainee;
 import com.gca.model.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 
@@ -21,8 +16,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class TraineeDAOTest {
+class TraineeDAOTest extends AbstractDAOTest {
 
     private static final Long USER_ID = 111L;
     private static final String USERNAME = "testuser";
@@ -33,15 +27,8 @@ class TraineeDAOTest {
     private static final String ADDRESS = "Some address";
     private static final boolean IS_ACTIVE = true;
 
-    @Mock
-    private SessionFactory sessionFactory;
-
-    @Mock
-    private Session session;
-
     @InjectMocks
     private TraineeDAOImpl dao;
-
 
     @Test
     void shouldSuccessfullyCreateTrainee() {

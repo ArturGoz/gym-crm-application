@@ -6,13 +6,8 @@ import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -22,8 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class TrainingDAOTest {
+class TrainingDAOTest extends AbstractDAOTest {
 
     private static final Long TRAINER_ID = 1L;
     private static final String TRAINER_USERNAME = "traineruser";
@@ -46,12 +40,6 @@ class TrainingDAOTest {
 
     private static final Long TRAINING_TYPE_ID = 999L;
     private static final String TRAINING_TYPE_NAME = "Yoga";
-
-    @Mock
-    private SessionFactory sessionFactory;
-
-    @Mock
-    private Session session;
 
     @InjectMocks
     private TrainingDAOImpl dao;

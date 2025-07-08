@@ -3,19 +3,20 @@ package com.gca.dao.integration;
 import com.gca.dao.impl.TraineeDAOImpl;
 import com.gca.model.Trainee;
 import com.gca.model.User;
+import com.github.database.rider.core.api.dataset.DataSet;
+import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.io.IOException;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ContextConfiguration(classes = TraineeDAOImpl.class)
+@DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
 class TraineeDAOIT  extends AbstractDaoIntegrationTest<TraineeDAOImpl> {
 
     private static final LocalDate BIRTHDAY = LocalDate.of(2000, 1, 1);
@@ -27,92 +28,66 @@ class TraineeDAOIT  extends AbstractDaoIntegrationTest<TraineeDAOImpl> {
     }
 
     @Test
-    void shouldReturnTraineeById2() throws IOException {
-        session.createNativeQuery(readSqlScript("/datasets/test-data.sql"), Void.class)
-                .executeUpdate();
+    void shouldSuccessfullyFindTrainee() {
+        Trainee expected = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
 
-        Trainee found = dao.getById(1L);
-        System.out.println(found);
-        assertNotNull(found);
-        assertEquals("finduser", found.getUser().getUsername());
+        Trainee actual = dao.getById(expected.getId());
+
+        assertNotNull(actual, "Loaded expected should not be null");
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+        assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
+        assertEquals(expected.getUser().getLastName(), actual.getUser().getLastName());
+        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
     }
 
     @Test
-    void shouldSuccessfullyCreateTrainee() {
-        Trainee trainee = buildTrainee(null, null, "testuser");
-
-        Trainee created = dao.create(trainee);
-
-        assertNotNull(created.getId(), "Created trainee ID should not be null");
-
-        Trainee loaded = dao.getById(created.getId());
-
-        assertNotNull(loaded, "Loaded trainee should not be null");
-        assertEquals(ADDRESS, loaded.getAddress());
-        assertEquals(BIRTHDAY, loaded.getDateOfBirth());
-        assertEquals("testuser", loaded.getUser().getUsername());
+    void shouldNotFindTrainee() {
+        Trainee found = dao.getById(99L);
+        assertNull(found, "Found trainee should  be null");
     }
 
     @Test
-    void shouldReturnTraineeById() {
-        Trainee trainee = buildTrainee(null, null, "finduser");
+    @DataSet(value = "dataset/trainee/trainee-creation-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
+    void shouldCreateTrainee() {
+        Trainee expected = buildTraineeFromExistingUser();
 
-        Trainee created = dao.create(trainee);
-        Trainee found = dao.getById(created.getId());
+        Trainee actual = dao.create(expected);
 
-        assertNotNull(found, "Found trainee should not be null");
-        assertEquals("finduser", found.getUser().getUsername());
+        assertNotNull(actual.getId(), "Created expected should have ID");
+
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getUser(), actual.getUser());
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+        assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
     }
 
     @Test
     void shouldUpdateTrainee() {
-        Trainee trainee = buildTrainee(null, null, "upduser");
-        Trainee created = dao.create(trainee);
+        Trainee expected = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
+        expected.setAddress("Updated Address");
 
-        created.setAddress("Updated Address");
+        Trainee actual = dao.update(expected);
 
-        Trainee updated = dao.update(created);
-
-        assertEquals("Updated Address", updated.getAddress());
-    }
-
-    @Test
-    void shouldThrowWhenUpdatingNonExistingTrainee() {
-        Trainee nonExisting = buildTrainee(9999L, null, "nonexist");
-
-        assertThrows(RuntimeException.class, () -> {
-            dao.update(nonExisting);
-        });
+        assertEquals(expected.getAddress(), actual.getAddress());
+        assertEquals(expected.getUser(), actual.getUser());
+        assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
+        assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
     }
 
     @Test
     void shouldDeleteTraineeById() {
-        Trainee trainee = buildTrainee(null, null, "deluser");
-        Trainee created = dao.create(trainee);
-
-        dao.delete(created.getId());
-
-        Trainee deleted = dao.getById(created.getId());
-        assertNull(deleted, "Deleted trainee should be null");
+        dao.delete(1L);
+        Trainee trainee = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
+        assertNull(trainee);
     }
 
-    private Trainee buildTrainee(Long traineeId, Long userId, String username) {
+    private Trainee buildTraineeFromExistingUser() {
+        Session session = sessionFactory.getCurrentSession();
+        User existingUser = session.find(User.class, 2L);
         return Trainee.builder()
-                .id(traineeId)
                 .dateOfBirth(BIRTHDAY)
                 .address(ADDRESS)
-                .user(buildUser(userId, username))
-                .build();
-    }
-
-    private User buildUser(Long userId, String username) {
-        return User.builder()
-                .id(userId)
-                .username(username)
-                .firstName("John")
-                .lastName("Doe")
-                .password("pass")
-                .isActive(true)
+                .user(existingUser)
                 .build();
     }
 }

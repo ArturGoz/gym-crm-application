@@ -5,13 +5,8 @@ import com.gca.exception.DaoException;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,8 +15,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class TrainerDAOTest {
+class TrainerDAOTest extends AbstractDAOTest {
 
     private static final Long USER_ID = 1001L;
     private static final Long TYPE_ID = 991L;
@@ -32,12 +26,6 @@ class TrainerDAOTest {
     private static final String PASSWORD = "trainerpass";
     private static final String TYPE_NAME = "Fitness";
     private static final boolean IS_ACTIVE = true;
-
-    @Mock
-    private SessionFactory sessionFactory;
-
-    @Mock
-    private Session session;
 
     @InjectMocks
     private TrainerDAOImpl dao;
