@@ -1,7 +1,6 @@
 package com.gca.dao.impl;
 
 import com.gca.dao.TrainingTypeDAO;
-import com.gca.model.Training;
 import com.gca.model.TrainingType;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

@@ -213,4 +213,11 @@ public class GymTestProvider {
                 .isActive(true)
                 .build();
     }
+
+    public static TrainingType constructTrainingType() {
+        return TrainingType.builder()
+                .id(1L)
+                .name("Strength")
+                .build();
+    }
 }
