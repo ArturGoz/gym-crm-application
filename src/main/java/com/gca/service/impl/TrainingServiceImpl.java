@@ -12,21 +12,45 @@ import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
 import com.gca.service.TrainingService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class TrainingServiceImpl implements TrainingService {
     private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
-    private final TrainingDAO trainingDAO;
-    private final TrainerDAO trainerDAO;
-    private final TraineeDAO traineeDAO;
-    private final TrainingTypeDAO trainingTypeDAO;
-    private final TrainingMapper trainingMapper;
+    private TrainingDAO trainingDAO;
+    private TrainerDAO trainerDAO;
+    private TraineeDAO traineeDAO;
+    private TrainingTypeDAO trainingTypeDAO;
+    private TrainingMapper trainingMapper;
+
+    @Autowired
+    public void setTrainingDAO(TrainingDAO trainingDAO) {
+        this.trainingDAO = trainingDAO;
+    }
+
+    @Autowired
+    public void setTrainerDAO(TrainerDAO trainerDAO) {
+        this.trainerDAO = trainerDAO;
+    }
+
+    @Autowired
+    public void setTraineeDAO(TraineeDAO traineeDAO) {
+        this.traineeDAO = traineeDAO;
+    }
+
+    @Autowired
+    public void setTrainingTypeDAO(TrainingTypeDAO trainingTypeDAO) {
+        this.trainingTypeDAO = trainingTypeDAO;
+    }
+
+    @Autowired
+    public void setTrainingMapper(TrainingMapper trainingMapper) {
+        this.trainingMapper = trainingMapper;
+    }
 
     @Override
     public TrainingResponse createTraining(TrainingCreateRequest request) {

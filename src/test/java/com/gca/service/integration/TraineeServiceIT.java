@@ -1,7 +1,5 @@
 package com.gca.service.integration;
 
-import com.gca.config.LiquibaseConfigTest;
-import com.gca.config.PersistenceConfigTest;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.UserDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
@@ -12,21 +10,12 @@ import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
 import com.gca.model.User;
 import com.gca.service.impl.TraineeServiceImpl;
-import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.core.api.dataset.DataSet;
-import com.github.database.rider.spring.api.DBRider;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 
@@ -35,29 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {
-        PersistenceConfigTest.class,
-        LiquibaseConfigTest.class
-})
-@ActiveProfiles("test")
-@DBRider
-@DBUnit(cacheConnection = true, leakHunter = true, caseSensitiveTableNames = false, schema = "PUBLIC")
-@ComponentScan(basePackages = "com.gca.service")
-class TraineeServiceIntegrationTest {
-
-    @Autowired
-    private SessionFactory sessionFactory;
+class TraineeServiceIT extends AbstractServiceIT {
 
     @Autowired
     private TraineeDAO traineeDAO;
 
     @Autowired
     private UserDAO userDAO;
-
-    private TraineeServiceImpl traineeService;
-
-    private Transaction transaction;
 
     @BeforeEach
     void setUp() {
