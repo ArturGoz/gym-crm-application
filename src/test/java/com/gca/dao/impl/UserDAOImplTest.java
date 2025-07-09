@@ -1,6 +1,6 @@
-package com.gca.dao;
+package com.gca.dao.impl;
 
-import com.gca.dao.impl.UserDAOImpl;
+import com.gca.dao.BaseIntegrationTest;
 import com.gca.exception.DaoException;
 import com.gca.model.User;
 import com.github.database.rider.core.api.dataset.DataSet;

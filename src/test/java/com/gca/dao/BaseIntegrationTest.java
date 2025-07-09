@@ -23,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles("test")
 @DBRider
 @DBUnit(cacheConnection = true, leakHunter = true, caseSensitiveTableNames = false, schema = "PUBLIC")
-@ComponentScan(basePackages = "com.gca.dao.impl")
+@ComponentScan(basePackages = "com.gca.dao")
 public abstract class BaseIntegrationTest<T> {
 
     @Autowired

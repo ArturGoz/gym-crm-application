@@ -1,6 +1,6 @@
-package com.gca.dao;
+package com.gca.dao.impl;
 
-import com.gca.dao.impl.TrainingDAOImpl;
+import com.gca.dao.BaseIntegrationTest;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
