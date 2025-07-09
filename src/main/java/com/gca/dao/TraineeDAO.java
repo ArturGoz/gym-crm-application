@@ -11,7 +11,7 @@ public interface TraineeDAO {
 
     Trainee findByUsername(String username);
 
-    void delete(Long id);
+    void deleteById(Long id);
 
     void deleteByUsername(String username);
 }

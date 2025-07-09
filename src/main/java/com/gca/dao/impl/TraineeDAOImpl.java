@@ -58,7 +58,7 @@ public class TraineeDAOImpl implements TraineeDAO {
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         Session session = sessionFactory.getCurrentSession();
         Trainee trainee = session.find(Trainee.class, id);
 

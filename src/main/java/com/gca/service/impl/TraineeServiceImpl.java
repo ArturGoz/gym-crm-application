@@ -98,7 +98,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public void deleteTraineeById(Long id) {
         logger.debug("Deleting trainee with ID: {}", id);
-        traineeDAO.delete(id);
+        traineeDAO.deleteById(id);
         logger.info("Deleted trainee with ID: {}", id);
     }
 

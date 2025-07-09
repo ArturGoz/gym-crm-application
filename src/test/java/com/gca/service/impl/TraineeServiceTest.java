@@ -92,7 +92,7 @@ class TraineeServiceTest {
     void deleteTrainee_ById_success() {
         service.deleteTraineeById(1L);
 
-        verify(dao).delete(1L);
+        verify(dao).deleteById(1L);
     }
 
     @Test

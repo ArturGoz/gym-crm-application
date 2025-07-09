@@ -67,11 +67,11 @@ class TraineeDAOImplTest extends BaseIntegrationTest<TraineeDAOImpl> {
     }
 
     @Test
-    void shouldDeleteTraineeById() {
+    void shouldDeleteByIdTraineeById() {
         Trainee existing = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
         assertNotNull(existing, "Trainee should exist before delete");
 
-        dao.delete(1L);
+        dao.deleteById(1L);
 
         Trainee deleted = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
 
