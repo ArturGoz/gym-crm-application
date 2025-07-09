@@ -33,7 +33,7 @@ public class UserDAOImpl implements UserDAO {
         User existing = session.find(User.class, entity.getId());
 
         if (existing == null) {
-            throw new DaoException("User with id: " + entity.getId() + " not found");
+            throw new DaoException(String.format("User with id: %d not found", entity.getId()));
         }
 
         return session.merge(entity);
@@ -51,7 +51,7 @@ public class UserDAOImpl implements UserDAO {
         User user = session.find(User.class, id);
 
         if (user == null) {
-            throw new DaoException("User with id: " + id + " not found");
+            throw new DaoException(String.format("User with id: %d not found", id));
         }
         session.remove(user);
     }
