@@ -54,6 +54,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         Trainer created = trainerDAO.create(trainer);
 
+        logger.info("Trainer created: {}", created);
         return trainerMapper.toResponse(created);
     }
 
@@ -71,7 +72,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         Trainer updated = trainerDAO.update(updatedTrainer);
 
-        logger.info("Trainer updated");
+        logger.info("Trainer updated {}", updated);
         return trainerMapper.toResponse(updated);
     }
 

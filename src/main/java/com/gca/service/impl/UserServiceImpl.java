@@ -96,11 +96,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changeUserPassword(Long userId, String newPassword) {
+        logger.debug("Changing password for user with id: {}", userId);
+
         User user = userDAO.getById(userId);
         if (user == null) throw new ServiceException("User not found");
 
         user.setPassword(newPassword);
         userDAO.update(user);
+
+        logger.info("Changed password for user with id: {}", userId);
     }
 
     @Override

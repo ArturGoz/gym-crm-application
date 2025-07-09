@@ -3,7 +3,6 @@ package com.gca.dao.impl;
 import com.gca.dao.TraineeDAO;
 import com.gca.exception.DaoException;
 import com.gca.model.Trainee;
-import com.gca.model.Trainer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

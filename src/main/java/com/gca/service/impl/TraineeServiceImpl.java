@@ -54,6 +54,7 @@ public class TraineeServiceImpl implements TraineeService {
 
         Trainee created = traineeDAO.create(trainee);
 
+        logger.info("Created trainee: " + created);
         return traineeMapper.toResponse(created);
     }
 
@@ -71,15 +72,8 @@ public class TraineeServiceImpl implements TraineeService {
 
         Trainee updated = traineeDAO.update(updatedTrainee);
 
-        logger.debug("Trainee updated");
+        logger.info("Trainee updated  {}", updated);
         return traineeMapper.toResponse(updated);
-    }
-
-    @Override
-    public void deleteTrainee(Long id) {
-        logger.debug("Deleting trainee with ID: {}", id);
-        traineeDAO.delete(id);
-        logger.info("Deleted trainee with ID: {}", id);
     }
 
     @Override
@@ -96,5 +90,21 @@ public class TraineeServiceImpl implements TraineeService {
         if (user == null) throw new ServiceException("User not found");
 
         return traineeMapper.toResponse(traineeDAO.getTraineeByUserId(user.getId()));
+    }
+
+    @Override
+    public void deleteTrainee(Long id) {
+        logger.debug("Deleting trainee with ID: {}", id);
+        traineeDAO.delete(id);
+        logger.info("Deleted trainee with ID: {}", id);
+    }
+
+    @Override
+    public void deleteTraineeByUsername(String username) {
+        logger.debug("Deleting trainee by username {}", username);
+        User user = userDAO.getByUsername(username);
+
+        if (user == null) throw new ServiceException("User not found");
+        deleteTrainee(user.getId());
     }
 }
