@@ -66,6 +66,7 @@ class TrainerServiceTest {
         TrainerResponse expected = GymTestProvider.constructUpdatedTrainerResponse();
 
         when(dao.getById(2L)).thenReturn(existing);
+        when(mapper.toEntity(updateRequest)).thenReturn(updated);
         when(dao.update(existing)).thenReturn(updated);
         when(mapper.toResponse(updated)).thenReturn(expected);
 

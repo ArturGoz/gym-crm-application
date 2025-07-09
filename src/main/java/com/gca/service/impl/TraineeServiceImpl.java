@@ -41,18 +41,18 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeResponse createTrainee(TraineeCreateRequest request) {
-        logger.debug("Creating trainee with user id: {}", request.getUserId());
-        Trainee trainee = traineeMapper.toEntity(request);
+        logger.debug("Creating trainee");
 
-        Long userId = request.getUserId();
-        User user = userDAO.getById(userId);
+        if (request.getUserId() == null) {
+            throw new ServiceException("User id is null");
+        }
 
-        trainee = trainee.toBuilder()
+        User user = userDAO.getById(request.getUserId());
+        Trainee trainee = traineeMapper.toEntity(request).toBuilder()
                 .user(user)
                 .build();
 
         Trainee created = traineeDAO.create(trainee);
-        logger.info("Created trainee: {}", created);
 
         return traineeMapper.toResponse(created);
     }
@@ -61,15 +61,17 @@ public class TraineeServiceImpl implements TraineeService {
     public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
         logger.debug("Updating trainee");
 
-        Trainee existing = traineeDAO.getById(request.getId());
+        Trainee trainee = traineeDAO.getById(request.getId());
+        if (trainee == null) throw new ServiceException("Trainee not found");
 
-        if (existing == null) {
-            throw new ServiceException("Trainee not found");
-        }
+        Trainee updatedTrainee = traineeMapper.toEntity(request).toBuilder()
+                .id(trainee.getId())
+                .user(trainee.getUser())
+                .build();
 
-        Trainee updated = traineeDAO.update(existing);
-        logger.info("Updated trainee: {}", updated);
+        Trainee updated = traineeDAO.update(updatedTrainee);
 
+        logger.debug("Trainee updated");
         return traineeMapper.toResponse(updated);
     }
 
