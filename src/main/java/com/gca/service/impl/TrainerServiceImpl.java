@@ -63,7 +63,10 @@ public class TrainerServiceImpl implements TrainerService {
         logger.debug("Updating trainer");
 
         Trainer trainer = trainerDAO.getById(request.getId());
-        if (trainer == null) throw new ServiceException("Trainer not found");
+
+        if (trainer == null) {
+            throw new ServiceException("Trainer not found");
+        }
 
         Trainer updatedTrainer = trainerMapper.toEntity(request).toBuilder()
                 .id(trainer.getId())
@@ -80,10 +83,10 @@ public class TrainerServiceImpl implements TrainerService {
     public TrainerResponse getTrainerByUsername(String username) {
         logger.debug("Getting trainer by username {}", username);
 
-        User user = userDAO.getByUsername(username);
-        if (user == null) throw new ServiceException("User not found");
+        Trainer trainer = trainerDAO.findByUsername(username);
 
-        return trainerMapper.toResponse(trainerDAO.getTrainerByUserId(user.getId()));
+        logger.debug("Trainer is found by username {}", username);
+        return trainerMapper.toResponse(trainer);
     }
 
     @Override

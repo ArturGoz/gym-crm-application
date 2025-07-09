@@ -30,8 +30,8 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User update(User entity) {
         Session session = sessionFactory.getCurrentSession();
-
         User existing = session.find(User.class, entity.getId());
+
         if (existing == null) {
             throw new DaoException("User with id: " + entity.getId() + " not found");
         }

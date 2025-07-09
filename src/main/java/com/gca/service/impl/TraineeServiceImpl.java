@@ -54,7 +54,7 @@ public class TraineeServiceImpl implements TraineeService {
 
         Trainee created = traineeDAO.create(trainee);
 
-        logger.info("Created trainee: " + created);
+        logger.info("Created trainee: {}", created);
         return traineeMapper.toResponse(created);
     }
 
@@ -63,7 +63,10 @@ public class TraineeServiceImpl implements TraineeService {
         logger.debug("Updating trainee");
 
         Trainee trainee = traineeDAO.getById(request.getId());
-        if (trainee == null) throw new ServiceException("Trainee not found");
+
+        if (trainee == null) {
+            throw new ServiceException("Trainee not found");
+        }
 
         Trainee updatedTrainee = traineeMapper.toEntity(request).toBuilder()
                 .id(trainee.getId())
@@ -86,14 +89,14 @@ public class TraineeServiceImpl implements TraineeService {
     public TraineeResponse getTraineeByUsername(String username) {
         logger.debug("Getting trainee by username {}", username);
 
-        User user = userDAO.getByUsername(username);
-        if (user == null) throw new ServiceException("User not found");
+        Trainee trainee = traineeDAO.findByUsername(username);
 
-        return traineeMapper.toResponse(traineeDAO.getTraineeByUserId(user.getId()));
+        logger.debug("Trainee is found by username {}", username);
+        return traineeMapper.toResponse(trainee);
     }
 
     @Override
-    public void deleteTrainee(Long id) {
+    public void deleteTraineeById(Long id) {
         logger.debug("Deleting trainee with ID: {}", id);
         traineeDAO.delete(id);
         logger.info("Deleted trainee with ID: {}", id);
@@ -102,9 +105,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Override
     public void deleteTraineeByUsername(String username) {
         logger.debug("Deleting trainee by username {}", username);
-        User user = userDAO.getByUsername(username);
-
-        if (user == null) throw new ServiceException("User not found");
-        deleteTrainee(user.getId());
+        traineeDAO.deleteByUsername(username);
+        logger.info("Deleted trainee by username {}", username);
     }
 }

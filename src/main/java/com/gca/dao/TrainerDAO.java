@@ -9,5 +9,5 @@ public interface TrainerDAO {
 
     Trainer getById(Long id);
 
-    Trainer getTrainerByUserId(Long userId);
+    Trainer findByUsername(String username);
 }

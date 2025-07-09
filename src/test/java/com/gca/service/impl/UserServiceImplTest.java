@@ -15,8 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -184,32 +182,5 @@ class UserServiceImplTest {
 
         assertEquals("User not found", ex.getMessage());
         verify(userDAO).getById(1L);
-    }
-
-    @Test
-    void getAllUsers_success() {
-        List<String> usernames = List.of("john_doe", "jane_smith");
-        User user1 = GymTestProvider.constructUser();
-        User user2 = GymTestProvider.constructUser().toBuilder().id(2L).username("jane_smith").build();
-        UserResponse response1 = GymTestProvider.constructUserResponse();
-        UserResponse response2 = GymTestProvider.constructUserResponse().toBuilder().id(2L).username("jane_smith").build();
-
-        when(userDAO.getAllUsernames()).thenReturn(usernames);
-        when(userDAO.getByUsername("john_doe")).thenReturn(user1);
-        when(userDAO.getByUsername("jane_smith")).thenReturn(user2);
-        when(userMapper.toResponse(user1)).thenReturn(response1);
-        when(userMapper.toResponse(user2)).thenReturn(response2);
-
-        List<UserResponse> actual = userService.getAllUsers();
-
-        assertEquals(2, actual.size());
-        assertTrue(actual.contains(response1));
-        assertTrue(actual.contains(response2));
-
-        verify(userDAO).getAllUsernames();
-        verify(userDAO).getByUsername("john_doe");
-        verify(userDAO).getByUsername("jane_smith");
-        verify(userMapper).toResponse(user1);
-        verify(userMapper).toResponse(user2);
     }
 }

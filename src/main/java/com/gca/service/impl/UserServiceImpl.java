@@ -14,9 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -90,7 +87,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isUserCredentialsValid(String username, String rawPassword) {
         User user = userDAO.getByUsername(username);
-        if (user == null) return false;
+        if (user == null) {
+            return false;
+        }
         return user.getPassword().equals(rawPassword);
     }
 
@@ -99,7 +98,10 @@ public class UserServiceImpl implements UserService {
         logger.debug("Changing password for user with id: {}", userId);
 
         User user = userDAO.getById(userId);
-        if (user == null) throw new ServiceException("User not found");
+
+        if (user == null) {
+            throw new ServiceException("User not found");
+        }
 
         user.setPassword(newPassword);
         userDAO.update(user);
@@ -117,16 +119,5 @@ public class UserServiceImpl implements UserService {
         }
 
         return userMapper.toResponse(user);
-    }
-
-    @Override
-    public List<UserResponse> getAllUsers() {
-        logger.debug("Fetching all users");
-        List<String> usernames = userDAO.getAllUsernames();
-
-        return usernames.stream()
-                .map(username -> userDAO.getByUsername(username))
-                .map(userMapper::toResponse)
-                .collect(Collectors.toList());
     }
 }

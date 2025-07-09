@@ -92,19 +92,17 @@ class TraineeServiceIT extends AbstractServiceIT {
 
     @Test
     @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldDeleteTraineeByUsername() {
+    void shouldDeleteTraineeByIdByUsername() {
         String username = "john.doe";
 
-        Trainee before = traineeDAO.getTraineeByUserId(userDAO.getByUsername(username).getId());
+        Trainee before = traineeDAO.findByUsername(username);
         assertNotNull(before);
 
         traineeService.deleteTraineeByUsername(username);
 
-        Long userId = userDAO.getByUsername(username).getId();
-
         DaoException ex = assertThrows(
                 DaoException.class,
-                () -> traineeDAO.getTraineeByUserId(userId),
+                () -> traineeDAO.findByUsername(username),
                 "Expected DaoException when trainee is not found"
         );
 

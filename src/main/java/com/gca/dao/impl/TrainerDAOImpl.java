@@ -32,7 +32,7 @@ public class TrainerDAOImpl implements TrainerDAO {
         Trainer existingTrainer = session.find(Trainer.class, trainer.getId());
 
         if (existingTrainer == null) {
-            throw new DaoException("Trainer with id: " + trainer.getId() + " not found");
+            throw new DaoException(String.format("Trainer with id: %d not found", trainer.getId()));
         }
 
         return session.merge(trainer);
@@ -46,17 +46,14 @@ public class TrainerDAOImpl implements TrainerDAO {
     }
 
     @Override
-    public Trainer getTrainerByUserId(Long userId) {
+    public Trainer findByUsername(String username) {
         Session session = sessionFactory.getCurrentSession();
-        Trainer trainer = session.createQuery(
-                        "FROM Trainer t WHERE t.user.id = :userId", Trainer.class)
-                .setParameter("userId", userId)
-                .uniqueResult();
-
-        if (trainer == null) {
-            throw new DaoException("Trainer with user id: " + userId + " not found");
-        }
-
-        return trainer;
+        return session.createQuery(
+                        "SELECT t FROM Trainer t JOIN FETCH t.user u WHERE u.username = :username",
+                        Trainer.class
+                )
+                .setParameter("username", username)
+                .uniqueResultOptional()
+                .orElseThrow(() -> new DaoException(String.format("Trainer with username: %s not found", username)));
     }
 }

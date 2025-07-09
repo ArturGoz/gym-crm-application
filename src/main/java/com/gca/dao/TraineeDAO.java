@@ -9,7 +9,9 @@ public interface TraineeDAO {
 
     Trainee getById(Long id);
 
-    Trainee getTraineeByUserId(Long userId);
+    Trainee findByUsername(String username);
 
     void delete(Long id);
+
+    void deleteByUsername(String username);
 }

@@ -8,7 +8,6 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
-import com.gca.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,8 +25,10 @@ class TrainerServiceTest {
 
     @Mock
     private TrainerDAO dao;
+
     @Mock
     private UserDAO userDAO;
+
     @Mock
     private TrainerMapper mapper;
 
@@ -110,20 +111,17 @@ class TrainerServiceTest {
     @Test
     void getTrainerByUsername_success() {
         String username = "john_doe";
-        User mockUser = GymTestProvider.constructUser();
         Trainer mockTrainer = GymTestProvider.constructTrainer();
         TrainerResponse expectedResponse = GymTestProvider.constructTrainerResponse();
 
-        when(userDAO.getByUsername(username)).thenReturn(mockUser);
-        when(dao.getTrainerByUserId(mockUser.getId())).thenReturn(mockTrainer);
+        when(dao.findByUsername(username)).thenReturn(mockTrainer);
         when(mapper.toResponse(mockTrainer)).thenReturn(expectedResponse);
 
         TrainerResponse actualResponse = service.getTrainerByUsername(username);
 
         assertEquals(expectedResponse, actualResponse);
 
-        verify(userDAO).getByUsername(username);
-        verify(dao).getTrainerByUserId(mockUser.getId());
+        verify(dao).findByUsername(username);
         verify(mapper).toResponse(mockTrainer);
     }
 }

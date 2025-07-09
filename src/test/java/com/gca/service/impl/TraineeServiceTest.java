@@ -8,7 +8,6 @@ import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
-import com.gca.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,8 +25,10 @@ class TraineeServiceTest {
 
     @Mock
     private TraineeDAO dao;
+
     @Mock
     private UserDAO userDAO;
+
     @Mock
     private TraineeMapper mapper;
 
@@ -88,8 +89,8 @@ class TraineeServiceTest {
     }
 
     @Test
-    void deleteTrainee_success() {
-        service.deleteTrainee(1L);
+    void deleteTrainee_ById_success() {
+        service.deleteTraineeById(1L);
 
         verify(dao).delete(1L);
     }
@@ -113,20 +114,17 @@ class TraineeServiceTest {
     @Test
     void getTraineeByUsername_success() {
         String username = "john_doe";
-        User mockUser = GymTestProvider.constructUser();
         Trainee mockTrainee = GymTestProvider.constructTrainee();
         TraineeResponse expectedResponse = GymTestProvider.constructTraineeResponse();
 
-        when(userDAO.getByUsername(username)).thenReturn(mockUser);
-        when(dao.getTraineeByUserId(mockUser.getId())).thenReturn(mockTrainee);
+        when(dao.findByUsername(username)).thenReturn(mockTrainee);
         when(mapper.toResponse(mockTrainee)).thenReturn(expectedResponse);
 
         TraineeResponse actualResponse = service.getTraineeByUsername(username);
 
         assertEquals(expectedResponse, actualResponse);
 
-        verify(userDAO).getByUsername(username);
-        verify(dao).getTraineeByUserId(mockUser.getId());
+        verify(dao).findByUsername(username);
         verify(mapper).toResponse(mockTrainee);
     }
 }
