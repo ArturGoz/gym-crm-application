@@ -44,4 +44,19 @@ public class TrainerDAOImpl implements TrainerDAO {
 
         return session.find(Trainer.class, id);
     }
+
+    @Override
+    public Trainer getTrainerByUserId(Long userId) {
+        Session session = sessionFactory.getCurrentSession();
+        Trainer trainer = session.createQuery(
+                        "FROM Trainer t WHERE t.user.id = :userId", Trainer.class)
+                .setParameter("userId", userId)
+                .uniqueResult();
+
+        if (trainer == null) {
+            throw new DaoException("Trainer with user id: " + userId + " not found");
+        }
+
+        return trainer;
+    }
 }

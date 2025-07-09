@@ -1,4 +1,4 @@
-package com.gca.service;
+package com.gca.service.impl;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.TrainerDAO;
@@ -8,7 +8,7 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
-import com.gca.service.impl.TrainerServiceImpl;
+import com.gca.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -105,5 +105,25 @@ class TrainerServiceTest {
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(dao).getById(2L);
         verify(mapper).toResponse(trainer);
+    }
+
+    @Test
+    void getTrainerByUsername_success() {
+        String username = "john_doe";
+        User mockUser = GymTestProvider.constructUser();
+        Trainer mockTrainer = GymTestProvider.constructTrainer();
+        TrainerResponse expectedResponse = GymTestProvider.constructTrainerResponse();
+
+        when(userDAO.getByUsername(username)).thenReturn(mockUser);
+        when(dao.getTrainerByUserId(mockUser.getId())).thenReturn(mockTrainer);
+        when(mapper.toResponse(mockTrainer)).thenReturn(expectedResponse);
+
+        TrainerResponse actualResponse = service.getTrainerByUsername(username);
+
+        assertEquals(expectedResponse, actualResponse);
+
+        verify(userDAO).getByUsername(username);
+        verify(dao).getTrainerByUserId(mockUser.getId());
+        verify(mapper).toResponse(mockTrainer);
     }
 }

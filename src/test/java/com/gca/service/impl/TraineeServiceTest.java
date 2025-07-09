@@ -1,4 +1,4 @@
-package com.gca.service;
+package com.gca.service.impl;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.TraineeDAO;
@@ -8,7 +8,7 @@ import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
-import com.gca.service.impl.TraineeServiceImpl;
+import com.gca.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -109,5 +109,25 @@ class TraineeServiceTest {
         assertEquals(expected.getAddress(), actual.getAddress());
         verify(dao).getById(1L);
         verify(mapper).toResponse(trainee);
+    }
+
+    @Test
+    void getTraineeByUsername_success() {
+        String username = "john_doe";
+        User mockUser = GymTestProvider.constructUser();
+        Trainee mockTrainee = GymTestProvider.constructTrainee();
+        TraineeResponse expectedResponse = GymTestProvider.constructTraineeResponse();
+
+        when(userDAO.getByUsername(username)).thenReturn(mockUser);
+        when(dao.getTraineeByUserId(mockUser.getId())).thenReturn(mockTrainee);
+        when(mapper.toResponse(mockTrainee)).thenReturn(expectedResponse);
+
+        TraineeResponse actualResponse = service.getTraineeByUsername(username);
+
+        assertEquals(expectedResponse, actualResponse);
+
+        verify(userDAO).getByUsername(username);
+        verify(dao).getTraineeByUserId(mockUser.getId());
+        verify(mapper).toResponse(mockTrainee);
     }
 }

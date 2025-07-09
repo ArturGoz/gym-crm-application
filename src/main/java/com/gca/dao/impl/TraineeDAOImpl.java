@@ -3,6 +3,7 @@ package com.gca.dao.impl;
 import com.gca.dao.TraineeDAO;
 import com.gca.exception.DaoException;
 import com.gca.model.Trainee;
+import com.gca.model.Trainer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,21 @@ public class TraineeDAOImpl implements TraineeDAO {
         Session session = sessionFactory.getCurrentSession();
 
         return session.find(Trainee.class, id);
+    }
+
+    @Override
+    public Trainee getTraineeByUserId(Long userId) {
+        Session session = sessionFactory.getCurrentSession();
+        Trainee trainee = session.createQuery(
+                        "FROM Trainee t WHERE t.user.id = :userId", Trainee.class)
+                .setParameter("userId", userId)
+                .uniqueResult();
+
+        if (trainee == null) {
+            throw new DaoException("Trainee with user id: " + userId + " not found");
+        }
+
+        return trainee;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.gca.dao.UserDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainer.TrainerResponse;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
@@ -86,5 +87,15 @@ public class TraineeServiceImpl implements TraineeService {
     public TraineeResponse getTraineeById(Long id) {
         logger.debug("Retrieving trainee with ID: {}", id);
         return traineeMapper.toResponse(traineeDAO.getById(id));
+    }
+
+    @Override
+    public TraineeResponse getTraineeByUsername(String username) {
+        logger.debug("Getting trainee by username {}", username);
+
+        User user = userDAO.getByUsername(username);
+        if (user == null) throw new ServiceException("User not found");
+
+        return traineeMapper.toResponse(traineeDAO.getTraineeByUserId(user.getId()));
     }
 }

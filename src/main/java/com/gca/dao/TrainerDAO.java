@@ -8,4 +8,6 @@ public interface TrainerDAO {
     Trainer update(Trainer entity);
 
     Trainer getById(Long id);
+
+    Trainer getTrainerByUserId(Long userId);
 }

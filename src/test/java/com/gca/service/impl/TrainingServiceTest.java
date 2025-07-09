@@ -1,4 +1,4 @@
-package com.gca.service;
+package com.gca.service.impl;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.TrainingDAO;
@@ -6,7 +6,6 @@ import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
 import com.gca.mapper.TrainingMapper;
 import com.gca.model.Training;
-import com.gca.service.impl.TrainingServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

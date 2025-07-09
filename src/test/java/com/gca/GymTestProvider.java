@@ -8,6 +8,9 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.user.UserCreateRequest;
+import com.gca.dto.user.UserResponse;
+import com.gca.dto.user.UserUpdateRequest;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
@@ -168,6 +171,46 @@ public class GymTestProvider {
                 .date(LocalDate.of(2025, 7, 5))
                 .duration(90L)
                 .name("Strength Training")
+                .build();
+    }
+
+    public static UserCreateRequest createUserCreateRequest() {
+        return UserCreateRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .build();
+    }
+
+    public static UserUpdateRequest createUserUpdateRequest() {
+        return UserUpdateRequest.builder()
+                .id(1L)
+                .firstName("UpdatedJohn")
+                .lastName("UpdatedDoe")
+                .username("updated_john_doe")
+                .password("updatedPass123")
+                .isActive(true)
+                .build();
+    }
+
+    public static User constructUser() {
+        return User.builder()
+                .id(1L)
+                .firstName("John")
+                .lastName("Doe")
+                .username("john_doe")
+                .password("securePass123")
+                .isActive(true)
+                .build();
+    }
+
+    public static UserResponse constructUserResponse() {
+        return UserResponse.builder()
+                .id(1L)
+                .firstName("John")
+                .lastName("Doe")
+                .username("john_doe")
+                .password("securePass123")
+                .isActive(true)
                 .build();
     }
 }

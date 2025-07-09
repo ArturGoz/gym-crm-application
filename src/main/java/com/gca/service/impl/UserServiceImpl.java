@@ -1,6 +1,7 @@
 package com.gca.service.impl;
 
 import com.gca.dao.UserDAO;
+import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserResponse;
 import com.gca.dto.user.UserUpdateRequest;
@@ -9,6 +10,7 @@ import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.UserService;
 import com.gca.service.common.UserProfileService;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +87,22 @@ public class UserServiceImpl implements UserService {
         logger.debug("Deleting user with id: {}", id);
         userDAO.delete(id);
         logger.info("Deleted user with id: {}", id);
+    }
+
+    @Override
+    public boolean isUserCredentialsValid(String username, String rawPassword) {
+        User user = userDAO.getByUsername(username);
+        if (user == null) return false;
+        return user.getPassword().equals(rawPassword);
+    }
+
+    @Override
+    public void changeUserPassword(Long userId, String newPassword) {
+        User user = userDAO.getById(userId);
+        if (user == null) throw new ServiceException("User not found");
+
+        user.setPassword(newPassword);
+        userDAO.update(user);
     }
 
     @Override

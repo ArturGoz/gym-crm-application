@@ -16,4 +16,8 @@ public interface UserService {
     List<UserResponse> getAllUsers();
 
     void deleteUser(Long id);
+
+    boolean isUserCredentialsValid(String username, String password);
+
+    void changeUserPassword(Long userId, String newPassword);
 }

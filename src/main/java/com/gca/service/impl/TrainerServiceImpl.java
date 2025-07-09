@@ -39,6 +39,7 @@ public class TrainerServiceImpl implements TrainerService {
         this.trainerMapper = trainerMapper;
     }
 
+    @Override
     public TrainerResponse createTrainer(TrainerCreateRequest request) {
         logger.debug("Creating trainer");
 
@@ -72,6 +73,16 @@ public class TrainerServiceImpl implements TrainerService {
 
         logger.info("Trainer updated");
         return trainerMapper.toResponse(updated);
+    }
+
+    @Override
+    public TrainerResponse getTrainerByUsername(String username) {
+        logger.debug("Getting trainer by username {}", username);
+
+        User user = userDAO.getByUsername(username);
+        if (user == null) throw new ServiceException("User not found");
+
+        return trainerMapper.toResponse(trainerDAO.getTrainerByUserId(user.getId()));
     }
 
     @Override
