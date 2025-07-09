@@ -1,7 +1,6 @@
 package com.gca.service.impl;
 
 import com.gca.dao.UserDAO;
-import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserResponse;
 import com.gca.dto.user.UserUpdateRequest;
@@ -10,7 +9,6 @@ import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.UserService;
 import com.gca.service.common.UserProfileService;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

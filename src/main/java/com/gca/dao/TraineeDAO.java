@@ -1,7 +1,6 @@
 package com.gca.dao;
 
 import com.gca.model.Trainee;
-import com.gca.model.Trainer;
 
 public interface TraineeDAO {
     Trainee create(Trainee entity);

@@ -72,13 +72,12 @@ class UserServiceImplTest {
         UserUpdateRequest request = GymTestProvider.createUserUpdateRequest();
         User existing = GymTestProvider.constructUser();
         User updatedEntity = existing.toBuilder().firstName("Updated").build();
-        User updated = updatedEntity;
         UserResponse expected = GymTestProvider.constructUserResponse();
 
         when(userDAO.getById(request.getId())).thenReturn(existing);
         when(userMapper.toEntity(request)).thenReturn(updatedEntity);
-        when(userDAO.update(any(User.class))).thenReturn(updated);
-        when(userMapper.toResponse(updated)).thenReturn(expected);
+        when(userDAO.update(any(User.class))).thenReturn(updatedEntity);
+        when(userMapper.toResponse(updatedEntity)).thenReturn(expected);
 
         UserResponse actual = userService.updateUser(request);
 
@@ -86,7 +85,7 @@ class UserServiceImplTest {
         verify(userDAO).getById(request.getId());
         verify(userMapper).toEntity(request);
         verify(userDAO).update(any(User.class));
-        verify(userMapper).toResponse(updated);
+        verify(userMapper).toResponse(updatedEntity);
     }
 
     @Test
