@@ -86,14 +86,21 @@ class TraineeServiceImplTest {
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainee(updateRequest));
-        assertEquals("Trainee not found", ex.getMessage());
+        assertEquals("Invalid trainee id", ex.getMessage());
     }
 
     @Test
     void deleteTrainee_ById_success() {
-        service.deleteTraineeById(1L);
+        Long traineeId = 1L;
+        Trainee trainee = Trainee.builder()
+                .id(traineeId)
+                .build();
 
-        verify(dao).deleteById(1L);
+        when(dao.getById(traineeId)).thenReturn(trainee);
+
+        service.deleteTraineeById(traineeId);
+
+        verify(dao).deleteById(traineeId);
     }
 
     @Test

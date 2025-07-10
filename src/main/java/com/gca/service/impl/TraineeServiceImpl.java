@@ -5,14 +5,13 @@ import com.gca.dao.UserDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
 import com.gca.model.User;
 import com.gca.service.TraineeService;
-import com.gca.service.utils.ValidateHelper;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,9 @@ public class TraineeServiceImpl implements TraineeService {
 
         User user = userDAO.getById(request.getUserId());
 
-        ValidateHelper.requireNotNull(user, "User not found");
+        if (user == null) {
+            throw new ServiceException("Invalid user id");
+        }
 
         Trainee trainee = traineeMapper.toEntity(request).toBuilder()
                 .user(user)
@@ -68,7 +69,9 @@ public class TraineeServiceImpl implements TraineeService {
 
         Trainee trainee = traineeDAO.getById(request.getId());
 
-        ValidateHelper.requireNotNull(trainee, "Trainee not found");
+        if (trainee == null) {
+            throw new ServiceException("Invalid trainee id");
+        }
 
         Trainee updatedTrainee = traineeMapper.toEntity(request).toBuilder()
                 .id(trainee.getId())
@@ -82,31 +85,70 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public TraineeResponse getTraineeById(@NotNull Long id) {
+    public TraineeResponse getTraineeById(Long id) {
         logger.debug("Retrieving trainee with ID: {}", id);
-        return traineeMapper.toResponse(traineeDAO.getById(id));
+
+        if (id == null) {
+            throw new ServiceException("ID must not be null");
+        }
+
+        Trainee trainee = traineeDAO.getById(id);
+        if (trainee == null) {
+            throw new EntityNotFoundException("Trainee with ID " + id + " not found");
+        }
+
+        return traineeMapper.toResponse(trainee);
     }
 
+
     @Override
-    public TraineeResponse getTraineeByUsername(@NotBlank String username) {
+    public TraineeResponse getTraineeByUsername(String username) {
         logger.debug("Getting trainee by username {}", username);
 
+        if (username == null || username.trim().isEmpty()) {
+            throw new ServiceException("Username must not be null or empty");
+        }
+
         Trainee trainee = traineeDAO.findByUsername(username);
+        if (trainee == null) {
+            throw new EntityNotFoundException("Trainee with username " + username + " not found");
+        }
 
         logger.debug("Trainee is found by username {}", username);
         return traineeMapper.toResponse(trainee);
     }
 
+
     @Override
-    public void deleteTraineeById(@NotNull Long id) {
+    public void deleteTraineeById(Long id) {
         logger.debug("Deleting trainee with ID: {}", id);
+
+        if (id == null) {
+            throw new ServiceException("ID must not be null");
+        }
+
+        Trainee trainee = traineeDAO.getById(id);
+        if (trainee == null) {
+            throw new EntityNotFoundException("Trainee with ID " + id + " not found");
+        }
+
         traineeDAO.deleteById(id);
         logger.info("Deleted trainee with ID: {}", id);
     }
 
     @Override
-    public void deleteTraineeByUsername(@NotBlank String username) {
+    public void deleteTraineeByUsername(String username) {
         logger.debug("Deleting trainee by username {}", username);
+
+        if (username == null || username.trim().isEmpty()) {
+            throw new ServiceException("Username must not be null or empty");
+        }
+
+        Trainee trainee = traineeDAO.findByUsername(username);
+        if (trainee == null) {
+            throw new EntityNotFoundException("Trainee with username " + username + " not found");
+        }
+
         traineeDAO.deleteByUsername(username);
         logger.info("Deleted trainee by username {}", username);
     }

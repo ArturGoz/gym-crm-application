@@ -86,7 +86,7 @@ class TrainerServiceImplTest {
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainer(updateRequest));
 
-        assertEquals("Trainer not found", ex.getMessage());
+        assertEquals("Invalid trainer id", ex.getMessage());
     }
 
     @Test

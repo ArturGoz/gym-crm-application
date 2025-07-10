@@ -4,11 +4,12 @@ import com.gca.dao.UserDAO;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserResponse;
 import com.gca.dto.user.UserUpdateRequest;
+import com.gca.exception.ServiceException;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.UserService;
 import com.gca.service.common.UserProfileService;
-import com.gca.service.utils.ValidateHelper;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,12 +63,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUser(UserUpdateRequest request) {
+    public UserResponse updateUser(@Valid UserUpdateRequest request) {
         logger.debug("Updating user with id: {}", request.getId());
 
         User existing = userDAO.getById(request.getId());
 
-        ValidateHelper.requireNotNull(existing, "User not found");
+        if (existing == null) {
+            throw new EntityNotFoundException("User with id " + request.getId() + " not found");
+        }
 
         User updatedEntity = userMapper.toEntity(request).toBuilder()
                 .id(existing.getId())
@@ -82,12 +85,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         logger.debug("Deleting user with id: {}", id);
+
+        if (id == null) {
+            throw new ServiceException("Id is null");
+        }
+
         userDAO.delete(id);
         logger.info("Deleted user with id: {}", id);
     }
 
     @Override
     public boolean isUserCredentialsValid(String username, String rawPassword) {
+        if (username == null || rawPassword == null) {
+            return false;
+        }
+
         User user = userDAO.getByUsername(username);
         if (user == null) {
             return false;
@@ -101,7 +113,9 @@ public class UserServiceImpl implements UserService {
 
         User user = userDAO.getById(userId);
 
-        ValidateHelper.requireNotNull(user, "User not found");
+        if (user == null) {
+            throw new EntityNotFoundException("User with id " + userId + " not found");
+        }
 
         user.setPassword(newPassword);
         userDAO.update(user);
@@ -112,9 +126,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Long id) {
         logger.debug("Retrieving user with id: {}", id);
-        User user = userDAO.getById(id);
 
-        ValidateHelper.requireNotNull(user, "User not found");
+        User user = userDAO.getById(id);
+        if (user == null) {
+            throw new EntityNotFoundException("User with id " + id + " not found");
+        }
 
         return userMapper.toResponse(user);
     }

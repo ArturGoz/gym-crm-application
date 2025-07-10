@@ -12,9 +12,8 @@ import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
 import com.gca.service.TrainingService;
-import com.gca.service.utils.ValidateHelper;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,11 +66,9 @@ public class TrainingServiceImpl implements TrainingService {
         Trainee trainee = traineeDAO.getById(request.getTraineeId());
         TrainingType trainingType = trainingTypeDAO.getById(request.getTrainingTypeId());
 
-        ValidateHelper.requireAllNotNull(
-                Trainer.class.getName(), trainer,
-                Trainee.class.getName(), trainee,
-                TrainingType.class.getName(), trainingType
-        );
+        if (trainer == null || trainee == null || trainingType == null) {
+            throw new EntityNotFoundException("Trainer, trainee, trainingType must not be null");
+        }
 
         training.setTrainer(trainer);
         training.setTrainee(trainee);
@@ -85,8 +82,14 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public TrainingResponse getTrainingById(@NotNull Long id) {
+    public TrainingResponse getTrainingById(Long id) {
         logger.debug("Retrieving training for id: {}", id);
-        return trainingMapper.toResponse(trainingDAO.getById(id));
+
+        Training training = trainingDAO.getById(id);
+        if (training == null) {
+            throw new EntityNotFoundException("Training with id " + id + " not found");
+        }
+
+        return trainingMapper.toResponse(training);
     }
 }

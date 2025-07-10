@@ -5,10 +5,10 @@ import com.gca.dao.UserDAO;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserResponse;
 import com.gca.dto.user.UserUpdateRequest;
-import com.gca.exception.ServiceException;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.common.UserProfileService;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -90,9 +90,9 @@ class UserServiceImplTest {
         UserUpdateRequest request = GymTestProvider.createUserUpdateRequest();
         when(userDAO.getById(request.getId())).thenReturn(null);
 
-        ServiceException ex = assertThrows(ServiceException.class, () -> userService.updateUser(request));
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> userService.updateUser(request));
 
-        assertEquals("User not found", ex.getMessage());
+        assertEquals("User with id 1 not found", ex.getMessage());
         verify(userDAO).getById(request.getId());
         verifyNoMoreInteractions(userMapper, userDAO);
     }
@@ -122,9 +122,9 @@ class UserServiceImplTest {
     void getUserById_notFound_throwsException() {
         when(userDAO.getById(1L)).thenReturn(null);
 
-        ServiceException ex = assertThrows(ServiceException.class, () -> userService.getUserById(1L));
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> userService.getUserById(1L));
 
-        assertEquals("User not found", ex.getMessage());
+        assertEquals("User with id 1 not found", ex.getMessage());
         verify(userDAO).getById(1L);
         verifyNoInteractions(userMapper);
     }
@@ -177,10 +177,10 @@ class UserServiceImplTest {
     void changeUserPassword_userNotFound_throwsException() {
         when(userDAO.getById(1L)).thenReturn(null);
 
-        ServiceException ex = assertThrows(ServiceException.class, () ->
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () ->
                 userService.changeUserPassword(1L, "newPass"));
 
-        assertEquals("User not found", ex.getMessage());
+        assertEquals("User with id 1 not found", ex.getMessage());
         verify(userDAO).getById(1L);
     }
 }

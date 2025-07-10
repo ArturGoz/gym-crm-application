@@ -5,14 +5,13 @@ import com.gca.dao.UserDAO;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
 import com.gca.model.User;
 import com.gca.service.TrainerService;
-import com.gca.service.utils.ValidateHelper;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,9 @@ public class TrainerServiceImpl implements TrainerService {
 
         User user = userDAO.getById(request.getUserId());
 
-        ValidateHelper.requireNotNull(user, "User not found");
+        if (user == null) {
+            throw new ServiceException("Invalid user id");
+        }
 
         Trainer trainer = trainerMapper.toEntity(request).toBuilder()
                 .user(user)
@@ -68,7 +69,9 @@ public class TrainerServiceImpl implements TrainerService {
 
         Trainer trainer = trainerDAO.getById(request.getId());
 
-        ValidateHelper.requireNotNull(trainer, "Trainer not found");
+        if (trainer == null) {
+            throw new ServiceException("Invalid trainer id");
+        }
 
         Trainer updatedTrainer = trainerMapper.toEntity(request).toBuilder()
                 .id(trainer.getId())
@@ -82,18 +85,35 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponse getTrainerByUsername(@NotBlank String username) {
+    public TrainerResponse getTrainerByUsername(String username) {
         logger.debug("Getting trainer by username {}", username);
 
+        if (username == null || username.trim().isEmpty()) {
+            throw new ServiceException("Username must not be null or empty");
+        }
+
         Trainer trainer = trainerDAO.findByUsername(username);
+        if (trainer == null) {
+            throw new EntityNotFoundException("Trainer with username " + username + " not found");
+        }
 
         logger.debug("Trainer is found by username {}", username);
         return trainerMapper.toResponse(trainer);
     }
 
     @Override
-    public TrainerResponse getTrainerById(@NotNull Long id) {
+    public TrainerResponse getTrainerById(Long id) {
         logger.debug("Retrieving trainer by id: {}", id);
-        return trainerMapper.toResponse(trainerDAO.getById(id));
+
+        if (id == null) {
+            throw new ServiceException("ID must not be null");
+        }
+
+        Trainer trainer = trainerDAO.getById(id);
+        if (trainer == null) {
+            throw new EntityNotFoundException("Trainer with id " + id + " not found");
+        }
+
+        return trainerMapper.toResponse(trainer);
     }
 }
