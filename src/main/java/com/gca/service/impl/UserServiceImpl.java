@@ -4,17 +4,20 @@ import com.gca.dao.UserDAO;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserResponse;
 import com.gca.dto.user.UserUpdateRequest;
-import com.gca.exception.ServiceException;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.UserService;
 import com.gca.service.common.UserProfileService;
+import com.gca.service.utils.ValidateHelper;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
+@Validated
 public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -38,7 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(UserCreateRequest request) {
+    public UserResponse createUser(@Valid UserCreateRequest request) {
         logger.debug("Creating user for {} {}", request.getFirstName(), request.getLastName());
 
         String username = userProfileService
@@ -63,9 +66,8 @@ public class UserServiceImpl implements UserService {
         logger.debug("Updating user with id: {}", request.getId());
 
         User existing = userDAO.getById(request.getId());
-        if (existing == null) {
-            throw new ServiceException("User not found");
-        }
+
+        ValidateHelper.requireNotNull(existing, "User not found");
 
         User updatedEntity = userMapper.toEntity(request).toBuilder()
                 .id(existing.getId())
@@ -99,9 +101,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userDAO.getById(userId);
 
-        if (user == null) {
-            throw new ServiceException("User not found");
-        }
+        ValidateHelper.requireNotNull(user, "User not found");
 
         user.setPassword(newPassword);
         userDAO.update(user);
@@ -114,9 +114,7 @@ public class UserServiceImpl implements UserService {
         logger.debug("Retrieving user with id: {}", id);
         User user = userDAO.getById(id);
 
-        if (user == null) {
-            throw new ServiceException("User not found");
-        }
+        ValidateHelper.requireNotNull(user, "User not found");
 
         return userMapper.toResponse(user);
     }

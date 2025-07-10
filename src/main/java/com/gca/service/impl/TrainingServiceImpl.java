@@ -12,12 +12,17 @@ import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
 import com.gca.service.TrainingService;
+import com.gca.service.utils.ValidateHelper;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
+@Validated
 public class TrainingServiceImpl implements TrainingService {
     private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
@@ -53,7 +58,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public TrainingResponse createTraining(TrainingCreateRequest request) {
+    public TrainingResponse createTraining(@Valid TrainingCreateRequest request) {
         logger.debug("Creating training {}", request.getName());
 
         Training training = trainingMapper.toEntity(request);
@@ -61,6 +66,12 @@ public class TrainingServiceImpl implements TrainingService {
         Trainer trainer = trainerDAO.getById(request.getTrainerId());
         Trainee trainee = traineeDAO.getById(request.getTraineeId());
         TrainingType trainingType = trainingTypeDAO.getById(request.getTrainingTypeId());
+
+        ValidateHelper.requireAllNotNull(
+                Trainer.class.getName(), trainer,
+                Trainee.class.getName(), trainee,
+                TrainingType.class.getName(), trainingType
+        );
 
         training.setTrainer(trainer);
         training.setTrainee(trainee);
@@ -74,7 +85,7 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public TrainingResponse getTrainingById(Long id) {
+    public TrainingResponse getTrainingById(@NotNull Long id) {
         logger.debug("Retrieving training for id: {}", id);
         return trainingMapper.toResponse(trainingDAO.getById(id));
     }

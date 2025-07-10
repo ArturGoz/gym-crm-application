@@ -39,15 +39,12 @@ class TrainerServiceImplTest {
     void createTrainer_success() {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
         Trainer trainer = GymTestProvider.constructTrainer();
-
-        when(mapper.toEntity(request)).thenReturn(trainer);
-
         Trainer trainerWithCreds = GymTestProvider.constructTrainer();
-
-        when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
-
         TrainerResponse expected = GymTestProvider.constructTrainerResponse();
 
+        when(userDAO.getById(any(Long.class))).thenReturn(trainer.getUser());
+        when(mapper.toEntity(request)).thenReturn(trainer);
+        when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
         when(mapper.toResponse(any(Trainer.class))).thenReturn(expected);
 
         TrainerResponse actual = service.createTrainer(request);

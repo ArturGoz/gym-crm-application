@@ -42,6 +42,7 @@ class TraineeServiceImplTest {
         Trainee traineeWithCreds = GymTestProvider.constructTrainee();
         TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
+        when(userDAO.getById(any(Long.class))).thenReturn(trainee.getUser());
         when(mapper.toEntity(request)).thenReturn(trainee);
         when(dao.create(any(Trainee.class))).thenReturn(traineeWithCreds);
         when(mapper.toResponse(any(Trainee.class))).thenReturn(expected);

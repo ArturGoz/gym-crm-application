@@ -5,17 +5,22 @@ import com.gca.dao.UserDAO;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
-import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
 import com.gca.model.User;
 import com.gca.service.TrainerService;
+import com.gca.service.utils.ValidateHelper;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 @Service
+@Validated
 public class TrainerServiceImpl implements TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
@@ -40,14 +45,13 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponse createTrainer(TrainerCreateRequest request) {
+    public TrainerResponse createTrainer(@Valid TrainerCreateRequest request) {
         logger.debug("Creating trainer");
 
-        if (request.getUserId() == null) {
-            throw new ServiceException("User id is null");
-        }
-
         User user = userDAO.getById(request.getUserId());
+
+        ValidateHelper.requireNotNull(user, "User not found");
+
         Trainer trainer = trainerMapper.toEntity(request).toBuilder()
                 .user(user)
                 .build();
@@ -59,14 +63,12 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
+    public TrainerResponse updateTrainer(@Valid TrainerUpdateRequest request) {
         logger.debug("Updating trainer");
 
         Trainer trainer = trainerDAO.getById(request.getId());
 
-        if (trainer == null) {
-            throw new ServiceException("Trainer not found");
-        }
+        ValidateHelper.requireNotNull(trainer, "Trainer not found");
 
         Trainer updatedTrainer = trainerMapper.toEntity(request).toBuilder()
                 .id(trainer.getId())
@@ -80,7 +82,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponse getTrainerByUsername(String username) {
+    public TrainerResponse getTrainerByUsername(@NotBlank String username) {
         logger.debug("Getting trainer by username {}", username);
 
         Trainer trainer = trainerDAO.findByUsername(username);
@@ -90,7 +92,7 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Override
-    public TrainerResponse getTrainerById(Long id) {
+    public TrainerResponse getTrainerById(@NotNull Long id) {
         logger.debug("Retrieving trainer by id: {}", id);
         return trainerMapper.toResponse(trainerDAO.getById(id));
     }
