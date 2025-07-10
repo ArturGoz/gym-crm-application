@@ -1,6 +1,6 @@
-package com.gca.dao;
+package com.gca.dao.impl;
 
-import com.gca.dao.impl.TraineeDAOImpl;
+import com.gca.dao.BaseIntegrationTest;
 import com.gca.model.Trainee;
 import com.gca.model.User;
 import com.github.database.rider.core.api.dataset.DataSet;
@@ -67,11 +67,11 @@ class TraineeDAOImplTest extends BaseIntegrationTest<TraineeDAOImpl> {
     }
 
     @Test
-    void shouldDeleteTraineeById() {
+    void shouldDeleteByIdTraineeById() {
         Trainee existing = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
         assertNotNull(existing, "Trainee should exist before delete");
 
-        dao.delete(1L);
+        dao.deleteById(1L);
 
         Trainee deleted = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
 

@@ -1,4 +1,4 @@
-package com.gca.service;
+package com.gca.service.impl;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.TrainerDAO;
@@ -8,7 +8,6 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
-import com.gca.service.impl.TrainerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,12 +21,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TrainerServiceTest {
+class TrainerServiceImplTest {
 
     @Mock
     private TrainerDAO dao;
+
     @Mock
     private UserDAO userDAO;
+
     @Mock
     private TrainerMapper mapper;
 
@@ -66,6 +67,7 @@ class TrainerServiceTest {
         TrainerResponse expected = GymTestProvider.constructUpdatedTrainerResponse();
 
         when(dao.getById(2L)).thenReturn(existing);
+        when(mapper.toEntity(updateRequest)).thenReturn(updated);
         when(dao.update(existing)).thenReturn(updated);
         when(mapper.toResponse(updated)).thenReturn(expected);
 
@@ -104,5 +106,22 @@ class TrainerServiceTest {
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(dao).getById(2L);
         verify(mapper).toResponse(trainer);
+    }
+
+    @Test
+    void getTrainerByUsername_success() {
+        String username = "john_doe";
+        Trainer mockTrainer = GymTestProvider.constructTrainer();
+        TrainerResponse expectedResponse = GymTestProvider.constructTrainerResponse();
+
+        when(dao.findByUsername(username)).thenReturn(mockTrainer);
+        when(mapper.toResponse(mockTrainer)).thenReturn(expectedResponse);
+
+        TrainerResponse actualResponse = service.getTrainerByUsername(username);
+
+        assertEquals(expectedResponse, actualResponse);
+
+        verify(dao).findByUsername(username);
+        verify(mapper).toResponse(mockTrainer);
     }
 }

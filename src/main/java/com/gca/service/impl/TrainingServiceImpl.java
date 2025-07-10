@@ -1,10 +1,16 @@
 package com.gca.service.impl;
 
+import com.gca.dao.TraineeDAO;
+import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
+import com.gca.dao.TrainingTypeDAO;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
 import com.gca.mapper.TrainingMapper;
+import com.gca.model.Trainee;
+import com.gca.model.Trainer;
 import com.gca.model.Training;
+import com.gca.model.TrainingType;
 import com.gca.service.TrainingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +22,29 @@ public class TrainingServiceImpl implements TrainingService {
     private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
     private TrainingDAO trainingDAO;
+    private TrainerDAO trainerDAO;
+    private TraineeDAO traineeDAO;
+    private TrainingTypeDAO trainingTypeDAO;
     private TrainingMapper trainingMapper;
 
     @Autowired
     public void setTrainingDAO(TrainingDAO trainingDAO) {
         this.trainingDAO = trainingDAO;
+    }
+
+    @Autowired
+    public void setTrainerDAO(TrainerDAO trainerDAO) {
+        this.trainerDAO = trainerDAO;
+    }
+
+    @Autowired
+    public void setTraineeDAO(TraineeDAO traineeDAO) {
+        this.traineeDAO = traineeDAO;
+    }
+
+    @Autowired
+    public void setTrainingTypeDAO(TrainingTypeDAO trainingTypeDAO) {
+        this.trainingTypeDAO = trainingTypeDAO;
     }
 
     @Autowired
@@ -33,6 +57,15 @@ public class TrainingServiceImpl implements TrainingService {
         logger.debug("Creating training {}", request.getName());
 
         Training training = trainingMapper.toEntity(request);
+
+        Trainer trainer = trainerDAO.getById(request.getTrainerId());
+        Trainee trainee = traineeDAO.getById(request.getTraineeId());
+        TrainingType trainingType = trainingTypeDAO.getById(request.getTrainingTypeId());
+
+        training.setTrainer(trainer);
+        training.setTrainee(trainee);
+        training.setType(trainingType);
+
         Training created = trainingDAO.create(training);
 
         logger.info("Created training: {}", created);

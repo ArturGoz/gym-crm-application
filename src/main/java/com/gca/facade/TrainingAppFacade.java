@@ -37,7 +37,7 @@ public class TrainingAppFacade {
 
     public void deleteTrainee(Long id) {
         logger.info("Facade: Deleting trainee with ID {}", id);
-        traineeService.deleteTrainee(id);
+        traineeService.deleteTraineeById(id);
     }
 
     public TraineeResponse getTraineeById(Long id) {

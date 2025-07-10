@@ -67,7 +67,7 @@ class TrainingAppFacadeTest {
     void deleteTrainee_delegatesToService() {
         facade.deleteTrainee(2L);
 
-        verify(traineeService).deleteTrainee(2L);
+        verify(traineeService).deleteTraineeById(2L);
     }
 
     @Test

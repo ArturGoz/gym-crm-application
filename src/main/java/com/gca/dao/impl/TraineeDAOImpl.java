@@ -32,7 +32,7 @@ public class TraineeDAOImpl implements TraineeDAO {
         Trainee existingTrainee = session.find(Trainee.class, trainee.getId());
 
         if (existingTrainee == null) {
-            throw new DaoException("Trainee with id: " + trainee.getId() + " not found");
+            throw new DaoException(String.format("Trainee with id: %d not found", trainee.getId()));
         }
 
         return session.merge(trainee);
@@ -46,13 +46,41 @@ public class TraineeDAOImpl implements TraineeDAO {
     }
 
     @Override
-    public void delete(Long id) {
+    public Trainee findByUsername(String username) {
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery(
+                        "SELECT t FROM Trainee t JOIN FETCH t.user u WHERE u.username = :username",
+                        Trainee.class
+                )
+                .setParameter("username", username)
+                .uniqueResultOptional()
+                .orElseThrow(() -> new DaoException(String.format("Trainee with username: %s not found", username)));
+    }
+
+    @Override
+    public void deleteById(Long id) {
         Session session = sessionFactory.getCurrentSession();
         Trainee trainee = session.find(Trainee.class, id);
 
         if (trainee == null) {
-            throw new DaoException("Trainee with id: " + id + " not found");
+            throw new DaoException(String.format("Trainee with id: %d not found", id));
         }
         session.remove(trainee);
+    }
+
+    @Override
+    public void deleteByUsername(String username) {
+        Session session = sessionFactory.getCurrentSession();
+
+        int deletedCount = session.createMutationQuery(
+                        "DELETE FROM Trainee t WHERE t.user.id = " +
+                                "(SELECT u.id FROM User u WHERE u.username = :username)"
+                )
+                .setParameter("username", username)
+                .executeUpdate();
+
+        if (deletedCount == 0) {
+            throw new DaoException(String.format("Trainee with username: %s not found for deleting", username));
+        }
     }
 }

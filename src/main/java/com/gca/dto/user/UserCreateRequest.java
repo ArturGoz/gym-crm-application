@@ -1,18 +1,17 @@
-package com.gca.dto.trainee;
+package com.gca.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TraineeCreateRequest {
-    private Long userId;
-    private LocalDate dateOfBirth;
-    private String address;
+public class UserCreateRequest {
+    private String firstName;
+    private String lastName;
+    private String username;
+    private String password;
 }

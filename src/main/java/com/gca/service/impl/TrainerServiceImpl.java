@@ -41,35 +41,52 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     public TrainerResponse createTrainer(TrainerCreateRequest request) {
-        logger.debug("Creating trainer with user id: {}", request.getUserId());
-        Trainer trainer = trainerMapper.toEntity(request);
+        logger.debug("Creating trainer");
 
-        Long userId = request.getUserId();
-        User user = userDAO.getById(userId);
+        if (request.getUserId() == null) {
+            throw new ServiceException("User id is null");
+        }
 
-        trainer = trainer.toBuilder()
+        User user = userDAO.getById(request.getUserId());
+        Trainer trainer = trainerMapper.toEntity(request).toBuilder()
                 .user(user)
                 .build();
 
         Trainer created = trainerDAO.create(trainer);
-        logger.info("Created trainer: {}", created);
 
+        logger.info("Trainer created: {}", created);
         return trainerMapper.toResponse(created);
     }
 
     @Override
     public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
         logger.debug("Updating trainer");
-        Trainer existing = trainerDAO.getById(request.getId());
 
-        if (existing == null) {
+        Trainer trainer = trainerDAO.getById(request.getId());
+
+        if (trainer == null) {
             throw new ServiceException("Trainer not found");
         }
 
-        Trainer updated = trainerDAO.update(existing);
-        logger.info("Updated trainer: {}", updated);
+        Trainer updatedTrainer = trainerMapper.toEntity(request).toBuilder()
+                .id(trainer.getId())
+                .user(trainer.getUser())
+                .build();
 
+        Trainer updated = trainerDAO.update(updatedTrainer);
+
+        logger.info("Trainer updated {}", updated);
         return trainerMapper.toResponse(updated);
+    }
+
+    @Override
+    public TrainerResponse getTrainerByUsername(String username) {
+        logger.debug("Getting trainer by username {}", username);
+
+        Trainer trainer = trainerDAO.findByUsername(username);
+
+        logger.debug("Trainer is found by username {}", username);
+        return trainerMapper.toResponse(trainer);
     }
 
     @Override

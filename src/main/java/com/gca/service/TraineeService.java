@@ -9,7 +9,11 @@ public interface TraineeService {
 
     TraineeResponse updateTrainee(TraineeUpdateRequest request);
 
-    void deleteTrainee(Long id);
-
     TraineeResponse getTraineeById(Long id);
+
+    TraineeResponse getTraineeByUsername(String username);
+
+    void deleteTraineeById(Long id);
+
+    void deleteTraineeByUsername(String username);
 }

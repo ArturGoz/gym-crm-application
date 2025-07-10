@@ -41,19 +41,20 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public TraineeResponse createTrainee(TraineeCreateRequest request) {
-        logger.debug("Creating trainee with user id: {}", request.getUserId());
-        Trainee trainee = traineeMapper.toEntity(request);
+        logger.debug("Creating trainee");
 
-        Long userId = request.getUserId();
-        User user = userDAO.getById(userId);
+        if (request.getUserId() == null) {
+            throw new ServiceException("User id is null");
+        }
 
-        trainee = trainee.toBuilder()
+        User user = userDAO.getById(request.getUserId());
+        Trainee trainee = traineeMapper.toEntity(request).toBuilder()
                 .user(user)
                 .build();
 
         Trainee created = traineeDAO.create(trainee);
-        logger.info("Created trainee: {}", created);
 
+        logger.info("Created trainee: {}", created);
         return traineeMapper.toResponse(created);
     }
 
@@ -61,28 +62,50 @@ public class TraineeServiceImpl implements TraineeService {
     public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
         logger.debug("Updating trainee");
 
-        Trainee existing = traineeDAO.getById(request.getId());
+        Trainee trainee = traineeDAO.getById(request.getId());
 
-        if (existing == null) {
+        if (trainee == null) {
             throw new ServiceException("Trainee not found");
         }
 
-        Trainee updated = traineeDAO.update(existing);
-        logger.info("Updated trainee: {}", updated);
+        Trainee updatedTrainee = traineeMapper.toEntity(request).toBuilder()
+                .id(trainee.getId())
+                .user(trainee.getUser())
+                .build();
 
+        Trainee updated = traineeDAO.update(updatedTrainee);
+
+        logger.info("Trainee updated  {}", updated);
         return traineeMapper.toResponse(updated);
-    }
-
-    @Override
-    public void deleteTrainee(Long id) {
-        logger.debug("Deleting trainee with ID: {}", id);
-        traineeDAO.delete(id);
-        logger.info("Deleted trainee with ID: {}", id);
     }
 
     @Override
     public TraineeResponse getTraineeById(Long id) {
         logger.debug("Retrieving trainee with ID: {}", id);
         return traineeMapper.toResponse(traineeDAO.getById(id));
+    }
+
+    @Override
+    public TraineeResponse getTraineeByUsername(String username) {
+        logger.debug("Getting trainee by username {}", username);
+
+        Trainee trainee = traineeDAO.findByUsername(username);
+
+        logger.debug("Trainee is found by username {}", username);
+        return traineeMapper.toResponse(trainee);
+    }
+
+    @Override
+    public void deleteTraineeById(Long id) {
+        logger.debug("Deleting trainee with ID: {}", id);
+        traineeDAO.deleteById(id);
+        logger.info("Deleted trainee with ID: {}", id);
+    }
+
+    @Override
+    public void deleteTraineeByUsername(String username) {
+        logger.debug("Deleting trainee by username {}", username);
+        traineeDAO.deleteByUsername(username);
+        logger.info("Deleted trainee by username {}", username);
     }
 }

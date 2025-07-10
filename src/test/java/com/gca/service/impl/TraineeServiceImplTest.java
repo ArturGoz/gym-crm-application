@@ -1,4 +1,4 @@
-package com.gca.service;
+package com.gca.service.impl;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.TraineeDAO;
@@ -8,7 +8,6 @@ import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
-import com.gca.service.impl.TraineeServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,12 +21,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TraineeServiceTest {
+class TraineeServiceImplTest {
 
     @Mock
     private TraineeDAO dao;
+
     @Mock
     private UserDAO userDAO;
+
     @Mock
     private TraineeMapper mapper;
 
@@ -62,6 +63,7 @@ class TraineeServiceTest {
         TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
         when(dao.getById(1L)).thenReturn(existing);
+        when(mapper.toEntity(updateRequest)).thenReturn(updated);
         when(dao.update(existing)).thenReturn(updated);
         when(mapper.toResponse(updated)).thenReturn(expected);
 
@@ -81,17 +83,16 @@ class TraineeServiceTest {
 
         when(dao.getById(2L)).thenReturn(null);
 
-
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainee(updateRequest));
         assertEquals("Trainee not found", ex.getMessage());
     }
 
     @Test
-    void deleteTrainee_success() {
-        service.deleteTrainee(1L);
+    void deleteTrainee_ById_success() {
+        service.deleteTraineeById(1L);
 
-        verify(dao).delete(1L);
+        verify(dao).deleteById(1L);
     }
 
     @Test
@@ -108,5 +109,22 @@ class TraineeServiceTest {
         assertEquals(expected.getAddress(), actual.getAddress());
         verify(dao).getById(1L);
         verify(mapper).toResponse(trainee);
+    }
+
+    @Test
+    void getTraineeByUsername_success() {
+        String username = "john_doe";
+        Trainee mockTrainee = GymTestProvider.constructTrainee();
+        TraineeResponse expectedResponse = GymTestProvider.constructTraineeResponse();
+
+        when(dao.findByUsername(username)).thenReturn(mockTrainee);
+        when(mapper.toResponse(mockTrainee)).thenReturn(expectedResponse);
+
+        TraineeResponse actualResponse = service.getTraineeByUsername(username);
+
+        assertEquals(expectedResponse, actualResponse);
+
+        verify(dao).findByUsername(username);
+        verify(mapper).toResponse(mockTrainee);
     }
 }
