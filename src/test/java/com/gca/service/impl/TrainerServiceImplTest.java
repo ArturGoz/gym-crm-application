@@ -8,6 +8,7 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
+import com.gca.service.common.CoreValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +29,9 @@ class TrainerServiceImplTest {
 
     @Mock
     private UserDAO userDAO;
+
+    @Mock
+    private CoreValidator validator;
 
     @Mock
     private TrainerMapper mapper;
@@ -86,7 +90,7 @@ class TrainerServiceImplTest {
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainer(updateRequest));
 
-        assertEquals("Invalid trainer id", ex.getMessage());
+        assertEquals("Invalid trainer ID: 3", ex.getMessage());
     }
 
     @Test

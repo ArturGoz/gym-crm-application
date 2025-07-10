@@ -92,7 +92,7 @@ class UserServiceImplTest {
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> userService.updateUser(request));
 
-        assertEquals("User with id 1 not found", ex.getMessage());
+        assertEquals("User with ID 1 not found", ex.getMessage());
         verify(userDAO).getById(request.getId());
         verifyNoMoreInteractions(userMapper, userDAO);
     }
@@ -124,7 +124,7 @@ class UserServiceImplTest {
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> userService.getUserById(1L));
 
-        assertEquals("User with id 1 not found", ex.getMessage());
+        assertEquals("User with ID 1 not found", ex.getMessage());
         verify(userDAO).getById(1L);
         verifyNoInteractions(userMapper);
     }
@@ -180,7 +180,7 @@ class UserServiceImplTest {
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () ->
                 userService.changeUserPassword(1L, "newPass"));
 
-        assertEquals("User with id 1 not found", ex.getMessage());
+        assertEquals("User with ID 1 not found", ex.getMessage());
         verify(userDAO).getById(1L);
     }
 }

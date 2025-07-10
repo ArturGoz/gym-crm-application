@@ -8,6 +8,7 @@ import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
+import com.gca.service.common.CoreValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,6 +32,9 @@ class TraineeServiceImplTest {
 
     @Mock
     private TraineeMapper mapper;
+
+    @Mock
+    private CoreValidator validator;
 
     @InjectMocks
     private TraineeServiceImpl service;
@@ -86,7 +90,7 @@ class TraineeServiceImplTest {
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainee(updateRequest));
-        assertEquals("Invalid trainee id", ex.getMessage());
+        assertEquals("Invalid trainee ID: 2", ex.getMessage());
     }
 
     @Test

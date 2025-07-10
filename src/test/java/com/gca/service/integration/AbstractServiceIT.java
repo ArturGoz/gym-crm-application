@@ -2,6 +2,7 @@ package com.gca.service.integration;
 
 import com.gca.config.LiquibaseConfigTest;
 import com.gca.config.PersistenceConfigTest;
+import com.gca.service.common.CoreValidator;
 import com.gca.service.impl.TraineeServiceImpl;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.spring.api.DBRider;
@@ -17,7 +18,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
         PersistenceConfigTest.class,
-        LiquibaseConfigTest.class
+        LiquibaseConfigTest.class,
+        CoreValidator.class
 })
 @ActiveProfiles("test")
 @DBRider
@@ -26,6 +28,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class AbstractServiceIT {
     @Autowired
     protected SessionFactory sessionFactory;
+
+    @Autowired
+    CoreValidator validator;
 
     protected TraineeServiceImpl traineeService;
 

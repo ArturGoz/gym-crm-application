@@ -6,6 +6,7 @@ import com.gca.dao.TrainingDAO;
 import com.gca.dao.TrainingTypeDAO;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
+import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainingMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
@@ -20,9 +21,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Optional;
+
+import static java.lang.String.format;
+
 @Service
 @Validated
 public class TrainingServiceImpl implements TrainingService {
+
     private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
     private TrainingDAO trainingDAO;
@@ -58,17 +64,24 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingResponse createTraining(@Valid TrainingCreateRequest request) {
-        logger.debug("Creating training {}", request.getName());
+        logger.debug("Creating training '{}'", request.getName());
 
         Training training = trainingMapper.toEntity(request);
 
-        Trainer trainer = trainerDAO.getById(request.getTrainerId());
-        Trainee trainee = traineeDAO.getById(request.getTraineeId());
-        TrainingType trainingType = trainingTypeDAO.getById(request.getTrainingTypeId());
+        Trainer trainer = Optional.ofNullable(trainerDAO.getById(request.getTrainerId()))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Trainer with ID %d not found", request.getTrainerId())
+                ));
 
-        if (trainer == null || trainee == null || trainingType == null) {
-            throw new EntityNotFoundException("Trainer, trainee, trainingType must not be null");
-        }
+        Trainee trainee = Optional.ofNullable(traineeDAO.getById(request.getTraineeId()))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Trainee with ID %d not found", request.getTraineeId())
+                ));
+
+        TrainingType trainingType = Optional.ofNullable(trainingTypeDAO.getById(request.getTrainingTypeId()))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Training type with ID %d not found", request.getTrainingTypeId())
+                ));
 
         training.setTrainer(trainer);
         training.setTrainee(trainee);
@@ -83,12 +96,15 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     public TrainingResponse getTrainingById(Long id) {
-        logger.debug("Retrieving training for id: {}", id);
+        logger.debug("Retrieving training with ID: {}", id);
 
-        Training training = trainingDAO.getById(id);
-        if (training == null) {
-            throw new EntityNotFoundException("Training with id " + id + " not found");
-        }
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new ServiceException("Training ID must not be null"));
+
+        Training training = Optional.ofNullable(trainingDAO.getById(id))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Training with ID %d not found", id)
+                ));
 
         return trainingMapper.toResponse(training);
     }
