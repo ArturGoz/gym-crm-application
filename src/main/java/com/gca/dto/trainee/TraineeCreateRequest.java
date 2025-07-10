@@ -1,5 +1,8 @@
 package com.gca.dto.trainee;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +15,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TraineeCreateRequest {
+    @NotNull(message = "User ID cannot be null")
     private Long userId;
+
+    @PastOrPresent(message = "Date of birth must be in the past or present")
     private LocalDate dateOfBirth;
+
+    @Size(max = 255, message = "Address cannot exceed 255 characters")
     private String address;
 }
