@@ -16,13 +16,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = "com.gca.dao")
+@ComponentScan(basePackages = {
+        "com.gca.dao",
+        "com.gca.service",
+        "com.gca.facade",
+        "com.gca.mapper",
+        "com.gca.security"
+})
+@Import(BCryptPasswordEncoder.class)
+@EnableAspectJAutoProxy
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
 public class PersistenceConfig {
 
