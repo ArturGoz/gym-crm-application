@@ -38,6 +38,7 @@ public class User {
     @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
 
+    @ToString.Exclude
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 

@@ -24,7 +24,7 @@ import java.util.Properties;
 @Configuration
 @ComponentScan(basePackages = "com.gca.dao")
 @PropertySource(value = "classpath:application.yml", factory = YamlPropertySourceFactory.class)
-public class PersistenceConfigTest extends PersistenceConfig {
+public class PersistenceConfigTest {
 
     private static final boolean SHOW_SQL = true;
     private static final boolean FORMAT_SQL = true;

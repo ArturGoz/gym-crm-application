@@ -1,6 +1,8 @@
 package com.gca.facade;
 
 import com.gca.GymTestProvider;
+import com.gca.dto.PasswordChangeRequest;
+import com.gca.dto.auth.AuthenticationRequest;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
@@ -9,9 +11,11 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
+import com.gca.security.AuthenticationService;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
+import com.gca.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,10 +32,15 @@ class TrainingAppFacadeTest {
 
     @Mock
     private TraineeService traineeService;
+
     @Mock
     private TrainerService trainerService;
+
     @Mock
     private TrainingService trainingService;
+
+    @Mock
+    private UserService userService;
 
     @InjectMocks
     private TrainingAppFacade facade;
@@ -151,5 +161,15 @@ class TrainingAppFacadeTest {
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getDate(), actual.getDate());
         verify(trainingService).getTrainingById(2L);
+    }
+
+    @Test
+    void changePassword_delegatesToUserService() {
+        PasswordChangeRequest request =
+                new PasswordChangeRequest(1L, "newSecretPassword");
+
+        facade.changePassword(request);
+
+        verify(userService).changeUserPassword(request);
     }
 }

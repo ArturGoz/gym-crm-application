@@ -2,6 +2,7 @@ package com.gca.service.impl;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.UserDAO;
+import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserResponse;
 import com.gca.dto.user.UserUpdateRequest;
@@ -132,53 +133,62 @@ class UserServiceImplTest {
     @Test
     void isUserCredentialsValid_validCredentials_returnsTrue() {
         User user = GymTestProvider.constructUser();
-        when(userDAO.getByUsername(user.getUsername())).thenReturn(user);
+
+        when(userDAO.findByUsername(user.getUsername())).thenReturn(user);
+        when(userProfileService.verifyPassword(any(String.class), any(String.class))).thenReturn(true);
 
         boolean result = userService.isUserCredentialsValid(user.getUsername(), user.getPassword());
 
         assertTrue(result);
-        verify(userDAO).getByUsername(user.getUsername());
+        verify(userDAO).findByUsername(user.getUsername());
     }
 
     @Test
     void isUserCredentialsValid_invalidPassword_returnsFalse() {
         User user = GymTestProvider.constructUser();
-        when(userDAO.getByUsername(user.getUsername())).thenReturn(user);
+        when(userDAO.findByUsername(user.getUsername())).thenReturn(user);
 
         boolean result = userService.isUserCredentialsValid(user.getUsername(), "wrongPass");
 
         assertFalse(result);
-        verify(userDAO).getByUsername(user.getUsername());
+        verify(userDAO).findByUsername(user.getUsername());
     }
 
     @Test
     void isUserCredentialsValid_userNotFound_returnsFalse() {
-        when(userDAO.getByUsername("unknown")).thenReturn(null);
+        when(userDAO.findByUsername("unknown")).thenReturn(null);
 
         boolean result = userService.isUserCredentialsValid("unknown", "any");
 
         assertFalse(result);
-        verify(userDAO).getByUsername("unknown");
+        verify(userDAO).findByUsername("unknown");
     }
 
     @Test
     void changeUserPassword_success() {
-        User user = GymTestProvider.constructUser();
-        when(userDAO.getById(user.getId())).thenReturn(user);
+        User actual = GymTestProvider.constructUser();
+        PasswordChangeRequest request
+                = new PasswordChangeRequest(actual.getId(), "newPassword");
 
-        userService.changeUserPassword(user.getId(), "newPassword123");
+        when(userDAO.getById(actual.getId())).thenReturn(actual);
+        when(userProfileService.encryptPassword(any(String.class))).thenReturn(request.getPassword());
 
-        assertEquals("newPassword123", user.getPassword());
-        verify(userDAO).getById(user.getId());
-        verify(userDAO).update(user);
+        userService.changeUserPassword(request);
+
+        assertEquals(request.getPassword(), actual.getPassword());
+        verify(userDAO).getById(actual.getId());
+        verify(userDAO).update(actual);
     }
 
     @Test
     void changeUserPassword_userNotFound_throwsException() {
+        PasswordChangeRequest request
+                = new PasswordChangeRequest(1L, "newPass");
+
         when(userDAO.getById(1L)).thenReturn(null);
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () ->
-                userService.changeUserPassword(1L, "newPass"));
+                userService.changeUserPassword(request));
 
         assertEquals("User with ID 1 not found", ex.getMessage());
         verify(userDAO).getById(1L);

@@ -1,6 +1,7 @@
 package com.gca.service.impl;
 
 import com.gca.dao.UserDAO;
+import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserResponse;
 import com.gca.dto.user.UserUpdateRequest;
@@ -102,13 +103,14 @@ public class UserServiceImpl implements UserService {
             return false;
         }
 
-        return Optional.ofNullable(userDAO.getByUsername(username))
-                .map(user -> user.getPassword().equals(rawPassword))
+        return Optional.ofNullable(userDAO.findByUsername(username))
+                .map(user -> userProfileService.verifyPassword(rawPassword, user.getPassword()))
                 .orElse(false);
     }
 
     @Override
-    public void changeUserPassword(Long userId, String newPassword) {
+    public void changeUserPassword(@Valid PasswordChangeRequest passwordChangeRequest) {
+        Long userId = passwordChangeRequest.getUserId();
         logger.debug("Changing password for user with ID: {}", userId);
 
         User user = Optional.ofNullable(userDAO.getById(userId))
@@ -116,7 +118,7 @@ public class UserServiceImpl implements UserService {
                         format("User with ID %d not found", userId)
                 ));
 
-        user.setPassword(newPassword);
+        user.setPassword(userProfileService.encryptPassword(passwordChangeRequest.getPassword()));
         userDAO.update(user);
 
         logger.info("Changed password for user with ID: {}", userId);
@@ -129,6 +131,18 @@ public class UserServiceImpl implements UserService {
         User user = Optional.ofNullable(userDAO.getById(id))
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("User with ID %d not found", id)
+                ));
+
+        return userMapper.toResponse(user);
+    }
+
+    @Override
+    public UserResponse getUserByUsername(String username) {
+        logger.debug("Retrieving user with username: {}", username);
+
+        User user = Optional.ofNullable(userDAO.findByUsername(username))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("User with username %s not found", username)
                 ));
 
         return userMapper.toResponse(user);

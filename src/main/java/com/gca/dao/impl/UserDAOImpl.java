@@ -57,7 +57,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User getByUsername(String username) {
+    public User findByUsername(String username) {
         Session session = sessionFactory.getCurrentSession();
 
         return session.createQuery(
