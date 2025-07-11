@@ -19,7 +19,7 @@ import java.util.Optional;
 public class AuthenticationService {
     private UserService userService;
     private UserDAO userDAO;
-    private AuthContextHolder authContextHolder ;
+    private AuthContextHolder authContextHolder;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -41,7 +41,7 @@ public class AuthenticationService {
 
         Optional.ofNullable(user).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        if (!userService.isUserCredentialsValid(user.getUsername(), request.getPassword()) || !user.getIsActive()) {
+        if (isNotAuthenticated(user, request.getPassword())) {
             throw new UserNotAuthenticatedException("Wrong user credentials");
         }
 
@@ -49,5 +49,10 @@ public class AuthenticationService {
 
         log.info("Authenticated user: {}", user.getUsername());
         return new AuthenticationResponse("User authenticated successfully", true);
+    }
+
+    private boolean isNotAuthenticated(User user, String rawPassword) {
+        return !userService.isUserCredentialsValid(user.getUsername(), rawPassword)
+                || !user.getIsActive();
     }
 }
