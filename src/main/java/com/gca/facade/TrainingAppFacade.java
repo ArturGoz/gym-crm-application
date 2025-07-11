@@ -89,7 +89,7 @@ public class TrainingAppFacade {
     public void changePassword(PasswordChangeRequest request) {
         logger.info("Changing password for userId: {}", request.getUserId());
 
-        userService.changeUserPassword(request.getUserId(),request.getPassword());
+        userService.changeUserPassword(request);
     }
 
     public boolean authenticate(AuthenticationRequest request) {

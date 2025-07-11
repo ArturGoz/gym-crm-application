@@ -2,6 +2,7 @@ package com.gca.service.impl;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.UserDAO;
+import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserResponse;
 import com.gca.dto.user.UserUpdateRequest;
@@ -166,24 +167,28 @@ class UserServiceImplTest {
     @Test
     void changeUserPassword_success() {
         User actual = GymTestProvider.constructUser();
-        String expectedPassword = "newPassword";
+        PasswordChangeRequest request
+                = new PasswordChangeRequest(actual.getId(), "newPassword");
 
         when(userDAO.getById(actual.getId())).thenReturn(actual);
-        when(userProfileService.encryptPassword(any(String.class))).thenReturn(expectedPassword);
+        when(userProfileService.encryptPassword(any(String.class))).thenReturn(request.getPassword());
 
-        userService.changeUserPassword(actual.getId(), expectedPassword);
+        userService.changeUserPassword(request);
 
-        assertEquals(expectedPassword, actual.getPassword());
+        assertEquals(request.getPassword(), actual.getPassword());
         verify(userDAO).getById(actual.getId());
         verify(userDAO).update(actual);
     }
 
     @Test
     void changeUserPassword_userNotFound_throwsException() {
+        PasswordChangeRequest request
+                = new PasswordChangeRequest(1L, "newPass");
+
         when(userDAO.getById(1L)).thenReturn(null);
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () ->
-                userService.changeUserPassword(1L, "newPass"));
+                userService.changeUserPassword(request));
 
         assertEquals("User with ID 1 not found", ex.getMessage());
         verify(userDAO).getById(1L);

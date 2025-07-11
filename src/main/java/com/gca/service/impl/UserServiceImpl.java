@@ -1,6 +1,7 @@
 package com.gca.service.impl;
 
 import com.gca.dao.UserDAO;
+import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserResponse;
 import com.gca.dto.user.UserUpdateRequest;
@@ -108,7 +109,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeUserPassword(Long userId, String newPassword) {
+    public void changeUserPassword(@Valid PasswordChangeRequest passwordChangeRequest) {
+        Long userId = passwordChangeRequest.getUserId();
         logger.debug("Changing password for user with ID: {}", userId);
 
         User user = Optional.ofNullable(userDAO.getById(userId))
@@ -116,7 +118,7 @@ public class UserServiceImpl implements UserService {
                         format("User with ID %d not found", userId)
                 ));
 
-        user.setPassword(userProfileService.encryptPassword(newPassword));
+        user.setPassword(userProfileService.encryptPassword(passwordChangeRequest.getPassword()));
         userDAO.update(user);
 
         logger.info("Changed password for user with ID: {}", userId);

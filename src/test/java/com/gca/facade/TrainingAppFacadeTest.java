@@ -168,20 +168,18 @@ class TrainingAppFacadeTest {
 
     @Test
     void changePassword_delegatesToUserService() {
-        PasswordChangeRequest request = new PasswordChangeRequest();
-        request.setUserId(1L);
-        request.setPassword("newSecretPassword");
+        PasswordChangeRequest request =
+                new PasswordChangeRequest(1L, "newSecretPassword");
 
         facade.changePassword(request);
 
-        verify(userService).changeUserPassword(1L, "newSecretPassword");
+        verify(userService).changeUserPassword(request);
     }
 
     @Test
     void authenticate_delegatesToAuthenticationService() {
-        AuthenticationRequest request = new AuthenticationRequest();
-        request.setUsername("john");
-        request.setPassword("password");
+        AuthenticationRequest request
+                = new AuthenticationRequest("john", "password");
 
         when(authenticationService.authenticate(request)).thenReturn(true);
 
