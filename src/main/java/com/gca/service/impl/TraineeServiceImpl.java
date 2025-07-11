@@ -10,19 +10,29 @@ import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
 import com.gca.model.User;
 import com.gca.service.TraineeService;
+import com.gca.service.common.CoreValidator;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.Optional;
+
+import static java.lang.String.format;
 
 @Service
+@Validated
 public class TraineeServiceImpl implements TraineeService {
+
     private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
     private TraineeDAO traineeDAO;
     private UserDAO userDAO;
-
     private TraineeMapper traineeMapper;
+    private CoreValidator validator;
 
     @Autowired
     public void setTraineeDAO(TraineeDAO traineeDAO) {
@@ -39,15 +49,20 @@ public class TraineeServiceImpl implements TraineeService {
         this.traineeMapper = traineeMapper;
     }
 
+    @Autowired
+    public void setValidator(CoreValidator validator) {
+        this.validator = validator;
+    }
+
     @Override
-    public TraineeResponse createTrainee(TraineeCreateRequest request) {
+    public TraineeResponse createTrainee(@Valid TraineeCreateRequest request) {
         logger.debug("Creating trainee");
 
-        if (request.getUserId() == null) {
-            throw new ServiceException("User id is null");
-        }
+        User user = Optional.ofNullable(userDAO.getById(request.getUserId()))
+                .orElseThrow(() -> new ServiceException(
+                        format("Invalid user ID: %d", request.getUserId())
+                ));
 
-        User user = userDAO.getById(request.getUserId());
         Trainee trainee = traineeMapper.toEntity(request).toBuilder()
                 .user(user)
                 .build();
@@ -59,14 +74,13 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
+    public TraineeResponse updateTrainee(@Valid TraineeUpdateRequest request) {
         logger.debug("Updating trainee");
 
-        Trainee trainee = traineeDAO.getById(request.getId());
-
-        if (trainee == null) {
-            throw new ServiceException("Trainee not found");
-        }
+        Trainee trainee = Optional.ofNullable(traineeDAO.getById(request.getId()))
+                .orElseThrow(() -> new ServiceException(
+                        format("Invalid trainee ID: %d", request.getId())
+                ));
 
         Trainee updatedTrainee = traineeMapper.toEntity(request).toBuilder()
                 .id(trainee.getId())
@@ -75,37 +89,80 @@ public class TraineeServiceImpl implements TraineeService {
 
         Trainee updated = traineeDAO.update(updatedTrainee);
 
-        logger.info("Trainee updated  {}", updated);
+        logger.info("Updated trainee: {}", updated);
         return traineeMapper.toResponse(updated);
     }
 
     @Override
     public TraineeResponse getTraineeById(Long id) {
         logger.debug("Retrieving trainee with ID: {}", id);
-        return traineeMapper.toResponse(traineeDAO.getById(id));
+
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new ServiceException("Trainee ID must not be null"));
+
+        Trainee trainee = Optional.ofNullable(traineeDAO.getById(id))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Trainee with ID %d not found", id)
+                ));
+
+        return traineeMapper.toResponse(trainee);
     }
 
     @Override
     public TraineeResponse getTraineeByUsername(String username) {
-        logger.debug("Getting trainee by username {}", username);
+        logger.debug("Getting trainee by username: {}", username);
 
-        Trainee trainee = traineeDAO.findByUsername(username);
+        validator.validateUsername(username);
 
-        logger.debug("Trainee is found by username {}", username);
-        return traineeMapper.toResponse(trainee);
+        return Optional.ofNullable(traineeDAO.findByUsername(username))
+                .map(trainee -> {
+                    logger.debug("Trainee found by username: {}", username);
+                    return traineeMapper.toResponse(trainee);
+                })
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Trainee with username '%s' not found", username)
+                ));
     }
 
     @Override
     public void deleteTraineeById(Long id) {
         logger.debug("Deleting trainee with ID: {}", id);
-        traineeDAO.deleteById(id);
-        logger.info("Deleted trainee with ID: {}", id);
+
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new ServiceException("Trainee ID must not be null"));
+
+        Optional.ofNullable(traineeDAO.getById(id))
+                .ifPresentOrElse(
+                        trainee -> {
+                            traineeDAO.deleteById(id);
+                            logger.info("Deleted trainee with ID: {}", id);
+                        },
+                        () -> {
+                            throw new EntityNotFoundException(
+                                    format("Trainee with ID %d not found", id)
+                            );
+                        }
+                );
     }
 
     @Override
     public void deleteTraineeByUsername(String username) {
-        logger.debug("Deleting trainee by username {}", username);
-        traineeDAO.deleteByUsername(username);
-        logger.info("Deleted trainee by username {}", username);
+        logger.debug("Deleting trainee by username: {}", username);
+
+        validator.validateUsername(username);
+
+        Optional.ofNullable(traineeDAO.findByUsername(username))
+                .ifPresentOrElse(
+                        trainee -> {
+                            traineeDAO.deleteByUsername(username);
+                            logger.info("Deleted trainee by username: {}", username);
+                        },
+                        () -> {
+                            throw new EntityNotFoundException(
+                                    format("Trainee with username '%s' not found", username)
+                            );
+                        }
+                );
     }
 }
+

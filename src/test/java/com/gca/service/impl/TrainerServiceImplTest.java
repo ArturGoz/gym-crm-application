@@ -8,6 +8,7 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainer;
+import com.gca.service.common.CoreValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,6 +31,9 @@ class TrainerServiceImplTest {
     private UserDAO userDAO;
 
     @Mock
+    private CoreValidator validator;
+
+    @Mock
     private TrainerMapper mapper;
 
     @InjectMocks
@@ -39,15 +43,12 @@ class TrainerServiceImplTest {
     void createTrainer_success() {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
         Trainer trainer = GymTestProvider.constructTrainer();
-
-        when(mapper.toEntity(request)).thenReturn(trainer);
-
         Trainer trainerWithCreds = GymTestProvider.constructTrainer();
-
-        when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
-
         TrainerResponse expected = GymTestProvider.constructTrainerResponse();
 
+        when(userDAO.getById(any(Long.class))).thenReturn(trainer.getUser());
+        when(mapper.toEntity(request)).thenReturn(trainer);
+        when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
         when(mapper.toResponse(any(Trainer.class))).thenReturn(expected);
 
         TrainerResponse actual = service.createTrainer(request);
@@ -89,7 +90,7 @@ class TrainerServiceImplTest {
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainer(updateRequest));
 
-        assertEquals("Trainer not found", ex.getMessage());
+        assertEquals("Invalid trainer ID: 3", ex.getMessage());
     }
 
     @Test

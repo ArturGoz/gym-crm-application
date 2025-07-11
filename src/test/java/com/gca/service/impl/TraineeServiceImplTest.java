@@ -8,6 +8,7 @@ import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
+import com.gca.service.common.CoreValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +33,9 @@ class TraineeServiceImplTest {
     @Mock
     private TraineeMapper mapper;
 
+    @Mock
+    private CoreValidator validator;
+
     @InjectMocks
     private TraineeServiceImpl service;
 
@@ -42,6 +46,7 @@ class TraineeServiceImplTest {
         Trainee traineeWithCreds = GymTestProvider.constructTrainee();
         TraineeResponse expected = GymTestProvider.constructTraineeResponse();
 
+        when(userDAO.getById(any(Long.class))).thenReturn(trainee.getUser());
         when(mapper.toEntity(request)).thenReturn(trainee);
         when(dao.create(any(Trainee.class))).thenReturn(traineeWithCreds);
         when(mapper.toResponse(any(Trainee.class))).thenReturn(expected);
@@ -85,14 +90,21 @@ class TraineeServiceImplTest {
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainee(updateRequest));
-        assertEquals("Trainee not found", ex.getMessage());
+        assertEquals("Invalid trainee ID: 2", ex.getMessage());
     }
 
     @Test
     void deleteTrainee_ById_success() {
-        service.deleteTraineeById(1L);
+        Long traineeId = 1L;
+        Trainee trainee = Trainee.builder()
+                .id(traineeId)
+                .build();
 
-        verify(dao).deleteById(1L);
+        when(dao.getById(traineeId)).thenReturn(trainee);
+
+        service.deleteTraineeById(traineeId);
+
+        verify(dao).deleteById(traineeId);
     }
 
     @Test

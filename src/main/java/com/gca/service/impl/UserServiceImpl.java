@@ -9,13 +9,22 @@ import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.UserService;
 import com.gca.service.common.UserProfileService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.Optional;
+
+import static java.lang.String.format;
 
 @Service
+@Validated
 public class UserServiceImpl implements UserService {
+
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private UserDAO userDAO;
@@ -38,12 +47,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(UserCreateRequest request) {
+    public UserResponse createUser(@Valid UserCreateRequest request) {
         logger.debug("Creating user for {} {}", request.getFirstName(), request.getLastName());
 
-        String username = userProfileService
-                .generateUsername(request.getFirstName(), request.getLastName());
-
+        String username = userProfileService.generateUsername(request.getFirstName(), request.getLastName());
         String password = userProfileService.generatePassword();
 
         User user = userMapper.toEntity(request).toBuilder()
@@ -53,71 +60,78 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         User created = userDAO.create(user);
-        logger.info("Created user: {}", created);
 
+        logger.info("Created user: {}", created);
         return userMapper.toResponse(created);
     }
 
     @Override
-    public UserResponse updateUser(UserUpdateRequest request) {
-        logger.debug("Updating user with id: {}", request.getId());
+    public UserResponse updateUser(@Valid UserUpdateRequest request) {
+        logger.debug("Updating user with ID: {}", request.getId());
 
-        User existing = userDAO.getById(request.getId());
-        if (existing == null) {
-            throw new ServiceException("User not found");
-        }
+        User existing = Optional.ofNullable(userDAO.getById(request.getId()))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("User with ID %d not found", request.getId())
+                ));
 
         User updatedEntity = userMapper.toEntity(request).toBuilder()
                 .id(existing.getId())
                 .build();
 
         User updated = userDAO.update(updatedEntity);
-        logger.info("Updated user: {}", updated);
 
+        logger.info("Updated user: {}", updated);
         return userMapper.toResponse(updated);
     }
 
     @Override
     public void deleteUser(Long id) {
-        logger.debug("Deleting user with id: {}", id);
+        logger.debug("Deleting user with ID: {}", id);
+
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new ServiceException("User ID must not be null"));
+
         userDAO.delete(id);
-        logger.info("Deleted user with id: {}", id);
+
+        logger.info("Deleted user with ID: {}", id);
     }
 
     @Override
     public boolean isUserCredentialsValid(String username, String rawPassword) {
-        User user = userDAO.getByUsername(username);
-        if (user == null) {
+        if (username == null || rawPassword == null) {
             return false;
         }
-        return user.getPassword().equals(rawPassword);
+
+        return Optional.ofNullable(userDAO.getByUsername(username))
+                .map(user -> user.getPassword().equals(rawPassword))
+                .orElse(false);
     }
 
     @Override
     public void changeUserPassword(Long userId, String newPassword) {
-        logger.debug("Changing password for user with id: {}", userId);
+        logger.debug("Changing password for user with ID: {}", userId);
 
-        User user = userDAO.getById(userId);
-
-        if (user == null) {
-            throw new ServiceException("User not found");
-        }
+        User user = Optional.ofNullable(userDAO.getById(userId))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("User with ID %d not found", userId)
+                ));
 
         user.setPassword(newPassword);
         userDAO.update(user);
 
-        logger.info("Changed password for user with id: {}", userId);
+        logger.info("Changed password for user with ID: {}", userId);
     }
 
     @Override
     public UserResponse getUserById(Long id) {
-        logger.debug("Retrieving user with id: {}", id);
-        User user = userDAO.getById(id);
+        logger.debug("Retrieving user with ID: {}", id);
 
-        if (user == null) {
-            throw new ServiceException("User not found");
-        }
+        User user = Optional.ofNullable(userDAO.getById(id))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("User with ID %d not found", id)
+                ));
 
         return userMapper.toResponse(user);
     }
 }
+

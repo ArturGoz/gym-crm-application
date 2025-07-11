@@ -42,6 +42,7 @@ class TraineeServiceIT extends AbstractServiceIT {
         traineeService.setTraineeDAO(traineeDAO);
         traineeService.setUserDAO(userDAO);
         traineeService.setTraineeMapper(traineeMapper);
+        traineeService.setValidator(validator);
     }
 
     @AfterEach
