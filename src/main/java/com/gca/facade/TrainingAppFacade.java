@@ -1,7 +1,6 @@
 package com.gca.facade;
 
 import com.gca.dto.PasswordChangeRequest;
-import com.gca.dto.auth.AuthenticationRequest;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
@@ -29,7 +28,6 @@ public class TrainingAppFacade {
     private final TraineeService traineeService;
     private final TrainerService trainerService;
     private final TrainingService trainingService;
-    private final AuthenticationService authenticationService;
     private final UserService userService;
 
     public TraineeResponse createTrainee(TraineeCreateRequest request) {
@@ -90,11 +88,5 @@ public class TrainingAppFacade {
         logger.info("Changing password for userId: {}", request.getUserId());
 
         userService.changeUserPassword(request);
-    }
-
-    public boolean authenticate(AuthenticationRequest request) {
-        logger.info("Authenticating user: {}", request.getUsername());
-
-        return authenticationService.authenticate(request);
     }
 }

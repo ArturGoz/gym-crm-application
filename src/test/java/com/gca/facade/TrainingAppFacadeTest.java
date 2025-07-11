@@ -42,9 +42,6 @@ class TrainingAppFacadeTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private AuthenticationService authenticationService;
-
     @InjectMocks
     private TrainingAppFacade facade;
 
@@ -174,18 +171,5 @@ class TrainingAppFacadeTest {
         facade.changePassword(request);
 
         verify(userService).changeUserPassword(request);
-    }
-
-    @Test
-    void authenticate_delegatesToAuthenticationService() {
-        AuthenticationRequest request
-                = new AuthenticationRequest("john", "password");
-
-        when(authenticationService.authenticate(request)).thenReturn(true);
-
-        boolean result = facade.authenticate(request);
-
-        assertTrue(result);
-        verify(authenticationService).authenticate(request);
     }
 }

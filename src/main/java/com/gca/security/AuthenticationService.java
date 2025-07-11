@@ -2,17 +2,20 @@ package com.gca.security;
 
 import com.gca.dao.UserDAO;
 import com.gca.dto.auth.AuthenticationRequest;
+import com.gca.dto.auth.AuthenticationResponse;
 import com.gca.exception.UserNotAuthenticatedException;
 import com.gca.model.User;
 import com.gca.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class AuthenticationService {
     private UserService userService;
     private UserDAO userDAO;
@@ -33,7 +36,7 @@ public class AuthenticationService {
         this.authContextHolder = authContextHolder;
     }
 
-    public boolean authenticate(@Valid AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(@Valid AuthenticationRequest request) {
         User user = userDAO.findByUsername(request.getUsername());
 
         Optional.ofNullable(user).orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -43,6 +46,8 @@ public class AuthenticationService {
         }
 
         authContextHolder.setCurrentUser(user);
-        return true;
+
+        log.info("Authenticated user: {}", user.getUsername());
+        return new AuthenticationResponse("User authenticated successfully", true);
     }
 }

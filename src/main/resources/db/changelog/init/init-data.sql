@@ -1,9 +1,9 @@
 -- USERS
 INSERT INTO users (first_name, last_name, username, password, is_active)
-VALUES ('John', 'Doe', 'johndoe', 'hashed_password_trainer', TRUE);
+VALUES ('John', 'Doe', 'johndoe', '$2a$12$XKdr6eAnA0W4Vmmdl2/3fuawtfamivMm5g4ZFUbUjL2zoOiKUwSpG', TRUE);
 
 INSERT INTO users (first_name, last_name, username, password, is_active)
-VALUES ('Jane', 'Smith', 'janesmith', 'hashed_password_trainee', TRUE);
+VALUES ('Jane', 'Smith', 'janesmith', '$2a$12$333cFrq.pIiAqoV1y04WFum.PfK1GEMU75NhQ0fkS8CsLgFhS.lfm', TRUE);
 
 -- TRAINING TYPES
 INSERT INTO training_types (training_type_name)
