@@ -39,7 +39,7 @@ public class UserDAOImplTest extends BaseIntegrationTest<UserDAOImpl> {
 
     @Test
     void shouldFindUserByUsername() {
-        User actual = dao.getByUsername(EXISTING_USERNAME);
+        User actual = dao.findByUsername(EXISTING_USERNAME);
 
         assertNotNull(actual);
         assertEquals(EXISTING_USERNAME, actual.getUsername());
@@ -47,7 +47,7 @@ public class UserDAOImplTest extends BaseIntegrationTest<UserDAOImpl> {
 
     @Test
     void shouldReturnNullWhenUserNotFoundByUsername() {
-        User actual = dao.getByUsername("unknown.user");
+        User actual = dao.findByUsername("unknown.user");
         assertNull(actual);
     }
 

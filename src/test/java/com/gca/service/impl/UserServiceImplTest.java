@@ -132,33 +132,33 @@ class UserServiceImplTest {
     @Test
     void isUserCredentialsValid_validCredentials_returnsTrue() {
         User user = GymTestProvider.constructUser();
-        when(userDAO.getByUsername(user.getUsername())).thenReturn(user);
+        when(userDAO.findByUsername(user.getUsername())).thenReturn(user);
 
         boolean result = userService.isUserCredentialsValid(user.getUsername(), user.getPassword());
 
         assertTrue(result);
-        verify(userDAO).getByUsername(user.getUsername());
+        verify(userDAO).findByUsername(user.getUsername());
     }
 
     @Test
     void isUserCredentialsValid_invalidPassword_returnsFalse() {
         User user = GymTestProvider.constructUser();
-        when(userDAO.getByUsername(user.getUsername())).thenReturn(user);
+        when(userDAO.findByUsername(user.getUsername())).thenReturn(user);
 
         boolean result = userService.isUserCredentialsValid(user.getUsername(), "wrongPass");
 
         assertFalse(result);
-        verify(userDAO).getByUsername(user.getUsername());
+        verify(userDAO).findByUsername(user.getUsername());
     }
 
     @Test
     void isUserCredentialsValid_userNotFound_returnsFalse() {
-        when(userDAO.getByUsername("unknown")).thenReturn(null);
+        when(userDAO.findByUsername("unknown")).thenReturn(null);
 
         boolean result = userService.isUserCredentialsValid("unknown", "any");
 
         assertFalse(result);
-        verify(userDAO).getByUsername("unknown");
+        verify(userDAO).findByUsername("unknown");
     }
 
     @Test

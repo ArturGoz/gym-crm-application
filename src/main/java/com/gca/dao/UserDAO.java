@@ -13,7 +13,7 @@ public interface UserDAO {
 
     void delete(Long id);
 
-    User getByUsername(String username);
+    User findByUsername(String username);
 
     List<String> getAllUsernames();
 }

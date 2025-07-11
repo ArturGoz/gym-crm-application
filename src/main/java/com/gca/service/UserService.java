@@ -11,6 +11,8 @@ public interface UserService {
 
     UserResponse getUserById(Long id);
 
+    UserResponse getUserByUsername(String username);
+
     void deleteUser(Long id);
 
     boolean isUserCredentialsValid(String username, String password);
