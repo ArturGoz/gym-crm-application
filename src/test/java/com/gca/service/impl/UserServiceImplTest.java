@@ -132,7 +132,9 @@ class UserServiceImplTest {
     @Test
     void isUserCredentialsValid_validCredentials_returnsTrue() {
         User user = GymTestProvider.constructUser();
+
         when(userDAO.findByUsername(user.getUsername())).thenReturn(user);
+        when(userProfileService.verifyPassword(any(String.class), any(String.class))).thenReturn(true);
 
         boolean result = userService.isUserCredentialsValid(user.getUsername(), user.getPassword());
 
@@ -163,14 +165,17 @@ class UserServiceImplTest {
 
     @Test
     void changeUserPassword_success() {
-        User user = GymTestProvider.constructUser();
-        when(userDAO.getById(user.getId())).thenReturn(user);
+        User actual = GymTestProvider.constructUser();
+        String expectedPassword = "newPassword";
 
-        userService.changeUserPassword(user.getId(), "newPassword123");
+        when(userDAO.getById(actual.getId())).thenReturn(actual);
+        when(userProfileService.encryptPassword(any(String.class))).thenReturn(expectedPassword);
 
-        assertEquals("newPassword123", user.getPassword());
-        verify(userDAO).getById(user.getId());
-        verify(userDAO).update(user);
+        userService.changeUserPassword(actual.getId(), expectedPassword);
+
+        assertEquals(expectedPassword, actual.getPassword());
+        verify(userDAO).getById(actual.getId());
+        verify(userDAO).update(actual);
     }
 
     @Test

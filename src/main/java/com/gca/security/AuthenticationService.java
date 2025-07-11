@@ -1,4 +1,4 @@
-package com.gca.service.common;
+package com.gca.security;
 
 import com.gca.dao.UserDAO;
 import com.gca.dto.auth.AuthenticationRequest;

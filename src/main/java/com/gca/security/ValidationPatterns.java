@@ -1,4 +1,4 @@
-package com.gca.service.utils;
+package com.gca.security;
 
 
 public final class ValidationPatterns {
