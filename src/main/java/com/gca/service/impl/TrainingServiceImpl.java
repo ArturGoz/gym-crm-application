@@ -4,6 +4,7 @@ import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
 import com.gca.dao.TrainingTypeDAO;
+import com.gca.dto.TrainingFilterDTO;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
 import com.gca.exception.ServiceException;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -107,5 +109,15 @@ public class TrainingServiceImpl implements TrainingService {
                 ));
 
         return trainingMapper.toResponse(training);
+    }
+
+    @Override
+    public List<Training> getTraineeTrainings(TrainingFilterDTO filter) {
+        return List.of();
+    }
+
+    @Override
+    public List<Training> getTrainerTrainings(TrainingFilterDTO filter) {
+        return List.of();
     }
 }

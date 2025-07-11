@@ -37,7 +37,7 @@ class TrainingServiceImplTest {
     private TrainingTypeDAO trainingTypeDAO;
 
     @Mock
-    private TrainingDAO trainingDAO;
+    private TrainingDAO dao;
 
     @Mock
     private TrainingMapper mapper;
@@ -61,7 +61,7 @@ class TrainingServiceImplTest {
         when(traineeDAO.getById(anyLong())).thenReturn(trainee);
         when(trainingTypeDAO.getById(anyLong())).thenReturn(type);
 
-        when(trainingDAO.create(any(Training.class))).thenReturn(created);
+        when(dao.create(any(Training.class))).thenReturn(created);
         when(mapper.toResponse(any(Training.class))).thenReturn(expected);
 
         TrainingResponse actual = service.createTraining(request);
@@ -71,7 +71,7 @@ class TrainingServiceImplTest {
         verify(trainerDAO).getById(anyLong());
         verify(traineeDAO).getById(anyLong());
         verify(trainingTypeDAO).getById(anyLong());
-        verify(trainingDAO).create(any(Training.class));
+        verify(dao).create(any(Training.class));
         verify(mapper).toResponse(any(Training.class));
     }
 
@@ -80,7 +80,7 @@ class TrainingServiceImplTest {
         Training training = GymTestProvider.constructStrengthTraining();
         TrainingResponse expected = GymTestProvider.constructStrengthTrainingResponse();
 
-        when(trainingDAO.getById(2L)).thenReturn(training);
+        when(dao.getById(2L)).thenReturn(training);
         when(mapper.toResponse(training)).thenReturn(expected);
 
         TrainingResponse actual = service.getTrainingById(2L);
@@ -88,7 +88,8 @@ class TrainingServiceImplTest {
         assertEquals(expected, actual);
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getDate(), actual.getDate());
-        verify(trainingDAO).getById(2L);
+        verify(dao).getById(2L);
         verify(mapper).toResponse(training);
     }
+
 }
