@@ -17,14 +17,6 @@ public class TrainingTypeDAOImpl implements TrainingTypeDAO {
     }
 
     @Override
-    public TrainingType create(TrainingType training) {
-        Session session = sessionFactory.getCurrentSession();
-        session.persist(training);
-
-        return training;
-    }
-
-    @Override
     public TrainingType getById(Long id) {
         Session session = sessionFactory.getCurrentSession();
 
