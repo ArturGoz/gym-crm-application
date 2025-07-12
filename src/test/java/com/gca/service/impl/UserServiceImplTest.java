@@ -202,16 +202,15 @@ class UserServiceImplTest {
                 .isActive(updated.getIsActive())
                 .build();
 
-        when(userDAO.getById(expected.getId())).thenReturn(expected);
+        when(userDAO.findByUsername(expected.getUsername())).thenReturn(expected);
         when(userDAO.update(any(User.class))).thenReturn(updated);
         when(userMapper.toResponse(updated)).thenReturn(expectedResponse);
 
-        UserResponse actual = userService.toggleActiveStatus(expected.getId());
+        UserResponse actual = userService.toggleActiveStatus(expected.getUsername());
 
         assertEquals(expectedResponse, actual);
         assertEquals(expected.getIsActive(), actual.getIsActive());
         assertEquals(expected.getId(), actual.getId());
-        verify(userDAO).getById(expected.getId());
         verify(userDAO).update(any(User.class));
         verify(userMapper).toResponse(updated);
     }

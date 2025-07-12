@@ -20,5 +20,5 @@ public interface UserService {
 
     void changeUserPassword(PasswordChangeRequest request);
 
-    UserResponse toggleActiveStatus(Long id);
+    UserResponse toggleActiveStatus(String username);
 }

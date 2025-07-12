@@ -9,6 +9,12 @@ VALUES ('Jane', 'Smith', 'janesmith', '$2a$12$333cFrq.pIiAqoV1y04WFum.PfK1GEMU75
 INSERT INTO training_types (training_type_name)
 VALUES ('Yoga');
 
+INSERT INTO training_types (training_type_name)
+VALUES ('Boxing');
+
+INSERT INTO training_types (training_type_name)
+VALUES ('Crossfit');
+
 -- TRAINERS
 INSERT INTO trainers (specialization_id, user_id)
 VALUES (1, 1);
