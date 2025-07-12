@@ -133,6 +133,7 @@ public class TrainingServiceIT extends AbstractServiceIT {
                                                 String traineeName,
                                                 int expectedCount) {
         Trainer trainer = Trainer.builder().id(1L).build();
+
         List<Training> result = dao.getTrainerTrainings(trainer, fromDate, toDate, traineeName);
 
         assertEquals(expectedCount, result.size(), description);
