@@ -104,22 +104,24 @@ class TrainingServiceImplTest {
     @Test
     void getTrainerTrainings_shouldReturnList_whenValidFilter() {
         TrainingTrainerCriteriaFilter filter = GymTestProvider.buildTrainerCriteriaFilter();
-
+        Training training = GymTestProvider.constructTraining();
+        List<Training> trainings = Collections.singletonList(training);
+        TrainingResponse response = GymTestProvider.constructTrainingResponse();
         Trainer trainer = new Trainer();
 
         when(trainerDAO.getById(1L)).thenReturn(trainer);
-
-        List<Training> expected = Collections.singletonList(new Training());
         when(dao.getTrainerTrainings(
                 eq(trainer),
                 eq(filter.getFromDate()),
                 eq(filter.getToDate()),
                 eq(filter.getTraineeName())
-        )).thenReturn(expected);
+        )).thenReturn(trainings);
+        when(mapper.toResponse(training)).thenReturn(response);
 
-        List<Training> actual = service.getTrainerTrainings(filter);
+        List<TrainingResponse> actual = service.getTrainerTrainings(filter);
 
-        assertEquals(expected, actual);
+        assertEquals(1, actual.size());
+        assertEquals(response, actual.get(0));
         verify(trainerDAO).getById(1L);
         verify(dao).getTrainerTrainings(
                 trainer,
@@ -127,6 +129,7 @@ class TrainingServiceImplTest {
                 filter.getToDate(),
                 filter.getTraineeName()
         );
+        verify(mapper).toResponse(training);
     }
 
     @Test
@@ -145,22 +148,25 @@ class TrainingServiceImplTest {
     @Test
     void getTraineeTrainings_shouldReturnList_whenValidFilter() {
         TrainingTraineeCriteriaFilter filter = GymTestProvider.buildTraineeCriteriaFilter();
-
+        Training training = GymTestProvider.constructTraining();
+        List<Training> trainings = Collections.singletonList(training);
+        TrainingResponse expected = GymTestProvider.constructTrainingResponse();
         Trainee trainee = new Trainee();
-        when(traineeDAO.getById(1L)).thenReturn(trainee);
 
-        List<Training> expected = Collections.singletonList(new Training());
+        when(traineeDAO.getById(1L)).thenReturn(trainee);
         when(dao.getTraineeTrainings(
                 eq(trainee),
                 eq(filter.getFromDate()),
                 eq(filter.getToDate()),
                 eq(filter.getTrainerName()),
                 eq(filter.getTrainingTypeName())
-        )).thenReturn(expected);
+        )).thenReturn(trainings);
+        when(mapper.toResponse(training)).thenReturn(expected);
 
-        List<Training> actual = service.getTraineeTrainings(filter);
+        List<TrainingResponse> actual = service.getTraineeTrainings(filter);
 
-        assertEquals(expected, actual);
+        assertEquals(1, actual.size());
+        assertEquals(expected, actual.get(0));
         verify(traineeDAO).getById(1L);
         verify(dao).getTraineeTrainings(
                 trainee,
@@ -169,6 +175,7 @@ class TrainingServiceImplTest {
                 filter.getTrainerName(),
                 filter.getTrainingTypeName()
         );
+        verify(mapper).toResponse(training);
     }
 
     @Test

@@ -113,35 +113,43 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<Training> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
+    public List<TrainingResponse> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainee");
 
         Trainee trainee = Optional.ofNullable(filter.getTraineeId())
                 .map(traineeDAO::getById)
                 .orElseThrow(() -> new ServiceException("Trainee ID must be provided"));
 
-        return trainingDAO.getTraineeTrainings(
+        List<Training> trainings = trainingDAO.getTraineeTrainings(
                 trainee,
                 filter.getFromDate(),
                 filter.getToDate(),
                 filter.getTrainerName(),
                 filter.getTrainingTypeName()
         );
+
+        return trainings.stream()
+                .map(trainingMapper::toResponse)
+                .toList();
     }
 
     @Override
-    public List<Training> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
+    public List<TrainingResponse> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainer");
 
         Trainer trainer = Optional.ofNullable(filter.getTrainerId())
                 .map(trainerDAO::getById)
                 .orElseThrow(() -> new ServiceException("Trainer ID must be provided"));
 
-        return trainingDAO.getTrainerTrainings(
+        List<Training> trainings = trainingDAO.getTrainerTrainings(
                 trainer,
                 filter.getFromDate(),
                 filter.getToDate(),
                 filter.getTraineeName()
         );
+
+        return trainings.stream()
+                .map(trainingMapper::toResponse)
+                .toList();
     }
 }
