@@ -132,8 +132,7 @@ public class TrainingServiceIT extends AbstractServiceIT {
                                                 LocalDate toDate,
                                                 String traineeName,
                                                 int expectedCount) {
-        Trainer trainer = sessionFactory.getCurrentSession().find(Trainer.class, 1L);
-
+        Trainer trainer = Trainer.builder().id(1L).build();
         List<Training> result = dao.getTrainerTrainings(trainer, fromDate, toDate, traineeName);
 
         assertEquals(expectedCount, result.size(), description);
@@ -148,7 +147,7 @@ public class TrainingServiceIT extends AbstractServiceIT {
                                                 String trainerName,
                                                 String trainingTypeName,
                                                 int expectedCount) {
-        Trainee trainee = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
+        Trainee trainee = Trainee.builder().id(1L).build();
 
         List<Training> result = dao.getTraineeTrainings(trainee, fromDate, toDate, trainerName, trainingTypeName);
 
