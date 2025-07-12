@@ -1,12 +1,14 @@
 package com.gca.service.impl;
 
 import com.gca.GymTestProvider;
+import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.UserDAO;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.mapper.TrainerMapper;
+import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.service.common.CoreValidator;
 import org.junit.jupiter.api.Test;
@@ -15,9 +17,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +43,9 @@ class TrainerServiceImplTest {
 
     @Mock
     private TrainerMapper mapper;
+
+    @Mock
+    private TraineeDAO trainerDAO;
 
     @InjectMocks
     private TrainerServiceImpl service;
@@ -124,5 +135,34 @@ class TrainerServiceImplTest {
 
         verify(dao).findByUsername(username);
         verify(mapper).toResponse(mockTrainer);
+    }
+
+    @Test
+    void getUnassignedTrainers_shouldReturnCorrectList() {
+        String traineeUsername = "john_doe";
+
+        doNothing().when(validator).validateUsername(traineeUsername);
+
+        Trainer assignedTrainer = GymTestProvider.constructTrainer().toBuilder().id(1L).build();
+        Trainer unassignedTrainer = GymTestProvider.constructTrainer();
+
+        Set<Trainer> assigned = Set.of(assignedTrainer);
+        List<Trainer> allTrainers = List.of(assignedTrainer, unassignedTrainer);
+
+        Trainee trainee = GymTestProvider.constructTrainee();
+        trainee.setTrainers(assigned);
+
+        when(trainerDAO.findByUsername(traineeUsername)).thenReturn(trainee);
+        when(dao.getAllTrainers()).thenReturn(allTrainers);
+
+        List<Trainer> actual = service.getUnassignedTrainers(traineeUsername);
+
+        assertEquals(1, actual.size());
+        assertTrue(actual.contains(unassignedTrainer));
+        assertFalse(actual.contains(assignedTrainer));
+
+        verify(validator).validateUsername(traineeUsername);
+        verify(trainerDAO).findByUsername(traineeUsername);
+        verify(dao).getAllTrainers();
     }
 }

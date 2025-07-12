@@ -193,4 +193,26 @@ class UserServiceImplTest {
         assertEquals("User with ID 1 not found", ex.getMessage());
         verify(userDAO).getById(1L);
     }
+
+    @Test
+    void toggleActiveStatus_success() {
+        User existing = GymTestProvider.constructUser();
+        User updated = existing.toBuilder().isActive(!existing.getIsActive()).build();
+        UserResponse expectedResponse = GymTestProvider.constructUserResponse().toBuilder()
+                .isActive(updated.getIsActive())
+                .build();
+
+        when(userDAO.getById(existing.getId())).thenReturn(existing);
+        when(userDAO.update(any(User.class))).thenReturn(updated);
+        when(userMapper.toResponse(updated)).thenReturn(expectedResponse);
+
+        UserResponse actual = userService.toggleActiveStatus(existing.getId());
+
+        assertEquals(expectedResponse, actual);
+        assertEquals(existing.getIsActive(), actual.getIsActive());
+        assertEquals(existing.getId(), actual.getId());
+        verify(userDAO).getById(existing.getId());
+        verify(userDAO).update(any(User.class));
+        verify(userMapper).toResponse(updated);
+    }
 }
