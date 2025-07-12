@@ -196,22 +196,22 @@ class UserServiceImplTest {
 
     @Test
     void toggleActiveStatus_success() {
-        User existing = GymTestProvider.constructUser();
-        User updated = existing.toBuilder().isActive(!existing.getIsActive()).build();
+        User expected = GymTestProvider.constructUser();
+        User updated = expected.toBuilder().isActive(!expected.getIsActive()).build();
         UserResponse expectedResponse = GymTestProvider.constructUserResponse().toBuilder()
                 .isActive(updated.getIsActive())
                 .build();
 
-        when(userDAO.getById(existing.getId())).thenReturn(existing);
+        when(userDAO.getById(expected.getId())).thenReturn(expected);
         when(userDAO.update(any(User.class))).thenReturn(updated);
         when(userMapper.toResponse(updated)).thenReturn(expectedResponse);
 
-        UserResponse actual = userService.toggleActiveStatus(existing.getId());
+        UserResponse actual = userService.toggleActiveStatus(expected.getId());
 
         assertEquals(expectedResponse, actual);
-        assertEquals(existing.getIsActive(), actual.getIsActive());
-        assertEquals(existing.getId(), actual.getId());
-        verify(userDAO).getById(existing.getId());
+        assertEquals(expected.getIsActive(), actual.getIsActive());
+        assertEquals(expected.getId(), actual.getId());
+        verify(userDAO).getById(expected.getId());
         verify(userDAO).update(any(User.class));
         verify(userMapper).toResponse(updated);
     }
