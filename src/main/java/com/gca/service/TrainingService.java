@@ -1,6 +1,7 @@
 package com.gca.service;
 
-import com.gca.dto.TrainingFilterDTO;
+import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
+import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
 import com.gca.model.Training;
@@ -12,7 +13,7 @@ public interface TrainingService {
 
     TrainingResponse getTrainingById(Long id);
 
-    List<Training> getTraineeTrainings(TrainingFilterDTO filter);
+    List<Training> getTraineeTrainings(TrainingTraineeCriteriaFilter filter);
 
-    List<Training> getTrainerTrainings(TrainingFilterDTO filter);
+    List<Training> getTrainerTrainings(TrainingTrainerCriteriaFilter filter);
 }

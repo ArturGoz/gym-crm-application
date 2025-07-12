@@ -4,7 +4,8 @@ import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
 import com.gca.dao.TrainingTypeDAO;
-import com.gca.dto.TrainingFilterDTO;
+import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
+import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
 import com.gca.exception.ServiceException;
@@ -112,12 +113,35 @@ public class TrainingServiceImpl implements TrainingService {
     }
 
     @Override
-    public List<Training> getTraineeTrainings(TrainingFilterDTO filter) {
-        return List.of();
+    public List<Training> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
+        logger.debug("Filtering trainings by trainee");
+
+        Trainee trainee = Optional.ofNullable(filter.getTraineeId())
+                .map(traineeDAO::getById)
+                .orElseThrow(() -> new ServiceException("Trainee ID must be provided"));
+
+        return trainingDAO.getTraineeTrainings(
+                trainee,
+                filter.getFromDate(),
+                filter.getToDate(),
+                filter.getTrainerName(),
+                filter.getTrainingTypeName()
+        );
     }
 
     @Override
-    public List<Training> getTrainerTrainings(TrainingFilterDTO filter) {
-        return List.of();
+    public List<Training> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
+        logger.debug("Filtering trainings by trainer");
+
+        Trainer trainer = Optional.ofNullable(filter.getTrainerId())
+                .map(trainerDAO::getById)
+                .orElseThrow(() -> new ServiceException("Trainer ID must be provided"));
+
+        return trainingDAO.getTrainerTrainings(
+                trainer,
+                filter.getFromDate(),
+                filter.getToDate(),
+                filter.getTraineeName()
+        );
     }
 }
