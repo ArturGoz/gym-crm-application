@@ -16,15 +16,18 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TrainingServiceIT extends AbstractServiceIT {
     @Autowired
@@ -40,6 +43,27 @@ public class TrainingServiceIT extends AbstractServiceIT {
     private TrainingTypeDAO trainingTypeDAO;
 
     private TrainingServiceImpl trainingService;
+
+    static Stream<Arguments> provideTraineeTrainingCriteria() {
+        return Stream.of(
+                Arguments.of("All trainings for trainee", null, null, null, null, 2),
+                Arguments.of("Filter by existing trainer name", null, null, "trainer.one", null, 2),
+                Arguments.of("Filter by wrong trainer name", null, null, "nonexistent", null, 0),
+                Arguments.of("Filter by training type", null, null, null, "Fitness", 1),
+                Arguments.of("Filter by date range matching one", LocalDate.of(2025, 7, 7), LocalDate.of(2025, 7, 7), null, null, 1),
+                Arguments.of("Filter by date range not matching", LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 6), null, null, 0)
+        );
+    }
+
+    static Stream<Arguments> provideTrainerTrainingCriteria() {
+        return Stream.of(
+                Arguments.of("All trainings for trainer", null, null, null, 2),
+                Arguments.of("Filter by existing trainee name", null, null, "john.doe", 2),
+                Arguments.of("Filter by non-existing trainee name", null, null, "nonexistent", 0),
+                Arguments.of("Filter by date range matching one", LocalDate.of(2025, 7, 7), LocalDate.of(2025, 7, 7), null, 1),
+                Arguments.of("Filter by date range not matching", LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 6), null, 0)
+        );
+    }
 
     @BeforeEach
     void setUp() {
@@ -100,62 +124,34 @@ public class TrainingServiceIT extends AbstractServiceIT {
         assertEquals(1L, actual.getTrainingTypeId());
     }
 
-    @Test
-    @DataSet(value = "dataset/training/training-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldFindTraineeTrainingsWithCriteria() {
-        Trainee trainee = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
-
-        List<Training> result = dao.getTraineeTrainings(trainee, null, null, null, null);
-
-        assertEquals(1, result.size(), "Should find one training for trainee");
-
-        Training training = result.get(0);
-        assertEquals("Morning Workout", training.getName());
-        assertEquals(trainee.getId(), training.getTrainee().getId());
-
-        List<Training> result2 = dao.getTraineeTrainings(trainee, null, null, "trainer.one", null);
-        List<Training> result3 = dao.getTraineeTrainings(trainee, null, null, "wrong.name", null);
-        List<Training> result4 = dao.getTraineeTrainings(trainee, null, null, null, "Fitness");
-
-        assertEquals(1, result2.size(), "Should find one training for trainee and trainer name");
-        assertTrue(result3.isEmpty(), "Should find no trainings for non-matching trainer name");
-        assertEquals(1, result4.size(), "Should find training with training type Fitness");
-    }
-
-    @Test
-    @DataSet(value = "dataset/training/training-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldFindTrainerTrainingsWithCriteria() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("provideTrainerTrainingCriteria")
+    @DataSet(value = "dataset/training/training-criteria-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
+    void shouldFilterTrainerTrainingsByCriteria(String description,
+                                                LocalDate fromDate,
+                                                LocalDate toDate,
+                                                String traineeName,
+                                                int expectedCount) {
         Trainer trainer = sessionFactory.getCurrentSession().find(Trainer.class, 1L);
 
-        List<Training> result = dao.getTrainerTrainings(trainer, null, null, null);
+        List<Training> result = dao.getTrainerTrainings(trainer, fromDate, toDate, traineeName);
 
-        assertEquals(1, result.size(), "Should find one training for trainer");
-
-        Training training = result.get(0);
-
-        assertEquals("Morning Workout", training.getName());
-        assertEquals(trainer.getId(), training.getTrainer().getId());
-
-        List<Training> result2 = dao.getTrainerTrainings(trainer, null, null, "john.doe");
-        List<Training> result3 = dao.getTrainerTrainings(trainer, null, null, "nonexistent");
-
-        assertEquals(1, result2.size(), "Should find one training for trainer and trainee name");
-        assertTrue(result3.isEmpty(), "Should find no trainings for non-matching trainee name");
+        assertEquals(expectedCount, result.size(), description);
     }
 
-    @Test
-    @DataSet(value = "dataset/training/training-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldFilterTrainingsByDateRange() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("provideTraineeTrainingCriteria")
+    @DataSet(value = "dataset/training/training-criteria-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
+    void shouldFilterTraineeTrainingsByCriteria(String description,
+                                                LocalDate fromDate,
+                                                LocalDate toDate,
+                                                String trainerName,
+                                                String trainingTypeName,
+                                                int expectedCount) {
         Trainee trainee = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
 
-        LocalDate fromDate = LocalDate.of(2025, 7, 6);
-        LocalDate toDate = LocalDate.of(2025, 7, 8);
+        List<Training> result = dao.getTraineeTrainings(trainee, fromDate, toDate, trainerName, trainingTypeName);
 
-        List<Training> result = dao.getTraineeTrainings(trainee, fromDate, toDate, null, null);
-        List<Training> result2 = dao.getTraineeTrainings(trainee, LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 6), null, null);
-
-        assertEquals(1, result.size(), "Should find training in date range");
-        assertTrue(result2.isEmpty(), "Should find no training outside date range");
+        assertEquals(expectedCount, result.size(), description);
     }
-
 }
