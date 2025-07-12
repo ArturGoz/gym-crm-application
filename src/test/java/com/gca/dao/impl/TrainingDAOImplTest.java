@@ -8,13 +8,17 @@ import com.gca.model.TrainingType;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-
 
 @DataSet(value = "dataset/training/training-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
 public class TrainingDAOImplTest extends BaseIntegrationTest<TrainingDAOImpl> {
@@ -70,5 +74,57 @@ public class TrainingDAOImplTest extends BaseIntegrationTest<TrainingDAOImpl> {
                 .trainer(trainer)
                 .type(type)
                 .build();
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("provideTrainerTrainingCriteria")
+    @DataSet(value = "dataset/training/training-criteria-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
+    void shouldFilterTrainerTrainingsByCriteria(String description,
+                                                LocalDate fromDate,
+                                                LocalDate toDate,
+                                                String traineeName,
+                                                int expectedCount) {
+        Trainer trainer = Trainer.builder().id(1L).build();
+
+        List<Training> result = dao.getTrainerTrainings(trainer, fromDate, toDate, traineeName);
+
+        assertEquals(expectedCount, result.size(), description);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("provideTraineeTrainingCriteria")
+    @DataSet(value = "dataset/training/training-criteria-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
+    void shouldFilterTraineeTrainingsByCriteria(String description,
+                                                LocalDate fromDate,
+                                                LocalDate toDate,
+                                                String trainerName,
+                                                String trainingTypeName,
+                                                int expectedCount) {
+        Trainee trainee = Trainee.builder().id(1L).build();
+
+        List<Training> result = dao.getTraineeTrainings(trainee, fromDate, toDate, trainerName, trainingTypeName);
+
+        assertEquals(expectedCount, result.size(), description);
+    }
+
+    static Stream<Arguments> provideTraineeTrainingCriteria() {
+        return Stream.of(
+                Arguments.of("All trainings for trainee", null, null, null, null, 2),
+                Arguments.of("Filter by existing trainer name", null, null, "trainer.one", null, 2),
+                Arguments.of("Filter by wrong trainer name", null, null, "nonexistent", null, 0),
+                Arguments.of("Filter by training type", null, null, null, "Fitness", 1),
+                Arguments.of("Filter by date range matching one", LocalDate.of(2025, 7, 7), LocalDate.of(2025, 7, 7), null, null, 1),
+                Arguments.of("Filter by date range not matching", LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 6), null, null, 0)
+        );
+    }
+
+    static Stream<Arguments> provideTrainerTrainingCriteria() {
+        return Stream.of(
+                Arguments.of("All trainings for trainer", null, null, null, 2),
+                Arguments.of("Filter by existing trainee name", null, null, "john.doe", 2),
+                Arguments.of("Filter by non-existing trainee name", null, null, "nonexistent", 0),
+                Arguments.of("Filter by date range matching one", LocalDate.of(2025, 7, 7), LocalDate.of(2025, 7, 7), null, 1),
+                Arguments.of("Filter by date range not matching", LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 6), null, 0)
+        );
     }
 }

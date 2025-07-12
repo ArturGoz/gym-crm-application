@@ -1,5 +1,7 @@
 package com.gca;
 
+import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
+import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
@@ -218,6 +220,26 @@ public class GymTestProvider {
         return TrainingType.builder()
                 .id(1L)
                 .name("Strength")
+                .build();
+    }
+
+
+    public static TrainingTraineeCriteriaFilter buildTraineeCriteriaFilter() {
+        return TrainingTraineeCriteriaFilter.builder()
+                .traineeId(1L)
+                .fromDate(LocalDate.of(2025, 7, 1))
+                .toDate(LocalDate.of(2025, 7, 31))
+                .trainerName("trainer.one")
+                .trainingTypeName("Yoga")
+                .build();
+    }
+
+    public static TrainingTrainerCriteriaFilter buildTrainerCriteriaFilter() {
+        return TrainingTrainerCriteriaFilter.builder()
+                .trainerId(1L)
+                .fromDate(LocalDate.of(2025, 7, 1))
+                .toDate(LocalDate.of(2025, 7, 31))
+                .traineeName("john.doe")
                 .build();
     }
 }

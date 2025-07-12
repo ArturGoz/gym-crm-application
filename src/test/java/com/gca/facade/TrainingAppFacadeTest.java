@@ -2,7 +2,8 @@ package com.gca.facade;
 
 import com.gca.GymTestProvider;
 import com.gca.dto.PasswordChangeRequest;
-import com.gca.dto.auth.AuthenticationRequest;
+import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
+import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
@@ -11,7 +12,6 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
-import com.gca.security.AuthenticationService;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
@@ -22,8 +22,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -171,5 +172,31 @@ class TrainingAppFacadeTest {
         facade.changePassword(request);
 
         verify(userService).changeUserPassword(request);
+    }
+
+    @Test
+    void findFilteredTrainings_byTrainerCriteria_delegatesToService() {
+        TrainingTrainerCriteriaFilter filter = GymTestProvider.buildTrainerCriteriaFilter();
+        List<TrainingResponse> expected = List.of(GymTestProvider.constructTrainingResponse());
+
+        when(trainingService.getTrainerTrainings(filter)).thenReturn(expected);
+
+        List<TrainingResponse> actual = facade.findFilteredTrainings(filter);
+
+        assertEquals(expected, actual);
+        verify(trainingService).getTrainerTrainings(filter);
+    }
+
+    @Test
+    void findFilteredTrainings_byTraineeCriteria_delegatesToService() {
+        TrainingTraineeCriteriaFilter filter = GymTestProvider.buildTraineeCriteriaFilter();
+        List<TrainingResponse> expected = List.of(GymTestProvider.constructTrainingResponse());
+
+        when(trainingService.getTraineeTrainings(filter)).thenReturn(expected);
+
+        List<TrainingResponse> actual = facade.findFilteredTrainings(filter);
+
+        assertEquals(expected, actual);
+        verify(trainingService).getTraineeTrainings(filter);
     }
 }

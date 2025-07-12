@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TrainingServiceIT extends AbstractServiceIT {
     @Autowired
-    private TrainingDAO trainingDAO;
+    private TrainingDAO dao;
 
     @Autowired
     private TrainerDAO trainerDAO;
@@ -45,7 +45,7 @@ public class TrainingServiceIT extends AbstractServiceIT {
         TrainingMapper trainingMapper = Mappers.getMapper(TrainingMapper.class);
 
         trainingService = new TrainingServiceImpl();
-        trainingService.setTrainingDAO(trainingDAO);
+        trainingService.setTrainingDAO(dao);
         trainingService.setTrainerDAO(trainerDAO);
         trainingService.setTraineeDAO(traineeDAO);
         trainingService.setTrainingTypeDAO(trainingTypeDAO);
