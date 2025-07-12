@@ -9,6 +9,7 @@ import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
 import com.gca.model.User;
+import com.gca.security.MyTransactional;
 import com.gca.service.TraineeService;
 import com.gca.service.common.CoreValidator;
 import jakarta.persistence.EntityNotFoundException;
@@ -54,6 +55,7 @@ public class TraineeServiceImpl implements TraineeService {
         this.validator = validator;
     }
 
+    @MyTransactional
     @Override
     public TraineeResponse createTrainee(@Valid TraineeCreateRequest request) {
         logger.debug("Creating trainee");
@@ -73,6 +75,7 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeMapper.toResponse(created);
     }
 
+    @MyTransactional
     @Override
     public TraineeResponse updateTrainee(@Valid TraineeUpdateRequest request) {
         logger.debug("Updating trainee");
@@ -93,6 +96,7 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeMapper.toResponse(updated);
     }
 
+    @MyTransactional(readOnly = true)
     @Override
     public TraineeResponse getTraineeById(Long id) {
         logger.debug("Retrieving trainee with ID: {}", id);
@@ -108,6 +112,7 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeMapper.toResponse(trainee);
     }
 
+    @MyTransactional(readOnly = true)
     @Override
     public TraineeResponse getTraineeByUsername(String username) {
         logger.debug("Getting trainee by username: {}", username);
@@ -124,6 +129,7 @@ public class TraineeServiceImpl implements TraineeService {
                 ));
     }
 
+    @MyTransactional
     @Override
     public void deleteTraineeById(Long id) {
         logger.debug("Deleting trainee with ID: {}", id);
@@ -145,6 +151,7 @@ public class TraineeServiceImpl implements TraineeService {
                 );
     }
 
+    @MyTransactional
     @Override
     public void deleteTraineeByUsername(String username) {
         logger.debug("Deleting trainee by username: {}", username);
