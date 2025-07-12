@@ -125,6 +125,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse toggleActiveStatus(Long id) {
+        logger.debug("Toggling active status for user with ID: {}", id);
+
+        if (id == null) {
+            throw new ServiceException("User ID must not be null");
+        }
+
+        User user = Optional.ofNullable(userDAO.getById(id))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("User with ID %d not found", id)
+                ));
+
+        user.setIsActive(!user.getIsActive());
+        User updatedUser = userDAO.update(user);
+
+        logger.info("Toggled active status for user with ID: {} to {}", id, updatedUser.getIsActive());
+
+        return userMapper.toResponse(updatedUser);
+    }
+
+    @Override
     public UserResponse getUserById(Long id) {
         logger.debug("Retrieving user with ID: {}", id);
 

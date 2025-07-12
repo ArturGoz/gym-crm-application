@@ -8,6 +8,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class TrainerDAOImpl implements TrainerDAO {
 
@@ -55,5 +57,12 @@ public class TrainerDAOImpl implements TrainerDAO {
                 .setParameter("username", username)
                 .uniqueResultOptional()
                 .orElseThrow(() -> new DaoException(String.format("Trainer with username: %s not found", username)));
+    }
+
+    @Override
+    public List<Trainer> getAllTrainers() {
+        Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("FROM Trainer", Trainer.class)
+                .getResultList();
     }
 }
