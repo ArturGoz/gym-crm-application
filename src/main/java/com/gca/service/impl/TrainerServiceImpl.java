@@ -1,5 +1,6 @@
 package com.gca.service.impl;
 
+import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.UserDAO;
 import com.gca.dto.trainer.TrainerCreateRequest;
@@ -7,6 +8,7 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainerMapper;
+import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.User;
 import com.gca.service.TrainerService;
@@ -19,7 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -31,6 +36,8 @@ public class TrainerServiceImpl implements TrainerService {
 
     private TrainerDAO trainerDAO;
     private UserDAO userDAO;
+    private TraineeDAO traineeDAO;
+
     private TrainerMapper trainerMapper;
     private CoreValidator validator;
 
@@ -52,6 +59,11 @@ public class TrainerServiceImpl implements TrainerService {
     @Autowired
     public void setValidator(CoreValidator validator) {
         this.validator = validator;
+    }
+
+    @Autowired
+    public void setTraineeDAO(TraineeDAO traineeDAO) {
+        this.traineeDAO = traineeDAO;
     }
 
     @Override
@@ -108,6 +120,29 @@ public class TrainerServiceImpl implements TrainerService {
                         format("Trainer with username '%s' not found", username)
                 ));
     }
+
+    @Override
+    public List<Trainer> getUnassignedTrainers(String traineeUsername) {
+        logger.debug("Getting unassigned trainers for trainee username: {}", traineeUsername);
+
+        validator.validateUsername(traineeUsername);
+
+        Trainee trainee = Optional.ofNullable(traineeDAO.findByUsername(traineeUsername))
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Trainee with username '%s' not found", traineeUsername)
+                ));
+
+        Set<Trainer> assignedTrainers = trainee.getTrainers();
+        List<Trainer> allTrainers = trainerDAO.getAllTrainers();
+
+        List<Trainer> unassignedTrainers = allTrainers.stream()
+                .filter(trainer -> !assignedTrainers.contains(trainer))
+                .collect(Collectors.toList());
+
+        logger.info("Found {} unassigned trainers for trainee '{}'", unassignedTrainers.size(), traineeUsername);
+        return unassignedTrainers;
+    }
+
 
     @Override
     public TrainerResponse getTrainerById(Long id) {

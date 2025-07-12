@@ -2,12 +2,14 @@ package com.gca.dao.impl;
 
 import com.gca.dao.BaseIntegrationTest;
 import com.gca.model.Trainee;
+import com.gca.model.Trainer;
 import com.gca.model.User;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -76,6 +78,21 @@ class TraineeDAOImplTest extends BaseIntegrationTest<TraineeDAOImpl> {
         Trainee deleted = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
 
         assertNull(deleted, "Trainee should be deleted from DB");
+    }
+
+    @Test
+    @DataSet(value = "dataset/trainee/trainee-trainers-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
+    void shouldUpdateTraineeTrainersList() {
+        Trainee before = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
+        String expectedUsername = "trainer.one";
+
+        Trainee updated = dao.updateTraineeTrainers(before.getUser().getUsername(), List.of(expectedUsername));
+
+        Trainer actual = updated.getTrainers().iterator().next();
+
+        assertNotNull(updated.getTrainers(), "Trainers list should not be null after update");
+        assertEquals(1, updated.getTrainers().size(), "Trainee should have one trainer assigned");
+        assertEquals(expectedUsername, actual.getUser().getUsername());
     }
 
     private Trainee buildTraineeFromExistingUser() {

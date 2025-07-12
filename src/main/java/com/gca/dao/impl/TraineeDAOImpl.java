@@ -3,10 +3,14 @@ package com.gca.dao.impl;
 import com.gca.dao.TraineeDAO;
 import com.gca.exception.DaoException;
 import com.gca.model.Trainee;
+import com.gca.model.Trainer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.HashSet;
+import java.util.List;
 
 @Repository
 public class TraineeDAOImpl implements TraineeDAO {
@@ -55,6 +59,27 @@ public class TraineeDAOImpl implements TraineeDAO {
                 .setParameter("username", username)
                 .uniqueResultOptional()
                 .orElseThrow(() -> new DaoException(String.format("Trainee with username: %s not found", username)));
+    }
+
+    @Override
+    public Trainee updateTraineeTrainers(String traineeUsername, List<String> trainerUsernames) {
+        Session session = sessionFactory.getCurrentSession();
+        Trainee trainee = findByUsername(traineeUsername);
+
+        List<Trainer> trainers = session.createQuery(
+                        "SELECT tr FROM Trainer tr JOIN FETCH tr.user u WHERE u.username IN (:usernames)",
+                        Trainer.class
+                )
+                .setParameter("usernames", trainerUsernames)
+                .getResultList();
+
+        if (trainers.size() != trainerUsernames.size()) {
+            throw new DaoException("Some trainers were not found for usernames: " + trainerUsernames);
+        }
+
+        trainee.setTrainers(new HashSet<>(trainers));
+
+        return session.merge(trainee);
     }
 
     @Override

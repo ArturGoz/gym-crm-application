@@ -19,4 +19,6 @@ public interface UserService {
     boolean isUserCredentialsValid(String username, String password);
 
     void changeUserPassword(PasswordChangeRequest request);
+
+    UserResponse toggleActiveStatus(String username);
 }
