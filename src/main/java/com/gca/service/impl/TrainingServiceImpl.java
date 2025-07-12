@@ -4,6 +4,8 @@ import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
 import com.gca.dao.TrainingTypeDAO;
+import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
+import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
 import com.gca.exception.ServiceException;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -107,5 +110,46 @@ public class TrainingServiceImpl implements TrainingService {
                 ));
 
         return trainingMapper.toResponse(training);
+    }
+
+    @Override
+    public List<TrainingResponse> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
+        logger.debug("Filtering trainings by trainee");
+
+        Trainee trainee = Optional.ofNullable(filter.getTraineeId())
+                .map(traineeDAO::getById)
+                .orElseThrow(() -> new ServiceException("Trainee ID must be provided"));
+
+        List<Training> trainings = trainingDAO.getTraineeTrainings(
+                trainee,
+                filter.getFromDate(),
+                filter.getToDate(),
+                filter.getTrainerName(),
+                filter.getTrainingTypeName()
+        );
+
+        return trainings.stream()
+                .map(trainingMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public List<TrainingResponse> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
+        logger.debug("Filtering trainings by trainer");
+
+        Trainer trainer = Optional.ofNullable(filter.getTrainerId())
+                .map(trainerDAO::getById)
+                .orElseThrow(() -> new ServiceException("Trainer ID must be provided"));
+
+        List<Training> trainings = trainingDAO.getTrainerTrainings(
+                trainer,
+                filter.getFromDate(),
+                filter.getToDate(),
+                filter.getTraineeName()
+        );
+
+        return trainings.stream()
+                .map(trainingMapper::toResponse)
+                .toList();
     }
 }

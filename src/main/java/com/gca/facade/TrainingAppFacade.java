@@ -1,6 +1,8 @@
 package com.gca.facade;
 
 import com.gca.dto.PasswordChangeRequest;
+import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
+import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
@@ -18,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -87,5 +91,19 @@ public class TrainingAppFacade {
         logger.info("Changing password for userId: {}", request.getUserId());
 
         userService.changeUserPassword(request);
+    }
+
+    @Authenticated
+    public List<TrainingResponse> findFilteredTrainings(TrainingTrainerCriteriaFilter filter) {
+        logger.info("Facade: Retrieving trainings with filter {}", filter);
+
+        return trainingService.getTrainerTrainings(filter);
+    }
+
+    @Authenticated
+    public List<TrainingResponse> findFilteredTrainings(TrainingTraineeCriteriaFilter filter) {
+        logger.info("Facade: Retrieving trainees with filter {}", filter);
+
+        return trainingService.getTraineeTrainings(filter);
     }
 }
