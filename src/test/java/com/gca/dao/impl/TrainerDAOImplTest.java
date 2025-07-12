@@ -1,6 +1,7 @@
 package com.gca.dao.impl;
 
 import com.gca.dao.BaseIntegrationTest;
+import com.gca.exception.DaoException;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
@@ -8,9 +9,13 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataSet(value = "dataset/trainer/trainer-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
 public class TrainerDAOImplTest extends BaseIntegrationTest<TrainerDAOImpl> {
@@ -59,6 +64,30 @@ public class TrainerDAOImplTest extends BaseIntegrationTest<TrainerDAOImpl> {
         assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());
         assertEquals(expected.getSpecialization().getId(), actual.getSpecialization().getId());
         assertEquals(expected.getUser().getLastName(), actual.getUser().getLastName());
+    }
+
+    @Test
+    void shouldFindTrainerByUsername() {
+        Trainer found = dao.findByUsername("john.doe");
+
+        assertNotNull(found, "Trainer should be found by username");
+        assertEquals("john.doe", found.getUser().getUsername());
+        assertEquals("John", found.getUser().getFirstName());
+    }
+
+    @Test
+    void shouldThrowIfUsernameNotFound() {
+        DaoException exception = assertThrows(DaoException.class, () -> dao.findByUsername("non.existent"));
+        assertTrue(exception.getMessage().contains("Trainer with username: non.existent not found"));
+    }
+
+    @Test
+    void shouldReturnAllTrainers() {
+        List<Trainer> actual = dao.getAllTrainers();
+
+        assertNotNull(actual, "List should not be null");
+        assertEquals(1, actual.size(), "Should contain one trainer from dataset");
+        assertEquals("john.doe", actual.get(0).getUser().getUsername());
     }
 
     private Trainer buildTrainerFromExistingUserAndSpecialization() {
