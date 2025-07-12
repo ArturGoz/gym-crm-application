@@ -11,6 +11,7 @@ import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.User;
+import com.gca.security.MyTransactional;
 import com.gca.service.TrainerService;
 import com.gca.service.common.CoreValidator;
 import jakarta.persistence.EntityNotFoundException;
@@ -66,6 +67,7 @@ public class TrainerServiceImpl implements TrainerService {
         this.traineeDAO = traineeDAO;
     }
 
+    @MyTransactional
     @Override
     public TrainerResponse createTrainer(@Valid TrainerCreateRequest request) {
         logger.debug("Creating trainer");
@@ -85,6 +87,7 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerMapper.toResponse(created);
     }
 
+    @MyTransactional
     @Override
     public TrainerResponse updateTrainer(@Valid TrainerUpdateRequest request) {
         logger.debug("Updating trainer");
@@ -105,6 +108,7 @@ public class TrainerServiceImpl implements TrainerService {
         return trainerMapper.toResponse(updated);
     }
 
+    @MyTransactional(readOnly = true)
     @Override
     public TrainerResponse getTrainerByUsername(String username) {
         logger.debug("Getting trainer by username: {}", username);
@@ -121,6 +125,7 @@ public class TrainerServiceImpl implements TrainerService {
                 ));
     }
 
+    @MyTransactional(readOnly = true)
     @Override
     public List<Trainer> getUnassignedTrainers(String traineeUsername) {
         logger.debug("Getting unassigned trainers for trainee username: {}", traineeUsername);
@@ -143,7 +148,7 @@ public class TrainerServiceImpl implements TrainerService {
         return unassignedTrainers;
     }
 
-
+    @MyTransactional(readOnly = true)
     @Override
     public TrainerResponse getTrainerById(Long id) {
         logger.debug("Retrieving trainer by ID: {}", id);
