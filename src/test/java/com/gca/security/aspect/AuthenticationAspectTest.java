@@ -31,9 +31,8 @@ class AuthenticationAspectTest {
 
     @Test
     void checkAuthentication_shouldPass_whenUserAuthenticated() {
-        User mockUser = User.builder()
-                .username("testUser")
-                .build();
+        User mockUser = User.builder().username("testUser").build();
+
         when(authContextHolder.getCurrentUser()).thenReturn(mockUser);
 
         authenticationAspect.checkAuthentication();

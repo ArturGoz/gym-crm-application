@@ -45,7 +45,7 @@ class UsernameGeneratorTest {
 
     @Test
     void generate_shouldReturnWithSuffixIfBaseTaken() {
-        when(userDAO.getAllUsernames()).thenReturn(Arrays.asList("John.Doe"));
+        when(userDAO.getAllUsernames()).thenReturn(List.of("John.Doe"));
 
         String result = sut.generate("John", "Doe");
 

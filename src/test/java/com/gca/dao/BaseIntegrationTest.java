@@ -30,7 +30,6 @@ public abstract class BaseIntegrationTest<T> {
     protected SessionFactory sessionFactory;
 
     @Autowired
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     protected T dao;
 
     protected Transaction transaction;

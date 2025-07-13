@@ -150,10 +150,7 @@ class TraineeServiceImplTest {
 
         ServiceException ex = assertThrows(ServiceException.class, () -> service.createTrainee(request));
 
-        assertEquals(
-                String.format("Invalid user ID: %d", request.getUserId()),
-                ex.getMessage()
-        );
+        assertEquals(("Invalid user ID: 1"), ex.getMessage());
         verify(userDAO).getById(request.getUserId());
     }
 
@@ -172,10 +169,7 @@ class TraineeServiceImplTest {
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.deleteTraineeById(id));
 
-        assertEquals(
-                String.format("Trainee with ID %d not found", id),
-                ex.getMessage()
-        );
+        assertEquals(("Trainee with ID 2 not found"), ex.getMessage());
         verify(dao).getById(id);
     }
 
@@ -187,10 +181,7 @@ class TraineeServiceImplTest {
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.deleteTraineeByUsername(username));
 
-        assertEquals(
-                String.format("Trainee with username '%s' not found", username),
-                ex.getMessage()
-        );
+        assertEquals(("Trainee with username 'ghost' not found"), ex.getMessage());
         verify(dao).findByUsername(username);
     }
 
@@ -209,10 +200,7 @@ class TraineeServiceImplTest {
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.getTraineeById(id));
 
-        assertEquals(
-                String.format("Trainee with ID %d not found", id),
-                ex.getMessage()
-        );
+        assertEquals("Trainee with ID 10 not found", ex.getMessage());
         verify(dao).getById(id);
     }
 }
