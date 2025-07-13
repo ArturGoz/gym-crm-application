@@ -82,19 +82,6 @@ class TrainingAppFacadeTest {
     }
 
     @Test
-    void getTraineeById_delegatesToService() {
-        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
-
-        when(traineeService.getTraineeById(1L)).thenReturn(expected);
-
-        TraineeResponse actual = facade.getTraineeById(1L);
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getAddress(), actual.getAddress());
-        verify(traineeService).getTraineeById(1L);
-    }
-
-    @Test
     void createTrainer_delegatesToService() {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
         TrainerResponse expected = GymTestProvider.constructTrainerResponse();
@@ -120,19 +107,6 @@ class TrainingAppFacadeTest {
         assertEquals(expected, actual);
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         verify(trainerService).updateTrainer(request);
-    }
-
-    @Test
-    void getTrainerById_delegatesToService() {
-        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
-
-        when(trainerService.getTrainerById(2L)).thenReturn(expected);
-
-        TrainerResponse actual = facade.getTrainerById(2L);
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getSpecialization(), actual.getSpecialization());
-        verify(trainerService).getTrainerById(2L);
     }
 
     @Test
@@ -198,5 +172,31 @@ class TrainingAppFacadeTest {
 
         assertEquals(expected, actual);
         verify(trainingService).getTraineeTrainings(filter);
+    }
+
+    @Test
+    void getTraineeByUsername_delegatesToService() {
+        String username = "john.doe";
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
+
+        when(traineeService.getTraineeByUsername(username)).thenReturn(expected);
+
+        TraineeResponse actual = facade.getTraineeByUsername(username);
+
+        assertEquals(expected, actual);
+        verify(traineeService).getTraineeByUsername(username);
+    }
+
+    @Test
+    void getTrainerByUsername_delegatesToService() {
+        String username = "trainer.one";
+        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
+
+        when(trainerService.getTrainerByUsername(username)).thenReturn(expected);
+
+        TrainerResponse actual = facade.getTrainerByUsername(username);
+
+        assertEquals(expected, actual);
+        verify(trainerService).getTrainerByUsername(username);
     }
 }

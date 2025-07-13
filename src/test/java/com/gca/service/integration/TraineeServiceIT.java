@@ -54,15 +54,6 @@ class TraineeServiceIT extends AbstractServiceIT {
 
     @Test
     @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldGetTraineeById() {
-        TraineeResponse actual = traineeService.getTraineeById(1L);
-
-        assertNotNull(actual);
-        assertEquals(1L, actual.getUserId());
-    }
-
-    @Test
-    @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldUpdateTrainee() {
         TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder()
                 .id(1L)
