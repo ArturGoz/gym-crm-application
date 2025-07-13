@@ -111,4 +111,10 @@ public class TrainingAppFacade {
 
         return userService.toggleActiveStatus(username);
     }
+
+    public List<TrainerResponse> getUnassignedTrainers(String traineeUsername) {
+        logger.info("Facade: Retrieving unassigned trainers");
+
+        return trainerService.getUnassignedTrainers(traineeUsername);
+    }
 }

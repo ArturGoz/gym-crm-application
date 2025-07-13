@@ -14,5 +14,5 @@ public interface TrainerService {
 
     TrainerResponse getTrainerByUsername(String username);
 
-    List<Trainer> getUnassignedTrainers(String traineeUsername);
+    List<TrainerResponse> getUnassignedTrainers(String traineeUsername);
 }

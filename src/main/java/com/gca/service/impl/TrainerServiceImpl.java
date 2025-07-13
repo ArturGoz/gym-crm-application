@@ -127,7 +127,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Trainer> getUnassignedTrainers(String traineeUsername) {
+    public List<TrainerResponse> getUnassignedTrainers(String traineeUsername) {
         logger.debug("Getting unassigned trainers for trainee username: {}", traineeUsername);
 
         validator.validateUsername(traineeUsername);
@@ -142,10 +142,12 @@ public class TrainerServiceImpl implements TrainerService {
 
         List<Trainer> unassignedTrainers = allTrainers.stream()
                 .filter(trainer -> !assignedTrainers.contains(trainer))
-                .collect(Collectors.toList());
+                .toList();
 
         logger.info("Found {} unassigned trainers for trainee '{}'", unassignedTrainers.size(), traineeUsername);
-        return unassignedTrainers;
+        return unassignedTrainers.stream()
+                .map(trainerMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }
 

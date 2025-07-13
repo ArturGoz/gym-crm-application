@@ -201,4 +201,21 @@ class TrainingAppFacadeTest {
         assertEquals(expected, actual);
         verify(userService).toggleActiveStatus(username);
     }
+
+    @Test
+    void getUnassignedTrainers_delegatesToService() {
+        String traineeUsername = "john.doe";
+
+        TrainerResponse response1 = GymTestProvider.constructTrainerResponse();
+        TrainerResponse response2 = GymTestProvider.constructTrainerResponse();
+
+        List<TrainerResponse> expected = List.of(response1, response2);
+
+        when(trainerService.getUnassignedTrainers(traineeUsername)).thenReturn(expected);
+
+        List<TrainerResponse> actual = facade.getUnassignedTrainers(traineeUsername);
+
+        assertEquals(expected, actual);
+        verify(trainerService).getUnassignedTrainers(traineeUsername);
+    }
 }

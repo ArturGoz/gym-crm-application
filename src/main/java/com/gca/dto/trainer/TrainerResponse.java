@@ -14,5 +14,4 @@ public class TrainerResponse {
     private Long id;
     private Long userId;
     private TrainingType specialization;
-
 }

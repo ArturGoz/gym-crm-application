@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -136,17 +137,19 @@ class TrainerServiceImplTest {
         Trainee trainee = GymTestProvider.constructTrainee();
         trainee.setTrainers(assigned);
 
+        TrainerResponse unassignedTrainerResponse = GymTestProvider.constructTrainerResponse();
+
         when(trainerDAO.findByUsername(traineeUsername)).thenReturn(trainee);
         when(dao.getAllTrainers()).thenReturn(allTrainers);
+        when(mapper.toResponse(unassignedTrainer)).thenReturn(unassignedTrainerResponse);
 
-        List<Trainer> actual = service.getUnassignedTrainers(traineeUsername);
+        List<TrainerResponse> actual = service.getUnassignedTrainers(traineeUsername);
 
         assertEquals(1, actual.size());
-        assertTrue(actual.contains(unassignedTrainer));
-        assertFalse(actual.contains(assignedTrainer));
+        assertTrue(actual.contains(unassignedTrainerResponse));
 
         verify(validator).validateUsername(traineeUsername);
-        verify(trainerDAO).findByUsername(traineeUsername);
-        verify(dao).getAllTrainers();
+        verify(mapper).toResponse(unassignedTrainer);
+        verify(mapper, never()).toResponse(assignedTrainer);
     }
 }
