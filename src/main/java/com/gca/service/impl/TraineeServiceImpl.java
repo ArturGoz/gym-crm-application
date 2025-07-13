@@ -2,6 +2,7 @@ package com.gca.service.impl;
 
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.UserDAO;
+import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
@@ -9,7 +10,6 @@ import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
 import com.gca.model.User;
-import com.gca.dao.transaction.Transactional;
 import com.gca.service.TraineeService;
 import com.gca.service.common.CoreValidator;
 import jakarta.persistence.EntityNotFoundException;
@@ -94,22 +94,6 @@ public class TraineeServiceImpl implements TraineeService {
 
         logger.info("Updated trainee: {}", updated);
         return traineeMapper.toResponse(updated);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public TraineeResponse getTraineeById(Long id) {
-        logger.debug("Retrieving trainee with ID: {}", id);
-
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ServiceException("Trainee ID must not be null"));
-
-        Trainee trainee = Optional.ofNullable(traineeDAO.getById(id))
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainee with ID %d not found", id)
-                ));
-
-        return traineeMapper.toResponse(trainee);
     }
 
     @Transactional(readOnly = true)

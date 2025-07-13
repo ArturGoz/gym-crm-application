@@ -9,8 +9,6 @@ public interface TraineeService {
 
     TraineeResponse updateTrainee(TraineeUpdateRequest request);
 
-    TraineeResponse getTraineeById(Long id);
-
     TraineeResponse getTraineeByUsername(String username);
 
     void deleteTraineeById(Long id);

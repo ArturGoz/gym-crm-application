@@ -105,22 +105,6 @@ class TrainerServiceImplTest {
     }
 
     @Test
-    void getTrainerById_success() {
-        Trainer trainer = GymTestProvider.constructTrainer();
-        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
-
-        when(dao.getById(2L)).thenReturn(trainer);
-        when(mapper.toResponse(trainer)).thenReturn(expected);
-
-        TrainerResponse actual = service.getTrainerById(2L);
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getSpecialization(), actual.getSpecialization());
-        verify(dao).getById(2L);
-        verify(mapper).toResponse(trainer);
-    }
-
-    @Test
     void getTrainerByUsername_success() {
         String username = "john_doe";
         Trainer mockTrainer = GymTestProvider.constructTrainer();
