@@ -3,6 +3,7 @@ package com.gca.service.impl;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.UserDAO;
+import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
@@ -11,7 +12,6 @@ import com.gca.mapper.TrainerMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.User;
-import com.gca.dao.transaction.Transactional;
 import com.gca.service.TrainerService;
 import com.gca.service.common.CoreValidator;
 import jakarta.persistence.EntityNotFoundException;
@@ -146,22 +146,6 @@ public class TrainerServiceImpl implements TrainerService {
 
         logger.info("Found {} unassigned trainers for trainee '{}'", unassignedTrainers.size(), traineeUsername);
         return unassignedTrainers;
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public TrainerResponse getTrainerById(Long id) {
-        logger.debug("Retrieving trainer by ID: {}", id);
-
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ServiceException("Trainer ID must not be null"));
-
-        Trainer trainer = Optional.ofNullable(trainerDAO.getById(id))
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainer with ID %d not found", id)
-                ));
-
-        return trainerMapper.toResponse(trainer);
     }
 }
 

@@ -50,12 +50,6 @@ public class TrainingAppFacade {
         traineeService.deleteTraineeById(id);
     }
 
-    @Authenticated
-    public TraineeResponse getTraineeById(Long id) {
-        logger.info("Facade: Retrieving trainee with ID {}", id);
-        return traineeService.getTraineeById(id);
-    }
-
     public TrainerResponse createTrainer(TrainerCreateRequest request) {
         logger.info("Facade: Creating trainer {}", request.getUserId());
         return trainerService.createTrainer(request);
@@ -65,12 +59,6 @@ public class TrainingAppFacade {
     public TrainerResponse updateTrainer(TrainerUpdateRequest request) {
         logger.info("Facade: Updating trainer with ID {}", request.getId());
         return trainerService.updateTrainer(request);
-    }
-
-    @Authenticated
-    public TrainerResponse getTrainerById(Long id) {
-        logger.info("Facade: Retrieving trainer with ID {}", id);
-        return trainerService.getTrainerById(id);
     }
 
     @Authenticated
@@ -105,5 +93,19 @@ public class TrainingAppFacade {
         logger.info("Facade: Retrieving trainees with filter {}", filter);
 
         return trainingService.getTraineeTrainings(filter);
+    }
+
+    @Authenticated
+    public TraineeResponse getTraineeByUsername(String username) {
+        logger.info("Facade: Retrieving traine by name {}", username);
+
+        return traineeService.getTraineeByUsername(username);
+    }
+
+    @Authenticated
+    public TrainerResponse getTrainerByUsername(String username) {
+        logger.info("Facade: Retrieving trainer by name {}", username);
+
+        return trainerService.getTrainerByUsername(username);
     }
 }
