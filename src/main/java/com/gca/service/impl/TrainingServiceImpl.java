@@ -14,7 +14,7 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
-import com.gca.security.MyTransactional;
+import com.gca.dao.transaction.Transactional;
 import com.gca.service.TrainingService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -66,7 +66,7 @@ public class TrainingServiceImpl implements TrainingService {
         this.trainingMapper = trainingMapper;
     }
 
-    @MyTransactional
+    @Transactional
     @Override
     public TrainingResponse createTraining(@Valid TrainingCreateRequest request) {
         logger.debug("Creating training '{}'", request.getName());
@@ -99,7 +99,7 @@ public class TrainingServiceImpl implements TrainingService {
         return trainingMapper.toResponse(created);
     }
 
-    @MyTransactional(readOnly = true)
+    @Transactional(readOnly = true)
     @Override
     public TrainingResponse getTrainingById(Long id) {
         logger.debug("Retrieving training with ID: {}", id);
@@ -115,7 +115,7 @@ public class TrainingServiceImpl implements TrainingService {
         return trainingMapper.toResponse(training);
     }
 
-    @MyTransactional(readOnly = true)
+    @Transactional(readOnly = true)
     @Override
     public List<TrainingResponse> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainee");
@@ -137,7 +137,7 @@ public class TrainingServiceImpl implements TrainingService {
                 .toList();
     }
 
-    @MyTransactional(readOnly = true)
+    @Transactional(readOnly = true)
     @Override
     public List<TrainingResponse> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainer");

@@ -1,6 +1,6 @@
 package com.gca.security.aspect;
 
-import com.gca.security.MyTransactional;
+import com.gca.dao.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -17,22 +17,21 @@ public class MyTransactionAspect {
 
     private final SessionFactory sessionFactory;
 
-    @Around("@annotation(myTransactional)")
-    public Object wrapInTransaction(ProceedingJoinPoint pjp, MyTransactional myTransactional) throws Throwable {
+    @Around("@annotation(transactional)")
+    public Object wrapInTransaction(ProceedingJoinPoint pjp, Transactional transactional) throws Throwable {
         Session session = sessionFactory.getCurrentSession();
         Transaction tx = session.beginTransaction();
 
         try {
             Object result = pjp.proceed();
 
-            if (myTransactional.readOnly()) {
+            if (transactional.readOnly()) {
                 tx.rollback();
             } else {
                 tx.commit();
             }
 
             return result;
-
         } catch (Throwable ex) {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
