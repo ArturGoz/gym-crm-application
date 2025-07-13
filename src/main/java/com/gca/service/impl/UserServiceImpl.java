@@ -8,6 +8,7 @@ import com.gca.dto.user.UserUpdateRequest;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
+import com.gca.dao.transaction.Transactional;
 import com.gca.service.UserService;
 import com.gca.service.common.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService {
         this.userProfileService = userProfileService;
     }
 
+    @Transactional
     @Override
     public UserResponse createUser(@Valid UserCreateRequest request) {
         logger.debug("Creating user for {} {}", request.getFirstName(), request.getLastName());
@@ -66,6 +68,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(created);
     }
 
+    @Transactional
     @Override
     public UserResponse updateUser(@Valid UserUpdateRequest request) {
         logger.debug("Updating user with ID: {}", request.getId());
@@ -85,6 +88,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(updated);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long id) {
         logger.debug("Deleting user with ID: {}", id);
@@ -97,6 +101,7 @@ public class UserServiceImpl implements UserService {
         logger.info("Deleted user with ID: {}", id);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public boolean isUserCredentialsValid(String username, String rawPassword) {
         if (username == null || rawPassword == null) {
@@ -108,6 +113,7 @@ public class UserServiceImpl implements UserService {
                 .orElse(false);
     }
 
+    @Transactional
     @Override
     public void changeUserPassword(@Valid PasswordChangeRequest passwordChangeRequest) {
         Long userId = passwordChangeRequest.getUserId();
@@ -124,6 +130,7 @@ public class UserServiceImpl implements UserService {
         logger.info("Changed password for user with ID: {}", userId);
     }
 
+    @Transactional
     @Override
     public UserResponse toggleActiveStatus(String username) {
         logger.debug("Toggling active status for user with username: {}", username);
@@ -141,6 +148,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(updatedUser);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserResponse getUserById(Long id) {
         logger.debug("Retrieving user with ID: {}", id);
@@ -153,6 +161,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(user);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserResponse getUserByUsername(String username) {
         logger.debug("Retrieving user with username: {}", username);
