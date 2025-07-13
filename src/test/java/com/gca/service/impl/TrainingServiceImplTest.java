@@ -15,6 +15,7 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -190,4 +192,51 @@ class TrainingServiceImplTest {
         verifyNoInteractions(traineeDAO);
         verifyNoInteractions(dao);
     }
+
+    @Test
+    void getTrainingById_shouldThrow_whenTrainingNotFound() {
+        when(dao.getById(2L)).thenReturn(null);
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.getTrainingById(2L));
+
+        assertEquals("Training with ID 2 not found", ex.getMessage());
+        verify(dao).getById(2L);
+    }
+
+    @Test
+    void createTraining_shouldThrow_whenTrainerNotFound() {
+        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
+
+        when(trainerDAO.getById(anyLong())).thenReturn(null);
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.createTraining(request));
+
+        assertTrue(ex.getMessage().contains("Trainer with ID"));
+    }
+
+    @Test
+    void createTraining_shouldThrow_whenTrainingTypeNotFound() {
+        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
+
+        when(trainerDAO.getById(request.getTrainerId())).thenReturn(GymTestProvider.constructTrainer());
+        when(traineeDAO.getById(request.getTraineeId())).thenReturn(GymTestProvider.constructTrainee());
+        when(trainingTypeDAO.getById(request.getTrainingTypeId())).thenReturn(null);
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.createTraining(request));
+
+        assertTrue(ex.getMessage().contains("Training type with ID"));
+    }
+
+    @Test
+    void createTraining_shouldThrow_whenTraineeNotFound() {
+        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
+
+        when(trainerDAO.getById(request.getTrainerId())).thenReturn(GymTestProvider.constructTrainer());
+        when(traineeDAO.getById(request.getTraineeId())).thenReturn(null);
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.createTraining(request));
+
+        assertTrue(ex.getMessage().contains("Trainee with ID"));
+    }
+
 }

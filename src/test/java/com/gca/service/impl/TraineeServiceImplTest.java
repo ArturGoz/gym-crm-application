@@ -6,9 +6,11 @@ import com.gca.dao.UserDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
 import com.gca.service.common.CoreValidator;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -138,5 +140,79 @@ class TraineeServiceImplTest {
 
         verify(dao).findByUsername(username);
         verify(mapper).toResponse(mockTrainee);
+    }
+
+    @Test
+    void createTrainee_shouldThrow_whenUserNotFound() {
+        TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
+
+        when(userDAO.getById(request.getUserId())).thenReturn(null);
+
+        ServiceException ex = assertThrows(ServiceException.class, () -> service.createTrainee(request));
+
+        assertEquals(
+                String.format("Invalid user ID: %d", request.getUserId()),
+                ex.getMessage()
+        );
+        verify(userDAO).getById(request.getUserId());
+    }
+
+    @Test
+    void deleteTraineeById_shouldThrow_whenIdIsNull() {
+        ServiceException ex = assertThrows(ServiceException.class, () -> service.deleteTraineeById(null));
+
+        assertEquals("Trainee ID must not be null", ex.getMessage());
+    }
+
+    @Test
+    void deleteTraineeById_shouldThrow_whenNotFound() {
+        Long id = 2L;
+
+        when(dao.getById(id)).thenReturn(null);
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.deleteTraineeById(id));
+
+        assertEquals(
+                String.format("Trainee with ID %d not found", id),
+                ex.getMessage()
+        );
+        verify(dao).getById(id);
+    }
+
+    @Test
+    void deleteTraineeByUsername_shouldThrow_whenNotFound() {
+        String username = "ghost";
+
+        when(dao.findByUsername(username)).thenReturn(null);
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.deleteTraineeByUsername(username));
+
+        assertEquals(
+                String.format("Trainee with username '%s' not found", username),
+                ex.getMessage()
+        );
+        verify(dao).findByUsername(username);
+    }
+
+    @Test
+    void getTraineeById_shouldThrow_whenIdIsNull() {
+        ServiceException ex = assertThrows(ServiceException.class, () -> service.getTraineeById(null));
+
+        assertEquals("Trainee ID must not be null", ex.getMessage());
+    }
+
+    @Test
+    void getTraineeById_shouldThrow_whenNotFound() {
+        Long id = 10L;
+
+        when(dao.getById(id)).thenReturn(null);
+
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.getTraineeById(id));
+
+        assertEquals(
+                String.format("Trainee with ID %d not found", id),
+                ex.getMessage()
+        );
+        verify(dao).getById(id);
     }
 }
