@@ -3,7 +3,6 @@ package com.gca.dao.impl;
 import com.gca.dao.BaseIntegrationTest;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
-import com.gca.model.Training;
 import com.gca.model.User;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.hibernate.Session;
@@ -13,7 +12,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

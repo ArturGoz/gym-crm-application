@@ -83,17 +83,4 @@ public class TrainingServiceIT extends AbstractServiceIT {
         assertEquals(trainee.getId(), actual.getTraineeId());
         assertEquals(type.getId(), actual.getTrainingTypeId());
     }
-
-    @Test
-    @DataSet(value = "dataset/training/training-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldGetTrainingById() {
-        TrainingResponse actual = trainingService.getTrainingById(1L);
-
-        assertNotNull(actual);
-        assertEquals(1L, actual.getId());
-        assertEquals("Morning Workout", actual.getName());
-        assertEquals(1L, actual.getTrainerId());
-        assertEquals(1L, actual.getTraineeId());
-        assertEquals(1L, actual.getTrainingTypeId());
-    }
 }

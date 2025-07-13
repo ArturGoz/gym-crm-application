@@ -24,27 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class TrainingDAOImplTest extends BaseIntegrationTest<TrainingDAOImpl> {
 
     @Test
-    void shouldSuccessfullyFindTraining() {
-        Training expected = sessionFactory.getCurrentSession().find(Training.class, 1L);
-
-        Training actual = dao.getById(expected.getId());
-
-        assertNotNull(actual, "Training should not be null");
-        assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getDuration(), actual.getDuration());
-        assertEquals(expected.getDate(), actual.getDate());
-        assertEquals(expected.getTrainer().getId(), actual.getTrainer().getId());
-        assertEquals(expected.getTrainee().getId(), actual.getTrainee().getId());
-        assertEquals(expected.getType().getId(), actual.getType().getId());
-    }
-
-    @Test
-    void shouldNotFindTraining() {
-        Training found = dao.getById(99L);
-        assertNull(found, "Training should be null");
-    }
-
-    @Test
     @DataSet(value = "dataset/training/training-creation-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldCreateTraining() {
         Training expected = buildTrainingFromExistingData();

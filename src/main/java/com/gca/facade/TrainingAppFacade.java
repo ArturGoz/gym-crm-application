@@ -64,12 +64,6 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public TrainingResponse getTrainingById(Long id) {
-        logger.info("Facade: Retrieving training with ID {}", id);
-        return trainingService.getTrainingById(id);
-    }
-
-    @Authenticated
     public void changePassword(PasswordChangeRequest request) {
         logger.info("Changing password for userId: {}", request.getUserId());
 

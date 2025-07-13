@@ -4,6 +4,7 @@ import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
 import com.gca.dao.TrainingTypeDAO;
+import com.gca.dao.transaction.Transactional;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateRequest;
@@ -14,7 +15,6 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
-import com.gca.dao.transaction.Transactional;
 import com.gca.service.TrainingService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -97,22 +97,6 @@ public class TrainingServiceImpl implements TrainingService {
         logger.info("Created training: {}", created);
 
         return trainingMapper.toResponse(created);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public TrainingResponse getTrainingById(Long id) {
-        logger.debug("Retrieving training with ID: {}", id);
-
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ServiceException("Training ID must not be null"));
-
-        Training training = Optional.ofNullable(trainingDAO.getById(id))
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Training with ID %d not found", id)
-                ));
-
-        return trainingMapper.toResponse(training);
     }
 
     @Transactional(readOnly = true)

@@ -10,8 +10,6 @@ import java.util.List;
 public interface TrainingService {
     TrainingResponse createTraining(TrainingCreateRequest request);
 
-    TrainingResponse getTrainingById(Long id);
-
     List<TrainingResponse> getTraineeTrainings(TrainingTraineeCriteriaFilter filter);
 
     List<TrainingResponse> getTrainerTrainings(TrainingTrainerCriteriaFilter filter);

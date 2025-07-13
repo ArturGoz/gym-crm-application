@@ -119,20 +119,6 @@ class TrainingAppFacadeTest {
     }
 
     @Test
-    void getTrainingById_delegatesToService() {
-        TrainingResponse expected = GymTestProvider.constructStrengthTrainingResponse();
-
-        when(trainingService.getTrainingById(2L)).thenReturn(expected);
-
-        TrainingResponse actual = facade.getTrainingById(2L);
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getDate(), actual.getDate());
-        verify(trainingService).getTrainingById(2L);
-    }
-
-    @Test
     void changePassword_delegatesToUserService() {
         PasswordChangeRequest request =
                 new PasswordChangeRequest(1L, "newSecretPassword");

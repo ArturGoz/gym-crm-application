@@ -87,23 +87,6 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void getTrainingById_success() {
-        Training training = GymTestProvider.constructStrengthTraining();
-        TrainingResponse expected = GymTestProvider.constructStrengthTrainingResponse();
-
-        when(dao.getById(2L)).thenReturn(training);
-        when(mapper.toResponse(training)).thenReturn(expected);
-
-        TrainingResponse actual = service.getTrainingById(2L);
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getDate(), actual.getDate());
-        verify(dao).getById(2L);
-        verify(mapper).toResponse(training);
-    }
-
-    @Test
     void getTrainerTrainings_shouldReturnList_whenValidFilter() {
         TrainingTrainerCriteriaFilter filter = GymTestProvider.buildTrainerCriteriaFilter();
         Training training = GymTestProvider.constructTraining();
@@ -191,16 +174,6 @@ class TrainingServiceImplTest {
         assertEquals("Trainee ID must be provided", ex.getMessage());
         verifyNoInteractions(traineeDAO);
         verifyNoInteractions(dao);
-    }
-
-    @Test
-    void getTrainingById_shouldThrow_whenTrainingNotFound() {
-        when(dao.getById(2L)).thenReturn(null);
-
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.getTrainingById(2L));
-
-        assertEquals("Training with ID 2 not found", ex.getMessage());
-        verify(dao).getById(2L);
     }
 
     @Test
