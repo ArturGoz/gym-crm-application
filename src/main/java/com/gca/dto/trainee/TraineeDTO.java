@@ -1,19 +1,19 @@
-package com.gca.dto.user;
+package com.gca.dto.trainee;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
+public class TraineeDTO {
     private Long id;
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String password;
-    private Boolean isActive;
+    private Long userId;
+    private LocalDate dateOfBirth;
+    private String address;
 }

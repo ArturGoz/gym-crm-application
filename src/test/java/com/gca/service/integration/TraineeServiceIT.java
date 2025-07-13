@@ -3,7 +3,7 @@ package com.gca.service.integration;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.UserDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.exception.DaoException;
 import com.gca.mapper.TraineeMapper;
@@ -60,7 +60,7 @@ class TraineeServiceIT extends AbstractServiceIT {
                 .address("Updated Address")
                 .build();
 
-        TraineeResponse actual = traineeService.updateTrainee(updateRequest);
+        TraineeDTO actual = traineeService.updateTrainee(updateRequest);
 
         assertEquals("Updated Address", actual.getAddress());
     }
@@ -76,7 +76,7 @@ class TraineeServiceIT extends AbstractServiceIT {
                 .dateOfBirth(LocalDate.of(2002, 3, 3))
                 .build();
 
-        TraineeResponse actual = traineeService.createTrainee(request);
+        TraineeDTO actual = traineeService.createTrainee(request);
 
         assertNotNull(actual.getId());
         assertEquals("New Address", actual.getAddress());

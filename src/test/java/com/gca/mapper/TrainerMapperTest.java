@@ -1,7 +1,7 @@
 package com.gca.mapper;
 
 import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
@@ -62,7 +62,7 @@ class TrainerMapperTest {
                 .trainees(Collections.emptySet())
                 .build();
 
-        TrainerResponse actual = mapper.toResponse(entity);
+        TrainerDTO actual = mapper.toResponse(entity);
 
         assertNotNull(actual);
         assertEquals(100L, actual.getId());

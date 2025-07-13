@@ -4,8 +4,9 @@ import com.gca.GymTestProvider;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.UserDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
@@ -46,14 +47,14 @@ class TraineeServiceImplTest {
         TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
         Trainee trainee = GymTestProvider.constructTrainee();
         Trainee traineeWithCreds = GymTestProvider.constructTrainee();
-        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
+        TraineeDTO expected = GymTestProvider.constructTraineeResponse();
 
         when(userDAO.getById(any(Long.class))).thenReturn(trainee.getUser());
         when(mapper.toEntity(request)).thenReturn(trainee);
         when(dao.create(any(Trainee.class))).thenReturn(traineeWithCreds);
         when(mapper.toResponse(any(Trainee.class))).thenReturn(expected);
 
-        TraineeResponse actual = service.createTrainee(request);
+        TraineeDTO actual = service.createTrainee(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getAddress(), actual.getAddress());
@@ -67,14 +68,14 @@ class TraineeServiceImplTest {
         TraineeUpdateRequest updateRequest = GymTestProvider.createTraineeUpdateRequest();
         Trainee existing = GymTestProvider.constructTrainee().toBuilder().address("1232").build();
         Trainee updated = existing.toBuilder().address("Kyiv, Khreschatyk 10").build();
-        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
+        TraineeDTO expected = GymTestProvider.constructTraineeResponse();
 
         when(dao.getById(1L)).thenReturn(existing);
         when(mapper.toEntity(updateRequest)).thenReturn(updated);
         when(dao.update(existing)).thenReturn(updated);
         when(mapper.toResponse(updated)).thenReturn(expected);
 
-        TraineeResponse actual = service.updateTrainee(updateRequest);
+        TraineeDTO actual = service.updateTrainee(updateRequest);
 
         assertEquals(expected, actual);
         verify(dao).getById(1L);
@@ -96,29 +97,15 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void deleteTrainee_ById_success() {
-        Long traineeId = 1L;
-        Trainee trainee = Trainee.builder()
-                .id(traineeId)
-                .build();
-
-        when(dao.getById(traineeId)).thenReturn(trainee);
-
-        service.deleteTraineeById(traineeId);
-
-        verify(dao).deleteById(traineeId);
-    }
-
-    @Test
     void getTraineeByUsername_success() {
         String username = "john_doe";
         Trainee mockTrainee = GymTestProvider.constructTrainee();
-        TraineeResponse expectedResponse = GymTestProvider.constructTraineeResponse();
+        TraineeDTO expectedResponse = GymTestProvider.constructTraineeResponse();
 
         when(dao.findByUsername(username)).thenReturn(mockTrainee);
         when(mapper.toResponse(mockTrainee)).thenReturn(expectedResponse);
 
-        TraineeResponse actualResponse = service.getTraineeByUsername(username);
+        TraineeDTO actualResponse = service.getTraineeByUsername(username);
 
         assertEquals(expectedResponse, actualResponse);
 
@@ -139,25 +126,6 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void deleteTraineeById_shouldThrow_whenIdIsNull() {
-        ServiceException ex = assertThrows(ServiceException.class, () -> service.deleteTraineeById(null));
-
-        assertEquals("Trainee ID must not be null", ex.getMessage());
-    }
-
-    @Test
-    void deleteTraineeById_shouldThrow_whenNotFound() {
-        Long id = 2L;
-
-        when(dao.getById(id)).thenReturn(null);
-
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.deleteTraineeById(id));
-
-        assertEquals(("Trainee with ID 2 not found"), ex.getMessage());
-        verify(dao).getById(id);
-    }
-
-    @Test
     void deleteTraineeByUsername_shouldThrow_whenNotFound() {
         String username = "ghost";
 
@@ -168,4 +136,23 @@ class TraineeServiceImplTest {
         assertEquals(("Trainee with username 'ghost' not found"), ex.getMessage());
         verify(dao).findByUsername(username);
     }
+
+    @Test
+    void updateTraineeTrainers_shouldUpdateAndReturnResponse() {
+        UpdateTraineeTrainersRequest request = GymTestProvider.createUpdateTraineeTrainersRequest();
+        Trainee updatedTrainee = GymTestProvider.constructTrainee();
+        TraineeDTO expectedResponse = GymTestProvider.constructTraineeResponse();
+
+        when(dao.updateTraineeTrainers(request.getTraineeUsername(), request.getTrainerNames()))
+                .thenReturn(updatedTrainee);
+        when(mapper.toResponse(updatedTrainee)).thenReturn(expectedResponse);
+
+        TraineeDTO actualResponse = service.updateTraineeTrainers(request);
+
+        assertEquals(expectedResponse, actualResponse);
+
+        verify(dao).updateTraineeTrainers(request.getTraineeUsername(), request.getTrainerNames());
+        verify(mapper).toResponse(updatedTrainee);
+    }
+
 }

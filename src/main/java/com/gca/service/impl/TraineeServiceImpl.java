@@ -4,8 +4,9 @@ import com.gca.dao.TraineeDAO;
 import com.gca.dao.UserDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
@@ -57,7 +58,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeResponse createTrainee(@Valid TraineeCreateRequest request) {
+    public TraineeDTO createTrainee(@Valid TraineeCreateRequest request) {
         logger.debug("Creating trainee");
 
         User user = Optional.ofNullable(userDAO.getById(request.getUserId()))
@@ -77,7 +78,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeResponse updateTrainee(@Valid TraineeUpdateRequest request) {
+    public TraineeDTO updateTrainee(@Valid TraineeUpdateRequest request) {
         logger.debug("Updating trainee");
 
         Trainee trainee = Optional.ofNullable(traineeDAO.getById(request.getId()))
@@ -98,7 +99,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional(readOnly = true)
     @Override
-    public TraineeResponse getTraineeByUsername(String username) {
+    public TraineeDTO getTraineeByUsername(String username) {
         logger.debug("Getting trainee by username: {}", username);
 
         validator.validateUsername(username);
@@ -115,24 +116,14 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public void deleteTraineeById(Long id) {
-        logger.debug("Deleting trainee with ID: {}", id);
+    public TraineeDTO updateTraineeTrainers(@Valid UpdateTraineeTrainersRequest request) {
+        logger.debug("Updating trainers for trainee usernames");
 
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ServiceException("Trainee ID must not be null"));
+        Trainee updated = traineeDAO.updateTraineeTrainers
+                (request.getTraineeUsername(), request.getTrainerNames());
 
-        Optional.ofNullable(traineeDAO.getById(id))
-                .ifPresentOrElse(
-                        trainee -> {
-                            traineeDAO.deleteById(id);
-                            logger.info("Deleted trainee with ID: {}", id);
-                        },
-                        () -> {
-                            throw new EntityNotFoundException(
-                                    format("Trainee with ID %d not found", id)
-                            );
-                        }
-                );
+        logger.info("Updated trainers for trainee");
+        return traineeMapper.toResponse(updated);
     }
 
     @Transactional

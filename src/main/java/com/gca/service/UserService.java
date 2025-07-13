@@ -2,17 +2,17 @@ package com.gca.service;
 
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserResponse;
+import com.gca.dto.user.UserDTO;
 import com.gca.dto.user.UserUpdateRequest;
 
 public interface UserService {
-    UserResponse createUser(UserCreateRequest request);
+    UserDTO createUser(UserCreateRequest request);
 
-    UserResponse updateUser(UserUpdateRequest request);
+    UserDTO updateUser(UserUpdateRequest request);
 
-    UserResponse getUserById(Long id);
+    UserDTO getUserById(Long id);
 
-    UserResponse getUserByUsername(String username);
+    UserDTO getUserByUsername(String username);
 
     void deleteUser(Long id);
 
@@ -20,5 +20,5 @@ public interface UserService {
 
     void changeUserPassword(PasswordChangeRequest request);
 
-    UserResponse toggleActiveStatus(String username);
+    UserDTO toggleActiveStatus(String username);
 }

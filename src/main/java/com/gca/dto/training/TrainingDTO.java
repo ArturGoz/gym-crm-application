@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainingResponse {
+public class TrainingDTO {
     private Long id;
     private Long trainerId;
     private Long traineeId;

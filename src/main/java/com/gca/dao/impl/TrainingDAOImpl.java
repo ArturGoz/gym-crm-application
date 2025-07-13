@@ -36,13 +36,6 @@ public class TrainingDAOImpl implements TrainingDAO {
     }
 
     @Override
-    public Training getById(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-
-        return session.find(Training.class, id);
-    }
-
-    @Override
     public List<Training> getTraineeTrainings(Trainee trainee, LocalDate fromDate,
                                               LocalDate toDate, String trainerName,
                                               String trainingTypeName) {

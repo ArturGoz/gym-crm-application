@@ -3,16 +3,14 @@ package com.gca.service;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.training.TrainingDTO;
 
 import java.util.List;
 
 public interface TrainingService {
-    TrainingResponse createTraining(TrainingCreateRequest request);
+    TrainingDTO createTraining(TrainingCreateRequest request);
 
-    TrainingResponse getTrainingById(Long id);
+    List<TrainingDTO> getTraineeTrainings(TrainingTraineeCriteriaFilter filter);
 
-    List<TrainingResponse> getTraineeTrainings(TrainingTraineeCriteriaFilter filter);
-
-    List<TrainingResponse> getTrainerTrainings(TrainingTrainerCriteriaFilter filter);
+    List<TrainingDTO> getTrainerTrainings(TrainingTrainerCriteriaFilter filter);
 }

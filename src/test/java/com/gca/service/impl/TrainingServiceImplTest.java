@@ -8,7 +8,7 @@ import com.gca.dao.TrainingTypeDAO;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.training.TrainingDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainingMapper;
 import com.gca.model.Trainee;
@@ -61,7 +61,7 @@ class TrainingServiceImplTest {
         TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
         Training training = GymTestProvider.constructTrainingWithoutId();
         Training created = GymTestProvider.constructTraining();
-        TrainingResponse expected = GymTestProvider.constructTrainingResponse();
+        TrainingDTO expected = GymTestProvider.constructTrainingResponse();
 
         Trainer trainer = GymTestProvider.constructTrainer();
         Trainee trainee = GymTestProvider.constructTrainee();
@@ -75,7 +75,7 @@ class TrainingServiceImplTest {
         when(dao.create(any(Training.class))).thenReturn(created);
         when(mapper.toResponse(any(Training.class))).thenReturn(expected);
 
-        TrainingResponse actual = service.createTraining(request);
+        TrainingDTO actual = service.createTraining(request);
 
         assertEquals(expected, actual);
         verify(mapper).toEntity(request);
@@ -87,28 +87,11 @@ class TrainingServiceImplTest {
     }
 
     @Test
-    void getTrainingById_success() {
-        Training training = GymTestProvider.constructStrengthTraining();
-        TrainingResponse expected = GymTestProvider.constructStrengthTrainingResponse();
-
-        when(dao.getById(2L)).thenReturn(training);
-        when(mapper.toResponse(training)).thenReturn(expected);
-
-        TrainingResponse actual = service.getTrainingById(2L);
-
-        assertEquals(expected, actual);
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getDate(), actual.getDate());
-        verify(dao).getById(2L);
-        verify(mapper).toResponse(training);
-    }
-
-    @Test
     void getTrainerTrainings_shouldReturnList_whenValidFilter() {
         TrainingTrainerCriteriaFilter filter = GymTestProvider.buildTrainerCriteriaFilter();
         Training training = GymTestProvider.constructTraining();
         List<Training> trainings = Collections.singletonList(training);
-        TrainingResponse response = GymTestProvider.constructTrainingResponse();
+        TrainingDTO response = GymTestProvider.constructTrainingResponse();
         Trainer trainer = new Trainer();
 
         when(trainerDAO.getById(1L)).thenReturn(trainer);
@@ -120,7 +103,7 @@ class TrainingServiceImplTest {
         )).thenReturn(trainings);
         when(mapper.toResponse(training)).thenReturn(response);
 
-        List<TrainingResponse> actual = service.getTrainerTrainings(filter);
+        List<TrainingDTO> actual = service.getTrainerTrainings(filter);
 
         assertEquals(1, actual.size());
         assertEquals(response, actual.get(0));
@@ -152,7 +135,7 @@ class TrainingServiceImplTest {
         TrainingTraineeCriteriaFilter filter = GymTestProvider.buildTraineeCriteriaFilter();
         Training training = GymTestProvider.constructTraining();
         List<Training> trainings = Collections.singletonList(training);
-        TrainingResponse expected = GymTestProvider.constructTrainingResponse();
+        TrainingDTO expected = GymTestProvider.constructTrainingResponse();
         Trainee trainee = new Trainee();
 
         when(traineeDAO.getById(1L)).thenReturn(trainee);
@@ -165,7 +148,7 @@ class TrainingServiceImplTest {
         )).thenReturn(trainings);
         when(mapper.toResponse(training)).thenReturn(expected);
 
-        List<TrainingResponse> actual = service.getTraineeTrainings(filter);
+        List<TrainingDTO> actual = service.getTraineeTrainings(filter);
 
         assertEquals(1, actual.size());
         assertEquals(expected, actual.get(0));
@@ -191,16 +174,6 @@ class TrainingServiceImplTest {
         assertEquals("Trainee ID must be provided", ex.getMessage());
         verifyNoInteractions(traineeDAO);
         verifyNoInteractions(dao);
-    }
-
-    @Test
-    void getTrainingById_shouldThrow_whenTrainingNotFound() {
-        when(dao.getById(2L)).thenReturn(null);
-
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.getTrainingById(2L));
-
-        assertEquals("Training with ID 2 not found", ex.getMessage());
-        verify(dao).getById(2L);
     }
 
     @Test

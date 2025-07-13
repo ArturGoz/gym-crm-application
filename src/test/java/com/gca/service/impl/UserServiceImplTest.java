@@ -4,7 +4,7 @@ import com.gca.GymTestProvider;
 import com.gca.dao.UserDAO;
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserResponse;
+import com.gca.dto.user.UserDTO;
 import com.gca.dto.user.UserUpdateRequest;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
@@ -46,7 +46,7 @@ class UserServiceImplTest {
         UserCreateRequest request = GymTestProvider.createUserCreateRequest();
         User mapped = GymTestProvider.constructUser().toBuilder().id(null).build();
         User saved = GymTestProvider.constructUser();
-        UserResponse expected = GymTestProvider.constructUserResponse();
+        UserDTO expected = GymTestProvider.constructUserResponse();
 
         when(userProfileService.generateUsername(request.getFirstName(), request.getLastName()))
                 .thenReturn("john_doe");
@@ -55,7 +55,7 @@ class UserServiceImplTest {
         when(userDAO.create(any(User.class))).thenReturn(saved);
         when(userMapper.toResponse(saved)).thenReturn(expected);
 
-        UserResponse actual = userService.createUser(request);
+        UserDTO actual = userService.createUser(request);
 
         assertEquals(expected, actual);
         verify(userProfileService).generateUsername(request.getFirstName(), request.getLastName());
@@ -70,14 +70,14 @@ class UserServiceImplTest {
         UserUpdateRequest request = GymTestProvider.createUserUpdateRequest();
         User existing = GymTestProvider.constructUser();
         User updatedEntity = existing.toBuilder().firstName("Updated").build();
-        UserResponse expected = GymTestProvider.constructUserResponse();
+        UserDTO expected = GymTestProvider.constructUserResponse();
 
         when(userDAO.getById(request.getId())).thenReturn(existing);
         when(userMapper.toEntity(request)).thenReturn(updatedEntity);
         when(userDAO.update(any(User.class))).thenReturn(updatedEntity);
         when(userMapper.toResponse(updatedEntity)).thenReturn(expected);
 
-        UserResponse actual = userService.updateUser(request);
+        UserDTO actual = userService.updateUser(request);
 
         assertEquals(expected, actual);
         verify(userDAO).getById(request.getId());
@@ -107,12 +107,12 @@ class UserServiceImplTest {
     @Test
     void getUserById_success() {
         User user = GymTestProvider.constructUser();
-        UserResponse expected = GymTestProvider.constructUserResponse();
+        UserDTO expected = GymTestProvider.constructUserResponse();
 
         when(userDAO.getById(1L)).thenReturn(user);
         when(userMapper.toResponse(user)).thenReturn(expected);
 
-        UserResponse actual = userService.getUserById(1L);
+        UserDTO actual = userService.getUserById(1L);
 
         assertEquals(expected, actual);
         verify(userDAO).getById(1L);
@@ -198,7 +198,7 @@ class UserServiceImplTest {
     void toggleActiveStatus_success() {
         User expected = GymTestProvider.constructUser();
         User updated = expected.toBuilder().isActive(!expected.getIsActive()).build();
-        UserResponse expectedResponse = GymTestProvider.constructUserResponse().toBuilder()
+        UserDTO expectedResponse = GymTestProvider.constructUserResponse().toBuilder()
                 .isActive(updated.getIsActive())
                 .build();
 
@@ -206,7 +206,7 @@ class UserServiceImplTest {
         when(userDAO.update(any(User.class))).thenReturn(updated);
         when(userMapper.toResponse(updated)).thenReturn(expectedResponse);
 
-        UserResponse actual = userService.toggleActiveStatus(expected.getUsername());
+        UserDTO actual = userService.toggleActiveStatus(expected.getUsername());
 
         assertEquals(expectedResponse, actual);
         assertEquals(expected.getIsActive(), actual.getIsActive());

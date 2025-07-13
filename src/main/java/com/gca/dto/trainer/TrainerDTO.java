@@ -1,19 +1,17 @@
-package com.gca.dto.trainee;
+package com.gca.dto.trainer;
 
+import com.gca.model.TrainingType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TraineeResponse {
+public class TrainerDTO {
     private Long id;
     private Long userId;
-    private LocalDate dateOfBirth;
-    private String address;
+    private TrainingType specialization;
 }

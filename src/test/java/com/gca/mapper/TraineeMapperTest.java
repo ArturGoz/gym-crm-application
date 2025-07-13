@@ -1,7 +1,7 @@
 package com.gca.mapper;
 
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.model.Trainee;
 import com.gca.model.User;
@@ -61,7 +61,7 @@ class TraineeMapperTest {
                 .address("Dnipro")
                 .build();
 
-        TraineeResponse response = mapper.toResponse(entity);
+        TraineeDTO response = mapper.toResponse(entity);
 
         assertNotNull(response);
         assertEquals(42L, response.getId());

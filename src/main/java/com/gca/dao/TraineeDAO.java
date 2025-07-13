@@ -15,7 +15,5 @@ public interface TraineeDAO {
 
     Trainee updateTraineeTrainers(String traineeUsername, List<String> trainerUsernames);
 
-    void deleteById(Long id);
-
     void deleteByUsername(String username);
 }

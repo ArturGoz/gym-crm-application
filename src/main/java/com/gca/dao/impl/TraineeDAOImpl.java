@@ -83,17 +83,6 @@ public class TraineeDAOImpl implements TraineeDAO {
     }
 
     @Override
-    public void deleteById(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        Trainee trainee = session.find(Trainee.class, id);
-
-        if (trainee == null) {
-            throw new DaoException(String.format("Trainee with id: %d not found", id));
-        }
-        session.remove(trainee);
-    }
-
-    @Override
     public void deleteByUsername(String username) {
         Session session = sessionFactory.getCurrentSession();
 

@@ -5,7 +5,7 @@ import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
 import com.gca.dao.TrainingTypeDAO;
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.training.TrainingDTO;
 import com.gca.mapper.TrainingMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
@@ -75,25 +75,12 @@ public class TrainingServiceIT extends AbstractServiceIT {
                 .duration(60L)
                 .build();
 
-        TrainingResponse actual = trainingService.createTraining(request);
+        TrainingDTO actual = trainingService.createTraining(request);
 
         assertNotNull(actual.getId());
         assertEquals("New Training", actual.getName());
         assertEquals(trainer.getId(), actual.getTrainerId());
         assertEquals(trainee.getId(), actual.getTraineeId());
         assertEquals(type.getId(), actual.getTrainingTypeId());
-    }
-
-    @Test
-    @DataSet(value = "dataset/training/training-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldGetTrainingById() {
-        TrainingResponse actual = trainingService.getTrainingById(1L);
-
-        assertNotNull(actual);
-        assertEquals(1L, actual.getId());
-        assertEquals("Morning Workout", actual.getName());
-        assertEquals(1L, actual.getTrainerId());
-        assertEquals(1L, actual.getTraineeId());
-        assertEquals(1L, actual.getTrainingTypeId());
     }
 }

@@ -5,7 +5,7 @@ import com.gca.dao.TrainerDAO;
 import com.gca.dao.UserDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainerMapper;
@@ -69,7 +69,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional
     @Override
-    public TrainerResponse createTrainer(@Valid TrainerCreateRequest request) {
+    public TrainerDTO createTrainer(@Valid TrainerCreateRequest request) {
         logger.debug("Creating trainer");
 
         User user = Optional.ofNullable(userDAO.getById(request.getUserId()))
@@ -89,7 +89,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional
     @Override
-    public TrainerResponse updateTrainer(@Valid TrainerUpdateRequest request) {
+    public TrainerDTO updateTrainer(@Valid TrainerUpdateRequest request) {
         logger.debug("Updating trainer");
 
         Trainer trainer = Optional.ofNullable(trainerDAO.getById(request.getId()))
@@ -110,7 +110,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional(readOnly = true)
     @Override
-    public TrainerResponse getTrainerByUsername(String username) {
+    public TrainerDTO getTrainerByUsername(String username) {
         logger.debug("Getting trainer by username: {}", username);
 
         validator.validateUsername(username);
@@ -127,7 +127,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Trainer> getUnassignedTrainers(String traineeUsername) {
+    public List<TrainerDTO> getUnassignedTrainers(String traineeUsername) {
         logger.debug("Getting unassigned trainers for trainee username: {}", traineeUsername);
 
         validator.validateUsername(traineeUsername);
@@ -142,10 +142,12 @@ public class TrainerServiceImpl implements TrainerService {
 
         List<Trainer> unassignedTrainers = allTrainers.stream()
                 .filter(trainer -> !assignedTrainers.contains(trainer))
-                .collect(Collectors.toList());
+                .toList();
 
         logger.info("Found {} unassigned trainers for trainee '{}'", unassignedTrainers.size(), traineeUsername);
-        return unassignedTrainers;
+        return unassignedTrainers.stream()
+                .map(trainerMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }
 

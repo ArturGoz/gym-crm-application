@@ -3,15 +3,16 @@ package com.gca;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.training.TrainingDTO;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserResponse;
+import com.gca.dto.user.UserDTO;
 import com.gca.dto.user.UserUpdateRequest;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
@@ -20,8 +21,16 @@ import com.gca.model.TrainingType;
 import com.gca.model.User;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class GymTestProvider {
+
+    public static UpdateTraineeTrainersRequest createUpdateTraineeTrainersRequest() {
+        return UpdateTraineeTrainersRequest.builder()
+                .traineeUsername("john_doe")
+                .trainerNames(List.of("trainer1", "trainer2"))
+                .build();
+    }
 
     public static TrainerCreateRequest createTrainerCreateRequest() {
         return TrainerCreateRequest.builder()
@@ -68,16 +77,16 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerResponse constructTrainerResponse() {
-        return TrainerResponse.builder()
+    public static TrainerDTO constructTrainerResponse() {
+        return TrainerDTO.builder()
                 .id(2L)
                 .userId(10L)
                 .specialization(TrainingType.builder().name("Yoga").build())
                 .build();
     }
 
-    public static TrainerResponse constructUpdatedTrainerResponse() {
-        return TrainerResponse.builder()
+    public static TrainerDTO constructUpdatedTrainerResponse() {
+        return TrainerDTO.builder()
                 .id(2L)
                 .userId(2L)
                 .specialization(TrainingType.builder().name("Pilates").build())
@@ -107,8 +116,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TraineeResponse constructTraineeResponse() {
-        return TraineeResponse.builder()
+    public static TraineeDTO constructTraineeResponse() {
+        return TraineeDTO.builder()
                 .id(1L)
                 .userId(1L)
                 .address("Kyiv, Shevchenka 1")
@@ -143,8 +152,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingResponse constructTrainingResponse() {
-        return TrainingResponse.builder()
+    public static TrainingDTO constructTrainingResponse() {
+        return TrainingDTO.builder()
                 .id(1L)
                 .trainerId(1L)
                 .traineeId(1L)
@@ -164,8 +173,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingResponse constructStrengthTrainingResponse() {
-        return TrainingResponse.builder()
+    public static TrainingDTO constructStrengthTrainingResponse() {
+        return TrainingDTO.builder()
                 .id(2L)
                 .trainerId(2L)
                 .traineeId(2L)
@@ -205,8 +214,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static UserResponse constructUserResponse() {
-        return UserResponse.builder()
+    public static UserDTO constructUserResponse() {
+        return UserDTO.builder()
                 .id(1L)
                 .firstName("John")
                 .lastName("Doe")
