@@ -11,6 +11,7 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.user.UserResponse;
 import com.gca.security.Authenticated;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
@@ -42,12 +43,6 @@ public class TrainingAppFacade {
     public TraineeResponse updateTrainee(TraineeUpdateRequest request) {
         logger.info("Facade: Updating trainee with ID {}", request.getUserId());
         return traineeService.updateTrainee(request);
-    }
-
-    @Authenticated
-    public void deleteTrainee(Long id) {
-        logger.info("Facade: Deleting trainee with ID {}", id);
-        traineeService.deleteTraineeById(id);
     }
 
     public TrainerResponse createTrainer(TrainerCreateRequest request) {
@@ -107,5 +102,19 @@ public class TrainingAppFacade {
         logger.info("Facade: Retrieving trainer by name {}", username);
 
         return trainerService.getTrainerByUsername(username);
+    }
+
+    @Authenticated
+    public void deleteTraineeByUsername(String username) {
+        logger.info("Facade: Deleting traine by name {}", username);
+
+        traineeService.deleteTraineeByUsername(username);
+    }
+
+    @Authenticated
+    public UserResponse toggleUserActiveStatus(String username) {
+        logger.info("Facade: Toggle user active status for user {}", username);
+
+        return userService.toggleActiveStatus(username);
     }
 }

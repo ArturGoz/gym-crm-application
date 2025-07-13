@@ -12,6 +12,7 @@ import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.user.UserResponse;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
@@ -72,13 +73,6 @@ class TrainingAppFacadeTest {
         assertEquals(expected, actual);
         assertEquals(expected.getAddress(), actual.getAddress());
         verify(traineeService).updateTrainee(request);
-    }
-
-    @Test
-    void deleteTrainee_delegatesToService() {
-        facade.deleteTrainee(2L);
-
-        verify(traineeService).deleteTraineeById(2L);
     }
 
     @Test
@@ -198,5 +192,27 @@ class TrainingAppFacadeTest {
 
         assertEquals(expected, actual);
         verify(trainerService).getTrainerByUsername(username);
+    }
+
+    @Test
+    void deleteTraineeByUsername_delegatesToService() {
+        String username = "john.doe";
+
+        facade.deleteTraineeByUsername(username);
+
+        verify(traineeService).deleteTraineeByUsername(username);
+    }
+
+    @Test
+    void toggleUserActiveStatus_delegatesToService() {
+        String username = "john.doe";
+        UserResponse expected = GymTestProvider.constructUserResponse();
+
+        when(userService.toggleActiveStatus(username)).thenReturn(expected);
+
+        UserResponse actual = facade.toggleUserActiveStatus(username);
+
+        assertEquals(expected, actual);
+        verify(userService).toggleActiveStatus(username);
     }
 }

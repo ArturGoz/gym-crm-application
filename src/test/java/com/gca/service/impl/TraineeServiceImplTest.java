@@ -96,20 +96,6 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void deleteTrainee_ById_success() {
-        Long traineeId = 1L;
-        Trainee trainee = Trainee.builder()
-                .id(traineeId)
-                .build();
-
-        when(dao.getById(traineeId)).thenReturn(trainee);
-
-        service.deleteTraineeById(traineeId);
-
-        verify(dao).deleteById(traineeId);
-    }
-
-    @Test
     void getTraineeByUsername_success() {
         String username = "john_doe";
         Trainee mockTrainee = GymTestProvider.constructTrainee();
@@ -136,25 +122,6 @@ class TraineeServiceImplTest {
 
         assertEquals(("Invalid user ID: 1"), ex.getMessage());
         verify(userDAO).getById(request.getUserId());
-    }
-
-    @Test
-    void deleteTraineeById_shouldThrow_whenIdIsNull() {
-        ServiceException ex = assertThrows(ServiceException.class, () -> service.deleteTraineeById(null));
-
-        assertEquals("Trainee ID must not be null", ex.getMessage());
-    }
-
-    @Test
-    void deleteTraineeById_shouldThrow_whenNotFound() {
-        Long id = 2L;
-
-        when(dao.getById(id)).thenReturn(null);
-
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.deleteTraineeById(id));
-
-        assertEquals(("Trainee with ID 2 not found"), ex.getMessage());
-        verify(dao).getById(id);
     }
 
     @Test

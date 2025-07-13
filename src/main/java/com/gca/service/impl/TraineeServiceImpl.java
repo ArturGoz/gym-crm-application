@@ -115,28 +115,6 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public void deleteTraineeById(Long id) {
-        logger.debug("Deleting trainee with ID: {}", id);
-
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ServiceException("Trainee ID must not be null"));
-
-        Optional.ofNullable(traineeDAO.getById(id))
-                .ifPresentOrElse(
-                        trainee -> {
-                            traineeDAO.deleteById(id);
-                            logger.info("Deleted trainee with ID: {}", id);
-                        },
-                        () -> {
-                            throw new EntityNotFoundException(
-                                    format("Trainee with ID %d not found", id)
-                            );
-                        }
-                );
-    }
-
-    @Transactional
-    @Override
     public void deleteTraineeByUsername(String username) {
         logger.debug("Deleting trainee by username: {}", username);
 

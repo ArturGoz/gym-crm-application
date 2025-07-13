@@ -71,18 +71,6 @@ class TraineeDAOImplTest extends BaseIntegrationTest<TraineeDAOImpl> {
     }
 
     @Test
-    void shouldDeleteByIdTraineeById() {
-        Trainee existing = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
-        assertNotNull(existing, "Trainee should exist before delete");
-
-        dao.deleteById(1L);
-
-        Trainee deleted = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
-
-        assertNull(deleted, "Trainee should be deleted from DB");
-    }
-
-    @Test
     @DataSet(value = "dataset/trainee/trainee-trainers-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldUpdateTraineeTrainersList() {
         Trainee before = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
@@ -95,25 +83,6 @@ class TraineeDAOImplTest extends BaseIntegrationTest<TraineeDAOImpl> {
         assertNotNull(updated.getTrainers(), "Trainers list should not be null after update");
         assertEquals(1, updated.getTrainers().size(), "Trainee should have one trainer assigned");
         assertEquals(expectedUsername, actual.getUser().getUsername());
-    }
-
-    @Test
-    @DataSet(value = "dataset/trainee/trainee-with-trainings.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldDeleteTraineeAndCascadeDeleteTrainings() {
-        Trainee trainee = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
-
-        assertNotNull(trainee, "Trainee must exist before deletion");
-        assertFalse(trainee.getTrainings().isEmpty(), "Trainee should have trainings before deletion");
-
-        dao.deleteById(1L);
-
-        Trainee deletedTrainee = sessionFactory.getCurrentSession().find(Trainee.class, 1L);
-
-        assertNull(deletedTrainee, "Trainee should be deleted");
-
-        Training training = sessionFactory.getCurrentSession().find(Training.class, 1L);
-
-        assertNull(training, "Trainee should be deleted");
     }
 
     private Trainee buildTraineeFromExistingUser() {
