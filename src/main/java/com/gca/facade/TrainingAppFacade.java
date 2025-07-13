@@ -106,4 +106,18 @@ public class TrainingAppFacade {
 
         return trainingService.getTraineeTrainings(filter);
     }
+
+    @Authenticated
+    public TraineeResponse getTraineeByUsername(String username) {
+        logger.info("Facade: Retrieving traine by name {}", username);
+
+        return traineeService.getTraineeByUsername(username);
+    }
+
+    @Authenticated
+    public TrainerResponse getTrainerByUsername(String username) {
+        logger.info("Facade: Retrieving trainer by name {}", username);
+
+        return trainerService.getTrainerByUsername(username);
+    }
 }
