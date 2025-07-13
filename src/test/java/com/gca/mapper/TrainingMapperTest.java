@@ -1,7 +1,7 @@
 package com.gca.mapper;
 
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.training.TrainingDTO;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
@@ -57,7 +57,7 @@ class TrainingMapperTest {
                 .name("Morning Yoga")
                 .build();
 
-        TrainingResponse actual = mapper.toResponse(training);
+        TrainingDTO actual = mapper.toResponse(training);
 
         assertNotNull(actual);
         assertEquals(10L, actual.getId());

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainerResponse {
+public class TrainerDTO {
     private Long id;
     private Long userId;
     private TrainingType specialization;

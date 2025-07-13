@@ -4,7 +4,7 @@ import com.gca.dao.TraineeDAO;
 import com.gca.dao.UserDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.exception.ServiceException;
@@ -58,7 +58,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeResponse createTrainee(@Valid TraineeCreateRequest request) {
+    public TraineeDTO createTrainee(@Valid TraineeCreateRequest request) {
         logger.debug("Creating trainee");
 
         User user = Optional.ofNullable(userDAO.getById(request.getUserId()))
@@ -78,7 +78,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeResponse updateTrainee(@Valid TraineeUpdateRequest request) {
+    public TraineeDTO updateTrainee(@Valid TraineeUpdateRequest request) {
         logger.debug("Updating trainee");
 
         Trainee trainee = Optional.ofNullable(traineeDAO.getById(request.getId()))
@@ -99,7 +99,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional(readOnly = true)
     @Override
-    public TraineeResponse getTraineeByUsername(String username) {
+    public TraineeDTO getTraineeByUsername(String username) {
         logger.debug("Getting trainee by username: {}", username);
 
         validator.validateUsername(username);
@@ -116,7 +116,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeResponse updateTraineeTrainers(@Valid UpdateTraineeTrainersRequest request) {
+    public TraineeDTO updateTraineeTrainers(@Valid UpdateTraineeTrainersRequest request) {
         logger.debug("Updating trainers for trainee usernames");
 
         Trainee updated = traineeDAO.updateTraineeTrainers

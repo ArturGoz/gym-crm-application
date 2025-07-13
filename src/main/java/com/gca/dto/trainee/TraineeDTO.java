@@ -1,4 +1,4 @@
-package com.gca.dto.training;
+package com.gca.dto.trainee;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,14 +11,9 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainingResponse {
+public class TraineeDTO {
     private Long id;
-    private Long trainerId;
-    private Long traineeId;
-    private Long trainingTypeId;
-    private LocalDate date;
-    private Long duration;
-    private String name;
+    private Long userId;
+    private LocalDate dateOfBirth;
+    private String address;
 }
-
-

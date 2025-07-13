@@ -1,7 +1,7 @@
 package com.gca.mapper;
 
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.model.Trainee;
 import org.mapstruct.Mapper;
@@ -15,5 +15,5 @@ public interface TraineeMapper {
     Trainee toEntity(TraineeUpdateRequest request);
 
     @Mapping(source = "user.id", target = "userId")
-    TraineeResponse toResponse(Trainee trainee);
+    TraineeDTO toResponse(Trainee trainee);
 }

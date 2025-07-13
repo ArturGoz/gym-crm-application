@@ -5,15 +5,15 @@ import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateRequest;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingResponse;
-import com.gca.dto.user.UserResponse;
+import com.gca.dto.training.TrainingDTO;
+import com.gca.dto.user.UserDTO;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
@@ -51,11 +51,11 @@ class TrainingAppFacadeTest {
     @Test
     void createTrainee_delegatesToService() {
         TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
-        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
+        TraineeDTO expected = GymTestProvider.constructTraineeResponse();
 
         when(traineeService.createTrainee(request)).thenReturn(expected);
 
-        TraineeResponse actual = facade.createTrainee(request);
+        TraineeDTO actual = facade.createTrainee(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getAddress(), actual.getAddress());
@@ -65,11 +65,11 @@ class TrainingAppFacadeTest {
     @Test
     void updateTrainee_delegatesToService() {
         TraineeUpdateRequest request = GymTestProvider.createTraineeUpdateRequest();
-        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
+        TraineeDTO expected = GymTestProvider.constructTraineeResponse();
 
         when(traineeService.updateTrainee(request)).thenReturn(expected);
 
-        TraineeResponse actual = facade.updateTrainee(request);
+        TraineeDTO actual = facade.updateTrainee(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getAddress(), actual.getAddress());
@@ -79,11 +79,11 @@ class TrainingAppFacadeTest {
     @Test
     void createTrainer_delegatesToService() {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
-        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
+        TrainerDTO expected = GymTestProvider.constructTrainerResponse();
 
         when(trainerService.createTrainer(request)).thenReturn(expected);
 
-        TrainerResponse actual = facade.createTrainer(request);
+        TrainerDTO actual = facade.createTrainer(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
@@ -93,11 +93,11 @@ class TrainingAppFacadeTest {
     @Test
     void updateTrainer_delegatesToService() {
         TrainerUpdateRequest request = GymTestProvider.createTrainerUpdateRequest();
-        TrainerResponse expected = GymTestProvider.constructUpdatedTrainerResponse();
+        TrainerDTO expected = GymTestProvider.constructUpdatedTrainerResponse();
 
         when(trainerService.updateTrainer(request)).thenReturn(expected);
 
-        TrainerResponse actual = facade.updateTrainer(request);
+        TrainerDTO actual = facade.updateTrainer(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
@@ -107,11 +107,11 @@ class TrainingAppFacadeTest {
     @Test
     void createTraining_delegatesToService() {
         TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
-        TrainingResponse expected = GymTestProvider.constructTrainingResponse();
+        TrainingDTO expected = GymTestProvider.constructTrainingResponse();
 
         when(trainingService.createTraining(request)).thenReturn(expected);
 
-        TrainingResponse actual = facade.createTraining(request);
+        TrainingDTO actual = facade.createTraining(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getName(), actual.getName());
@@ -132,11 +132,11 @@ class TrainingAppFacadeTest {
     @Test
     void findFilteredTrainings_byTrainerCriteria_delegatesToService() {
         TrainingTrainerCriteriaFilter filter = GymTestProvider.buildTrainerCriteriaFilter();
-        List<TrainingResponse> expected = List.of(GymTestProvider.constructTrainingResponse());
+        List<TrainingDTO> expected = List.of(GymTestProvider.constructTrainingResponse());
 
         when(trainingService.getTrainerTrainings(filter)).thenReturn(expected);
 
-        List<TrainingResponse> actual = facade.findFilteredTrainings(filter);
+        List<TrainingDTO> actual = facade.findFilteredTrainings(filter);
 
         assertEquals(expected, actual);
         verify(trainingService).getTrainerTrainings(filter);
@@ -145,11 +145,11 @@ class TrainingAppFacadeTest {
     @Test
     void findFilteredTrainings_byTraineeCriteria_delegatesToService() {
         TrainingTraineeCriteriaFilter filter = GymTestProvider.buildTraineeCriteriaFilter();
-        List<TrainingResponse> expected = List.of(GymTestProvider.constructTrainingResponse());
+        List<TrainingDTO> expected = List.of(GymTestProvider.constructTrainingResponse());
 
         when(trainingService.getTraineeTrainings(filter)).thenReturn(expected);
 
-        List<TrainingResponse> actual = facade.findFilteredTrainings(filter);
+        List<TrainingDTO> actual = facade.findFilteredTrainings(filter);
 
         assertEquals(expected, actual);
         verify(trainingService).getTraineeTrainings(filter);
@@ -158,11 +158,11 @@ class TrainingAppFacadeTest {
     @Test
     void getTraineeByUsername_delegatesToService() {
         String username = "john.doe";
-        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
+        TraineeDTO expected = GymTestProvider.constructTraineeResponse();
 
         when(traineeService.getTraineeByUsername(username)).thenReturn(expected);
 
-        TraineeResponse actual = facade.getTraineeByUsername(username);
+        TraineeDTO actual = facade.getTraineeByUsername(username);
 
         assertEquals(expected, actual);
         verify(traineeService).getTraineeByUsername(username);
@@ -171,11 +171,11 @@ class TrainingAppFacadeTest {
     @Test
     void getTrainerByUsername_delegatesToService() {
         String username = "trainer.one";
-        TrainerResponse expected = GymTestProvider.constructTrainerResponse();
+        TrainerDTO expected = GymTestProvider.constructTrainerResponse();
 
         when(trainerService.getTrainerByUsername(username)).thenReturn(expected);
 
-        TrainerResponse actual = facade.getTrainerByUsername(username);
+        TrainerDTO actual = facade.getTrainerByUsername(username);
 
         assertEquals(expected, actual);
         verify(trainerService).getTrainerByUsername(username);
@@ -193,11 +193,11 @@ class TrainingAppFacadeTest {
     @Test
     void toggleUserActiveStatus_delegatesToService() {
         String username = "john.doe";
-        UserResponse expected = GymTestProvider.constructUserResponse();
+        UserDTO expected = GymTestProvider.constructUserResponse();
 
         when(userService.toggleActiveStatus(username)).thenReturn(expected);
 
-        UserResponse actual = facade.toggleUserActiveStatus(username);
+        UserDTO actual = facade.toggleUserActiveStatus(username);
 
         assertEquals(expected, actual);
         verify(userService).toggleActiveStatus(username);
@@ -207,14 +207,14 @@ class TrainingAppFacadeTest {
     void getUnassignedTrainers_delegatesToService() {
         String traineeUsername = "john.doe";
 
-        TrainerResponse response1 = GymTestProvider.constructTrainerResponse();
-        TrainerResponse response2 = GymTestProvider.constructTrainerResponse();
+        TrainerDTO response1 = GymTestProvider.constructTrainerResponse();
+        TrainerDTO response2 = GymTestProvider.constructTrainerResponse();
 
-        List<TrainerResponse> expected = List.of(response1, response2);
+        List<TrainerDTO> expected = List.of(response1, response2);
 
         when(trainerService.getUnassignedTrainers(traineeUsername)).thenReturn(expected);
 
-        List<TrainerResponse> actual = facade.getUnassignedTrainers(traineeUsername);
+        List<TrainerDTO> actual = facade.getUnassignedTrainers(traineeUsername);
 
         assertEquals(expected, actual);
         verify(trainerService).getUnassignedTrainers(traineeUsername);
@@ -223,11 +223,11 @@ class TrainingAppFacadeTest {
     @Test
     void updateTraineeTrainers_delegatesToService() {
         UpdateTraineeTrainersRequest request = GymTestProvider.createUpdateTraineeTrainersRequest();
-        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
+        TraineeDTO expected = GymTestProvider.constructTraineeResponse();
 
         when(traineeService.updateTraineeTrainers(request)).thenReturn(expected);
 
-        TraineeResponse actual = facade.updateTraineeTrainers(request);
+        TraineeDTO actual = facade.updateTraineeTrainers(request);
 
         assertEquals(expected, actual);
         verify(traineeService).updateTraineeTrainers(request);

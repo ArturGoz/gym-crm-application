@@ -3,7 +3,7 @@ package com.gca.service.impl;
 import com.gca.dao.UserDAO;
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserResponse;
+import com.gca.dto.user.UserDTO;
 import com.gca.dto.user.UserUpdateRequest;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.UserMapper;
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserResponse createUser(@Valid UserCreateRequest request) {
+    public UserDTO createUser(@Valid UserCreateRequest request) {
         logger.debug("Creating user for {} {}", request.getFirstName(), request.getLastName());
 
         String username = userProfileService.generateUsername(request.getFirstName(), request.getLastName());
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserResponse updateUser(@Valid UserUpdateRequest request) {
+    public UserDTO updateUser(@Valid UserUpdateRequest request) {
         logger.debug("Updating user with ID: {}", request.getId());
 
         User existing = Optional.ofNullable(userDAO.getById(request.getId()))
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserResponse toggleActiveStatus(String username) {
+    public UserDTO toggleActiveStatus(String username) {
         logger.debug("Toggling active status for user with username: {}", username);
 
         User user = Optional.ofNullable(userDAO.findByUsername(username))
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public UserResponse getUserById(Long id) {
+    public UserDTO getUserById(Long id) {
         logger.debug("Retrieving user with ID: {}", id);
 
         User user = Optional.ofNullable(userDAO.getById(id))
@@ -163,7 +163,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(readOnly = true)
     @Override
-    public UserResponse getUserByUsername(String username) {
+    public UserDTO getUserByUsername(String username) {
         logger.debug("Retrieving user with username: {}", username);
 
         User user = Optional.ofNullable(userDAO.findByUsername(username))

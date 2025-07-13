@@ -1,7 +1,7 @@
 package com.gca.mapper;
 
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.training.TrainingDTO;
 import com.gca.model.Training;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,6 +14,6 @@ public interface TrainingMapper {
     @Mapping(source = "trainer.id", target = "trainerId")
     @Mapping(source = "trainee.id", target = "traineeId")
     @Mapping(source = "type.id", target = "trainingTypeId")
-    TrainingResponse toResponse(Training training);
+    TrainingDTO toResponse(Training training);
 }
 
