@@ -6,6 +6,7 @@ import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
@@ -112,9 +113,18 @@ public class TrainingAppFacade {
         return userService.toggleActiveStatus(username);
     }
 
+    @Authenticated
     public List<TrainerResponse> getUnassignedTrainers(String traineeUsername) {
         logger.info("Facade: Retrieving unassigned trainers");
 
         return trainerService.getUnassignedTrainers(traineeUsername);
     }
+
+    public TraineeResponse updateTraineeTrainers(UpdateTraineeTrainersRequest request) {
+        logger.info("Updating trainee list of trainers");
+
+        return traineeService.updateTraineeTrainers(request);
+    }
 }
+
+

@@ -5,6 +5,7 @@ import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
@@ -20,8 +21,16 @@ import com.gca.model.TrainingType;
 import com.gca.model.User;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class GymTestProvider {
+
+    public static UpdateTraineeTrainersRequest createUpdateTraineeTrainersRequest() {
+        return UpdateTraineeTrainersRequest.builder()
+                .traineeUsername("john_doe")
+                .trainerNames(List.of("trainer1", "trainer2"))
+                .build();
+    }
 
     public static TrainerCreateRequest createTrainerCreateRequest() {
         return TrainerCreateRequest.builder()

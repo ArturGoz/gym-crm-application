@@ -7,6 +7,7 @@ import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
@@ -217,5 +218,18 @@ class TrainingAppFacadeTest {
 
         assertEquals(expected, actual);
         verify(trainerService).getUnassignedTrainers(traineeUsername);
+    }
+
+    @Test
+    void updateTraineeTrainers_delegatesToService() {
+        UpdateTraineeTrainersRequest request = GymTestProvider.createUpdateTraineeTrainersRequest();
+        TraineeResponse expected = GymTestProvider.constructTraineeResponse();
+
+        when(traineeService.updateTraineeTrainers(request)).thenReturn(expected);
+
+        TraineeResponse actual = facade.updateTraineeTrainers(request);
+
+        assertEquals(expected, actual);
+        verify(traineeService).updateTraineeTrainers(request);
     }
 }

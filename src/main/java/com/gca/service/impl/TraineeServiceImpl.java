@@ -6,6 +6,7 @@ import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
@@ -111,6 +112,18 @@ public class TraineeServiceImpl implements TraineeService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("Trainee with username '%s' not found", username)
                 ));
+    }
+
+    @Transactional
+    @Override
+    public TraineeResponse updateTraineeTrainers(@Valid UpdateTraineeTrainersRequest request) {
+        logger.debug("Updating trainers for trainee usernames");
+
+        Trainee updated = traineeDAO.updateTraineeTrainers
+                (request.getTraineeUsername(), request.getTrainerNames());
+
+        logger.info("Updated trainers for trainee");
+        return traineeMapper.toResponse(updated);
     }
 
     @Transactional

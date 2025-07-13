@@ -6,6 +6,7 @@ import com.gca.dao.UserDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.model.Trainee;
@@ -135,4 +136,23 @@ class TraineeServiceImplTest {
         assertEquals(("Trainee with username 'ghost' not found"), ex.getMessage());
         verify(dao).findByUsername(username);
     }
+
+    @Test
+    void updateTraineeTrainers_shouldUpdateAndReturnResponse() {
+        UpdateTraineeTrainersRequest request = GymTestProvider.createUpdateTraineeTrainersRequest();
+        Trainee updatedTrainee = GymTestProvider.constructTrainee();
+        TraineeResponse expectedResponse = GymTestProvider.constructTraineeResponse();
+
+        when(dao.updateTraineeTrainers(request.getTraineeUsername(), request.getTrainerNames()))
+                .thenReturn(updatedTrainee);
+        when(mapper.toResponse(updatedTrainee)).thenReturn(expectedResponse);
+
+        TraineeResponse actualResponse = service.updateTraineeTrainers(request);
+
+        assertEquals(expectedResponse, actualResponse);
+
+        verify(dao).updateTraineeTrainers(request.getTraineeUsername(), request.getTrainerNames());
+        verify(mapper).toResponse(updatedTrainee);
+    }
+
 }
