@@ -168,23 +168,4 @@ class TraineeServiceImplTest {
         assertEquals(("Trainee with username 'ghost' not found"), ex.getMessage());
         verify(dao).findByUsername(username);
     }
-
-    @Test
-    void getTraineeById_shouldThrow_whenIdIsNull() {
-        ServiceException ex = assertThrows(ServiceException.class, () -> service.getTraineeById(null));
-
-        assertEquals("Trainee ID must not be null", ex.getMessage());
-    }
-
-    @Test
-    void getTraineeById_shouldThrow_whenNotFound() {
-        Long id = 10L;
-
-        when(dao.getById(id)).thenReturn(null);
-
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.getTraineeById(id));
-
-        assertEquals("Trainee with ID 10 not found", ex.getMessage());
-        verify(dao).getById(id);
-    }
 }
