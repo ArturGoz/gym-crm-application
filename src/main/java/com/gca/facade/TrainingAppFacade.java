@@ -120,6 +120,7 @@ public class TrainingAppFacade {
         return trainerService.getUnassignedTrainers(traineeUsername);
     }
 
+    @Authenticated
     public TraineeResponse updateTraineeTrainers(UpdateTraineeTrainersRequest request) {
         logger.info("Updating trainee list of trainers");
 
