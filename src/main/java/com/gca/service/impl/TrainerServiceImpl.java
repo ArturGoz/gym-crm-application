@@ -120,21 +120,12 @@ public class TrainerServiceImpl implements TrainerService {
                         format("Invalid trainer username: %s", request.getUsername())
                 ));
 
-        User user = trainer.getUser().toBuilder()
-                .username(request.getUsername())
-                .isActive(request.getIsActive())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .build();
+        User updatedUser = trainerMapper.fillUserFields(trainer.getUser(), request);
 
         TrainingType trainingType = Optional.ofNullable(trainingTypeDAO.getById(request.getSpecializationId()))
                 .orElse(trainer.getSpecialization());
 
-        Trainer updatedTrainer = Trainer.builder()
-                .id(trainer.getId())
-                .user(user)
-                .specialization(trainingType)
-                .build();
+        Trainer updatedTrainer = trainerMapper.fillTrainerFields(trainer, updatedUser, trainingType);
 
         Trainer updated = trainerDAO.update(updatedTrainer);
 

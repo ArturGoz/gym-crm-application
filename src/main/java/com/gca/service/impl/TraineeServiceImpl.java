@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -101,27 +100,10 @@ public class TraineeServiceImpl implements TraineeService {
                         format("Invalid trainee username: %s", request.getUsername())
                 ));
 
-        User user = trainee.getUser().toBuilder()
-                .username(request.getUsername())
-                .isActive(request.getIsActive())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .build();
+        User filledUser = traineeMapper.fillUserFields(trainee.getUser(), request);
+        Trainee filledTrainee = traineeMapper.fillTraineeFields(trainee, filledUser, request);
 
-        LocalDate dateOfBirth = Optional.ofNullable(request.getDateOfBirth())
-                .orElse(trainee.getDateOfBirth());
-
-        String address = Optional.ofNullable(request.getAddress())
-                .orElse(trainee.getAddress());
-
-        Trainee updatedTrainee = Trainee.builder()
-                .id(trainee.getId())
-                .user(user)
-                .dateOfBirth(dateOfBirth)
-                .address(address)
-                .build();
-
-        Trainee updated = traineeDAO.update(updatedTrainee);
+        Trainee updated = traineeDAO.update(filledTrainee);
 
         logger.info("Updated trainee: {}", updated);
         return traineeMapper.toUpdateResponse(updated);

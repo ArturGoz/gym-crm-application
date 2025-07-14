@@ -74,17 +74,36 @@ class TraineeServiceImplTest {
     @Test
     void updateTrainee_success() {
         TraineeUpdateData updateRequest = GymTestProvider.createTraineeUpdateRequest();
-        Trainee existing = GymTestProvider.constructTrainee().toBuilder().address("1232").build();
-        Trainee updated = existing.toBuilder().address("Kyiv, Khreschatyk 10").build();
-        TraineeUpdateResponse expected = GymTestProvider.createTraineeUpdateResponse();
+        User filledUser = GymTestProvider.constructUser();
+        Trainee existing = GymTestProvider.constructTrainee();
+
+        Trainee filledExistingTrainee = existing.toBuilder()
+                .user(filledUser)
+                .address(updateRequest.getAddress())
+                .dateOfBirth(updateRequest.getDateOfBirth())
+                .build();
+
+        Trainee updated = filledExistingTrainee.toBuilder()
+                .id(existing.getId())
+                .build();
+
+        TraineeUpdateResponse expected =
+                GymTestProvider.createTraineeUpdateResponse(updated);
 
         when(dao.findByUsername(updateRequest.getUsername())).thenReturn(existing);
-        when(dao.update(existing)).thenReturn(updated);
+        when(mapper.fillUserFields(existing.getUser(), updateRequest)).thenReturn(filledUser);
+        when(mapper.fillTraineeFields(existing, filledUser, updateRequest)).thenReturn(filledExistingTrainee);
+        when(dao.update(filledExistingTrainee)).thenReturn(updated);
         when(mapper.toUpdateResponse(updated)).thenReturn(expected);
 
         TraineeUpdateResponse actual = service.updateTrainee(updateRequest);
 
         assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getAddress(), actual.getAddress());
+        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
+        assertEquals(expected.getIsActive(), actual.getIsActive());
+
         verify(dao).update(existing);
         verify(mapper).toUpdateResponse(updated);
     }

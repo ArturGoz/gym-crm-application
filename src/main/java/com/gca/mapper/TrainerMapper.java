@@ -1,8 +1,11 @@
 package com.gca.mapper;
 
 import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.trainer.TrainerUpdateResponse;
 import com.gca.model.Trainer;
+import com.gca.model.TrainingType;
+import com.gca.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -23,4 +26,20 @@ public interface TrainerMapper {
     @Mapping(source = "specialization.id", target = "specializationId")
     @Mapping(source = "trainees", target = "trainees")
     TrainerUpdateResponse toUpdateResponse(Trainer trainer);
+
+    default User fillUserFields(User user, TrainerUpdateRequest request) {
+        return user.toBuilder()
+                .username(request.getUsername())
+                .isActive(request.getIsActive())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .build();
+    }
+
+    default Trainer fillTrainerFields(Trainer trainer, User user, TrainingType specialization) {
+        return trainer.toBuilder()
+                .user(user)
+                .specialization(specialization)
+                .build();
+    }
 }

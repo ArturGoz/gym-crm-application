@@ -15,7 +15,6 @@ import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingResponse;
 import com.gca.dto.user.UserCreateRequest;
 import com.gca.dto.user.UserCreationResponse;
-import com.gca.dto.user.UserResponse;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
@@ -45,6 +44,17 @@ public class GymTestProvider {
                 .build();
     }
 
+    public static TrainerUpdateResponse createTrainerUpdateResponse(Trainer trainer) {
+        return TrainerUpdateResponse.builder()
+                .firstName(trainer.getUser().getFirstName())
+                .lastName(trainer.getUser().getLastName())
+                .username(trainer.getUser().getUsername())
+                .isActive(trainer.getUser().getIsActive())
+                .trainees(List.of(constructTraineeResponse()))
+                .specializationId(trainer.getSpecialization().getId())
+                .build();
+    }
+
     public static TraineeUpdateResponse createTraineeUpdateResponse() {
         return TraineeUpdateResponse.builder()
                 .firstName("FirstName")
@@ -54,6 +64,18 @@ public class GymTestProvider {
                 .trainers(List.of(constructTrainerResponse()))
                 .address("Address")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .build();
+    }
+
+    public static TraineeUpdateResponse createTraineeUpdateResponse(Trainee trainee) {
+        return TraineeUpdateResponse.builder()
+                .firstName(trainee.getUser().getFirstName())
+                .lastName(trainee.getUser().getLastName())
+                .username(trainee.getUser().getUsername())
+                .isActive(trainee.getUser().getIsActive())
+                .trainers(List.of(constructTrainerResponse()))
+                .address(trainee.getAddress())
+                .dateOfBirth(trainee.getDateOfBirth())
                 .build();
     }
 

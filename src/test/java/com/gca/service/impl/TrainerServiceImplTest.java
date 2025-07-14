@@ -88,11 +88,27 @@ class TrainerServiceImplTest {
     void updateTrainer_success() {
         TrainerUpdateRequest updateRequest = GymTestProvider.createTrainerUpdateRequest();
         Trainer existing = GymTestProvider.constructInactiveTrainer();
-        Trainer updated = GymTestProvider.constructUpdatedTrainer();
-        TrainerUpdateResponse expected = GymTestProvider.createTrainerUpdateResponse();
+
+        User filledUser = GymTestProvider.constructUser();
+        TrainingType filledTrainingType = GymTestProvider.constructTrainingType();
+
+        Trainer filledTrainer = existing.toBuilder()
+                .specialization(filledTrainingType)
+                .user(filledUser)
+                .build();
+
+        Trainer updated = filledTrainer.toBuilder()
+                .id(existing.getId())
+                .build();
+
+        TrainerUpdateResponse expected =
+                GymTestProvider.createTrainerUpdateResponse(updated);
 
         when(dao.findByUsername(updateRequest.getUsername())).thenReturn(existing);
-        when(dao.update(existing)).thenReturn(updated);
+        when(mapper.fillUserFields(existing.getUser(), updateRequest)).thenReturn(filledUser);
+        when(trainingTypeDAO.getById(updateRequest.getSpecializationId())).thenReturn(filledTrainingType);
+        when(mapper.fillTrainerFields(existing, filledUser, filledTrainingType)).thenReturn(filledTrainer);
+        when(dao.update(filledTrainer)).thenReturn(updated);
         when(mapper.toUpdateResponse(updated)).thenReturn(expected);
 
         TrainerUpdateResponse actual = service.updateTrainer(updateRequest);
