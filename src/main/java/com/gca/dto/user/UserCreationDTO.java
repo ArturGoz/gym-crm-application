@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-    private Long id;
-    private String firstName;
-    private String lastName;
+public class UserCreationDTO {
     private String username;
     private String password;
-    private Boolean isActive;
 }

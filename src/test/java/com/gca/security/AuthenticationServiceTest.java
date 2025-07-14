@@ -2,7 +2,7 @@ package com.gca.security;
 
 import com.gca.dao.UserDAO;
 import com.gca.dto.auth.AuthenticationRequest;
-import com.gca.dto.auth.AuthenticationResponse;
+import com.gca.dto.auth.AuthenticationDTO;
 import com.gca.exception.UserNotAuthenticatedException;
 import com.gca.model.User;
 import com.gca.service.UserService;
@@ -51,7 +51,7 @@ class AuthenticationServiceTest {
         when(userDAO.findByUsername("john")).thenReturn(activeUser);
         when(userService.isUserCredentialsValid("john", "password")).thenReturn(true);
 
-        AuthenticationResponse result = authenticationService.authenticate(request);
+        AuthenticationDTO result = authenticationService.authenticate(request);
 
         assertEquals("User authenticated successfully", result.getMessage());
         assertTrue(result.isAuthenticated());

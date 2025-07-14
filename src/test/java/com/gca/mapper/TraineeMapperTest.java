@@ -2,7 +2,7 @@ package com.gca.mapper;
 
 import com.gca.GymTestProvider;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.model.Trainee;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class TraineeMapperTest {
     void testToResponse() {
         Trainee expected = GymTestProvider.constructTrainee();
 
-        TraineeResponse response = mapper.toResponse(expected);
+        TraineeDTO response = mapper.toResponse(expected);
 
         assertNotNull(response);
         assertEquals(expected.getUser().getUsername(), response.getUsername());

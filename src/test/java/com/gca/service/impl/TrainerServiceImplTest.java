@@ -5,11 +5,11 @@ import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingTypeDAO;
 import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
-import com.gca.dto.trainer.TrainerUpdateResponse;
+import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationResponse;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.mapper.TrainerMapper;
 import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
@@ -68,14 +68,14 @@ class TrainerServiceImplTest {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
         Trainer trainer = GymTestProvider.constructTrainer();
         Trainer trainerWithCreds = GymTestProvider.constructTrainer();
-        UserCreationResponse expected = GymTestProvider.constructUserCreationResponse();
+        UserCreationDTO expected = GymTestProvider.constructUserCreationResponse();
 
         when(userService.createUser(any(UserCreateRequest.class))).thenReturn(trainer.getUser());
         when(trainingTypeDAO.getById(any(Long.class))).thenReturn(TrainingType.builder().name("Yoga").build());
         when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
         when(userMapper.toResponse(any(User.class))).thenReturn(expected);
 
-        UserCreationResponse actual = service.createTrainer(request);
+        UserCreationDTO actual = service.createTrainer(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getPassword(), actual.getPassword());
@@ -96,12 +96,10 @@ class TrainerServiceImplTest {
                 .specialization(filledTrainingType)
                 .user(filledUser)
                 .build();
-
         Trainer updated = filledTrainer.toBuilder()
                 .id(existing.getId())
                 .build();
-
-        TrainerUpdateResponse expected =
+        TrainerUpdateDTO expected =
                 GymTestProvider.createTrainerUpdateResponse(updated);
 
         when(dao.findByUsername(updateRequest.getUsername())).thenReturn(existing);
@@ -111,7 +109,7 @@ class TrainerServiceImplTest {
         when(dao.update(filledTrainer)).thenReturn(updated);
         when(mapper.toUpdateResponse(updated)).thenReturn(expected);
 
-        TrainerUpdateResponse actual = service.updateTrainer(updateRequest);
+        TrainerUpdateDTO actual = service.updateTrainer(updateRequest);
 
         assertEquals(expected, actual);
         assertEquals(expected.getUsername(), actual.getUsername());
@@ -141,15 +139,17 @@ class TrainerServiceImplTest {
     void getTrainerByUsername_success() {
         String username = "john_doe";
         Trainer mockTrainer = GymTestProvider.constructTrainer();
-        TrainerResponse expectedResponse = GymTestProvider.constructTrainerResponse();
+        TrainerDTO expectedResponse = GymTestProvider.constructTrainerResponse();
 
         when(dao.findByUsername(username)).thenReturn(mockTrainer);
         when(mapper.toResponse(mockTrainer)).thenReturn(expectedResponse);
 
-        TrainerResponse actualResponse = service.getTrainerByUsername(username);
+        TrainerDTO actualResponse = service.getTrainerByUsername(username);
 
         assertEquals(expectedResponse, actualResponse);
-
+        assertEquals(expectedResponse.getUsername(), actualResponse.getUsername());
+        assertEquals(expectedResponse.getLastName(), actualResponse.getLastName());
+        assertEquals(expectedResponse.getSpecializationId(), actualResponse.getSpecializationId());
         verify(dao).findByUsername(username);
         verify(mapper).toResponse(mockTrainer);
     }
@@ -169,17 +169,16 @@ class TrainerServiceImplTest {
         Trainee trainee = GymTestProvider.constructTrainee();
         trainee.setTrainers(assigned);
 
-        TrainerResponse unassignedTrainerResponse = GymTestProvider.constructTrainerResponse();
+        TrainerDTO unassignedTrainerDTO = GymTestProvider.constructTrainerResponse();
 
         when(trainerDAO.findByUsername(traineeUsername)).thenReturn(trainee);
         when(dao.getAllTrainers()).thenReturn(allTrainers);
-        when(mapper.toResponse(unassignedTrainer)).thenReturn(unassignedTrainerResponse);
+        when(mapper.toResponse(unassignedTrainer)).thenReturn(unassignedTrainerDTO);
 
-        List<TrainerResponse> actual = service.getUnassignedTrainers(traineeUsername);
+        List<TrainerDTO> actual = service.getUnassignedTrainers(traineeUsername);
 
         assertEquals(1, actual.size());
-        assertTrue(actual.contains(unassignedTrainerResponse));
-
+        assertTrue(actual.contains(unassignedTrainerDTO));
         verify(validator).validateUsername(traineeUsername);
         verify(mapper).toResponse(unassignedTrainer);
         verify(mapper, never()).toResponse(assignedTrainer);

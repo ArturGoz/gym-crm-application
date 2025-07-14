@@ -1,6 +1,6 @@
-package com.gca.dto.trainee;
+package com.gca.dto.trainer;
 
-import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.user.UserUpdateData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,8 +15,7 @@ import java.util.List;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TraineeUpdateResponse extends UserUpdateData {
-    private LocalDate dateOfBirth;
-    private String address;
-    private List<TrainerResponse> trainers;
+public class TrainerUpdateDTO extends UserUpdateData {
+    private Long specializationId;
+    private List<TraineeDTO> trainees;
 }

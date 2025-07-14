@@ -2,7 +2,7 @@ package com.gca.security;
 
 import com.gca.dao.UserDAO;
 import com.gca.dto.auth.AuthenticationRequest;
-import com.gca.dto.auth.AuthenticationResponse;
+import com.gca.dto.auth.AuthenticationDTO;
 import com.gca.exception.UserNotAuthenticatedException;
 import com.gca.model.User;
 import com.gca.service.UserService;
@@ -36,7 +36,7 @@ public class AuthenticationService {
         this.authContextHolder = authContextHolder;
     }
 
-    public AuthenticationResponse authenticate(@Valid AuthenticationRequest request) {
+    public AuthenticationDTO authenticate(@Valid AuthenticationRequest request) {
         User user = userDAO.findByUsername(request.getUsername());
 
         Optional.ofNullable(user).orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -48,7 +48,7 @@ public class AuthenticationService {
         authContextHolder.setCurrentUser(user);
 
         log.info("Authenticated user: {}", user.getUsername());
-        return new AuthenticationResponse("User authenticated successfully", true);
+        return new AuthenticationDTO("User authenticated successfully", true);
     }
 
     private boolean isNotAuthenticated(User user, String rawPassword) {

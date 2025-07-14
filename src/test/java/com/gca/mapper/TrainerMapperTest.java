@@ -1,8 +1,8 @@
 package com.gca.mapper;
 
 import com.gca.GymTestProvider;
-import com.gca.dto.trainer.TrainerResponse;
-import com.gca.dto.trainer.TrainerUpdateResponse;
+import com.gca.dto.trainer.TrainerDTO;
+import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
@@ -28,7 +28,7 @@ class TrainerMapperTest {
     void testToEntity_fromUpdateResponse() {
         Trainer expected = GymTestProvider.constructTrainer();
 
-        TrainerUpdateResponse actual = mapper.toUpdateResponse(expected);
+        TrainerUpdateDTO actual = mapper.toUpdateResponse(expected);
 
         assertNotNull(actual);
         assertEquals(expected.getUser().getLastName(), actual.getLastName());
@@ -49,7 +49,7 @@ class TrainerMapperTest {
                 .trainees(Collections.emptySet())
                 .build();
 
-        TrainerResponse actual = mapper.toResponse(expected);
+        TrainerDTO actual = mapper.toResponse(expected);
 
         assertNotNull(actual);
         assertEquals(expected.getUser().getUsername(), actual.getUsername());

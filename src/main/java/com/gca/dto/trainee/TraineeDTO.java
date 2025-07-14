@@ -1,4 +1,4 @@
-package com.gca.dto.trainer;
+package com.gca.dto.trainee;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainerResponse {
+public class TraineeDTO {
     private String firstName;
     private String lastName;
     private String username;
-    private Long specializationId;
 }

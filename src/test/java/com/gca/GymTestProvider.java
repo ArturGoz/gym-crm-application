@@ -3,18 +3,18 @@ package com.gca;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
-import com.gca.dto.trainee.TraineeUpdateResponse;
+import com.gca.dto.trainee.TraineeUpdateDTO;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
-import com.gca.dto.trainer.TrainerUpdateResponse;
+import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingResponse;
+import com.gca.dto.training.TrainingDTO;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationResponse;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
@@ -33,8 +33,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerUpdateResponse createTrainerUpdateResponse() {
-        return TrainerUpdateResponse.builder()
+    public static TrainerUpdateDTO createTrainerUpdateResponse() {
+        return TrainerUpdateDTO.builder()
                 .firstName("FirstName")
                 .lastName("LastName")
                 .username("username")
@@ -44,8 +44,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerUpdateResponse createTrainerUpdateResponse(Trainer trainer) {
-        return TrainerUpdateResponse.builder()
+    public static TrainerUpdateDTO createTrainerUpdateResponse(Trainer trainer) {
+        return TrainerUpdateDTO.builder()
                 .firstName(trainer.getUser().getFirstName())
                 .lastName(trainer.getUser().getLastName())
                 .username(trainer.getUser().getUsername())
@@ -55,8 +55,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TraineeUpdateResponse createTraineeUpdateResponse() {
-        return TraineeUpdateResponse.builder()
+    public static TraineeUpdateDTO createTraineeUpdateResponse() {
+        return TraineeUpdateDTO.builder()
                 .firstName("FirstName")
                 .lastName("LastName")
                 .username("username")
@@ -67,8 +67,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TraineeUpdateResponse createTraineeUpdateResponse(Trainee trainee) {
-        return TraineeUpdateResponse.builder()
+    public static TraineeUpdateDTO createTraineeUpdateResponse(Trainee trainee) {
+        return TraineeUpdateDTO.builder()
                 .firstName(trainee.getUser().getFirstName())
                 .lastName(trainee.getUser().getLastName())
                 .username(trainee.getUser().getUsername())
@@ -121,8 +121,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerResponse constructTrainerResponse() {
-        return TrainerResponse.builder()
+    public static TrainerDTO constructTrainerResponse() {
+        return TrainerDTO.builder()
                 .firstName("john")
                 .lastName("doe")
                 .username("john.doe")
@@ -158,15 +158,15 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static UserCreationResponse constructUserCreationResponse() {
-        return UserCreationResponse.builder()
+    public static UserCreationDTO constructUserCreationResponse() {
+        return UserCreationDTO.builder()
                 .username("john.doe")
                 .password("password")
                 .build();
     }
 
-    public static TraineeResponse constructTraineeResponse() {
-        return TraineeResponse.builder()
+    public static TraineeDTO constructTraineeResponse() {
+        return TraineeDTO.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .username("john.doe")
@@ -201,8 +201,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingResponse constructTrainingResponse() {
-        return TrainingResponse.builder()
+    public static TrainingDTO constructTrainingResponse() {
+        return TrainingDTO.builder()
                 .id(1L)
                 .trainerId(1L)
                 .traineeId(1L)

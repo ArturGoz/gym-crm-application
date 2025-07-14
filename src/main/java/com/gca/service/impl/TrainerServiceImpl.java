@@ -5,11 +5,11 @@ import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingTypeDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerResponse;
+import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
-import com.gca.dto.trainer.TrainerUpdateResponse;
+import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationResponse;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainerMapper;
 import com.gca.mapper.UserMapper;
@@ -84,7 +84,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional
     @Override
-    public UserCreationResponse createTrainer(@Valid TrainerCreateRequest request) {
+    public UserCreationDTO createTrainer(@Valid TrainerCreateRequest request) {
         logger.debug("Creating trainer");
 
         UserCreateRequest userCreateRequest = UserCreateRequest.builder()
@@ -112,7 +112,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional
     @Override
-    public TrainerUpdateResponse updateTrainer(@Valid TrainerUpdateRequest request) {
+    public TrainerUpdateDTO updateTrainer(@Valid TrainerUpdateRequest request) {
         logger.debug("Updating trainer");
 
         Trainer trainer = Optional.ofNullable(trainerDAO.findByUsername(request.getUsername()))
@@ -135,7 +135,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional(readOnly = true)
     @Override
-    public TrainerResponse getTrainerByUsername(String username) {
+    public TrainerDTO getTrainerByUsername(String username) {
         logger.debug("Getting trainer by username: {}", username);
 
         validator.validateUsername(username);
@@ -152,7 +152,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<TrainerResponse> getUnassignedTrainers(String traineeUsername) {
+    public List<TrainerDTO> getUnassignedTrainers(String traineeUsername) {
         logger.debug("Getting unassigned trainers for trainee username: {}", traineeUsername);
 
         validator.validateUsername(traineeUsername);

@@ -4,8 +4,8 @@ import com.gca.GymTestProvider;
 import com.gca.dao.TraineeDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeUpdateData;
-import com.gca.dto.trainee.TraineeUpdateResponse;
-import com.gca.dto.user.UserCreationResponse;
+import com.gca.dto.trainee.TraineeUpdateDTO;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.exception.DaoException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.mapper.UserMapper;
@@ -62,10 +62,12 @@ class TraineeServiceIT extends AbstractServiceIT {
     void shouldUpdateTrainee() {
         TraineeUpdateData expected = GymTestProvider.createTraineeUpdateRequest();
 
-        TraineeUpdateResponse actual = traineeService.updateTrainee(expected);
+        TraineeUpdateDTO actual = traineeService.updateTrainee(expected);
 
         assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getAddress(), actual.getAddress());
+        assertEquals(expected.getIsActive(), actual.getIsActive());
+        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
     }
 
     @Test
@@ -73,7 +75,7 @@ class TraineeServiceIT extends AbstractServiceIT {
     void shouldCreateTrainee() {
         TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
 
-        UserCreationResponse actual = traineeService.createTrainee(request);
+        UserCreationDTO actual = traineeService.createTrainee(request);
 
         String expected = format("%s.%s1", request.getFirstName(), request.getLastName()).toLowerCase();
 

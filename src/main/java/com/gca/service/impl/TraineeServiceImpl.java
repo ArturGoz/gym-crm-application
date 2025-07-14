@@ -3,12 +3,12 @@ package com.gca.service.impl;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
-import com.gca.dto.trainee.TraineeUpdateResponse;
+import com.gca.dto.trainee.TraineeUpdateDTO;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationResponse;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.mapper.UserMapper;
@@ -70,7 +70,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public UserCreationResponse createTrainee(@Valid TraineeCreateRequest request) {
+    public UserCreationDTO createTrainee(@Valid TraineeCreateRequest request) {
         logger.debug("Creating trainee");
 
         UserCreateRequest userCreateRequest = UserCreateRequest.builder()
@@ -92,7 +92,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeUpdateResponse updateTrainee(@Valid TraineeUpdateData request) {
+    public TraineeUpdateDTO updateTrainee(@Valid TraineeUpdateData request) {
         logger.debug("Updating trainee");
 
         Trainee trainee = Optional.ofNullable(traineeDAO.findByUsername(request.getUsername()))
@@ -111,7 +111,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional(readOnly = true)
     @Override
-    public TraineeResponse getTraineeByUsername(String username) {
+    public TraineeDTO getTraineeByUsername(String username) {
         logger.debug("Getting trainee by username: {}", username);
 
         validator.validateUsername(username);
@@ -128,7 +128,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeResponse updateTraineeTrainers(@Valid UpdateTraineeTrainersRequest request) {
+    public TraineeDTO updateTraineeTrainers(@Valid UpdateTraineeTrainersRequest request) {
         logger.debug("Updating trainers for trainee usernames");
 
         Trainee updated = traineeDAO.updateTraineeTrainers
