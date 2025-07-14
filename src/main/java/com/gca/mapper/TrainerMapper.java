@@ -27,8 +27,8 @@ public interface TrainerMapper {
     @Mapping(source = "trainees", target = "trainees")
     TrainerUpdateResponse toUpdateResponse(Trainer trainer);
 
-    default User fillUserFields(User user, TrainerUpdateRequest request) {
-        return user.toBuilder()
+    default User fillUserFields(User oldUser, TrainerUpdateRequest request) {
+        return oldUser.toBuilder()
                 .username(request.getUsername())
                 .isActive(request.getIsActive())
                 .firstName(request.getFirstName())
@@ -36,9 +36,9 @@ public interface TrainerMapper {
                 .build();
     }
 
-    default Trainer fillTrainerFields(Trainer trainer, User user, TrainingType specialization) {
-        return trainer.toBuilder()
-                .user(user)
+    default Trainer fillTrainerFields(Trainer oldTrainer, User updatedUser, TrainingType specialization) {
+        return oldTrainer.toBuilder()
+                .user(updatedUser)
                 .specialization(specialization)
                 .build();
     }
