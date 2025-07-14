@@ -5,7 +5,7 @@ import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
 import com.gca.dao.TrainingTypeDAO;
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingDTO;
+import com.gca.dto.training.TrainingResponse;
 import com.gca.mapper.TrainingMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
@@ -75,7 +75,7 @@ public class TrainingServiceIT extends AbstractServiceIT {
                 .duration(60L)
                 .build();
 
-        TrainingDTO actual = trainingService.createTraining(request);
+        TrainingResponse actual = trainingService.createTraining(request);
 
         assertNotNull(actual.getId());
         assertEquals("New Training", actual.getName());

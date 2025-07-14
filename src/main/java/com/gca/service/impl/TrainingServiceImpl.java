@@ -8,7 +8,7 @@ import com.gca.dao.transaction.Transactional;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateRequest;
-import com.gca.dto.training.TrainingDTO;
+import com.gca.dto.training.TrainingResponse;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainingMapper;
 import com.gca.model.Trainee;
@@ -68,7 +68,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Transactional
     @Override
-    public TrainingDTO createTraining(@Valid TrainingCreateRequest request) {
+    public TrainingResponse createTraining(@Valid TrainingCreateRequest request) {
         logger.debug("Creating training '{}'", request.getName());
 
         Training training = trainingMapper.toEntity(request);
@@ -101,7 +101,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<TrainingDTO> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
+    public List<TrainingResponse> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainee");
 
         Trainee trainee = Optional.ofNullable(filter.getTraineeId())
@@ -123,7 +123,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<TrainingDTO> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
+    public List<TrainingResponse> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainer");
 
         Trainer trainer = Optional.ofNullable(filter.getTrainerId())

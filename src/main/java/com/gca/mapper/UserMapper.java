@@ -1,8 +1,8 @@
 package com.gca.mapper;
 
+import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserDTO;
-import com.gca.dto.user.UserUpdateRequest;
+import com.gca.dto.user.UserCreationResponse;
 import com.gca.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -11,7 +11,7 @@ import org.mapstruct.ReportingPolicy;
 public interface UserMapper {
     User toEntity(UserCreateRequest request);
 
-    User toEntity(UserUpdateRequest request);
+    User toEntity(TraineeUpdateData user);
 
-    UserDTO toResponse(User trainer);
+    UserCreationResponse toResponse(User user);
 }

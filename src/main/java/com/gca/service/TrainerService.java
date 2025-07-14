@@ -1,17 +1,19 @@
 package com.gca.service;
 
 import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerDTO;
+import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.dto.trainer.TrainerUpdateResponse;
+import com.gca.dto.user.UserCreationResponse;
 
 import java.util.List;
 
 public interface TrainerService {
-    TrainerDTO createTrainer(TrainerCreateRequest request);
+    UserCreationResponse createTrainer(TrainerCreateRequest request);
 
-    TrainerDTO updateTrainer(TrainerUpdateRequest request);
+    TrainerUpdateResponse updateTrainer(TrainerUpdateRequest request);
 
-    TrainerDTO getTrainerByUsername(String username);
+    TrainerResponse getTrainerByUsername(String username);
 
-    List<TrainerDTO> getUnassignedTrainers(String traineeUsername);
+    List<TrainerResponse> getUnassignedTrainers(String traineeUsername);
 }

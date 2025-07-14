@@ -1,19 +1,21 @@
 package com.gca.dto.trainer;
 
+import com.gca.dto.trainee.TraineeResponse;
 import com.gca.dto.user.UserUpdateData;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainerUpdateRequest extends UserUpdateData {
-    @NotNull(message = "Specialization cannot be null")
+public class TrainerUpdateResponse extends UserUpdateData {
     private Long specializationId;
+    List<TraineeResponse> trainees;
 }

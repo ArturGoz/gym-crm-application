@@ -1,7 +1,8 @@
 package com.gca.dto.trainer;
 
-import com.gca.model.TrainingType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +13,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainerCreateRequest {
-    @NotNull(message = "User ID cannot be null")
-    private Long userId;
+    @NotBlank(message = "First name cannot be blank")
+    @Size(min = 1, max = 50, message = "First name must be 1-50 characters")
+    private String firstName;
+
+    @NotBlank(message = "Last name cannot be blank")
+    @Size(min = 1, max = 50, message = "Last name must be 1-50 characters")
+    private String lastName;
 
     @NotNull(message = "Specialization cannot be null")
-    private TrainingType specialization;
+    private Long specializationId;
 }

@@ -3,13 +3,20 @@ package com.gca.service.impl;
 import com.gca.GymTestProvider;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
-import com.gca.dao.UserDAO;
+import com.gca.dao.TrainingTypeDAO;
 import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerDTO;
+import com.gca.dto.trainer.TrainerResponse;
 import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.dto.trainer.TrainerUpdateResponse;
+import com.gca.dto.user.UserCreateRequest;
+import com.gca.dto.user.UserCreationResponse;
 import com.gca.mapper.TrainerMapper;
+import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
+import com.gca.model.TrainingType;
+import com.gca.model.User;
+import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,9 +43,6 @@ class TrainerServiceImplTest {
     private TrainerDAO dao;
 
     @Mock
-    private UserDAO userDAO;
-
-    @Mock
     private CoreValidator validator;
 
     @Mock
@@ -46,6 +50,15 @@ class TrainerServiceImplTest {
 
     @Mock
     private TraineeDAO trainerDAO;
+
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private TrainingTypeDAO trainingTypeDAO;
+
+    @Mock
+    private UserMapper userMapper;
 
     @InjectMocks
     private TrainerServiceImpl service;
@@ -55,20 +68,20 @@ class TrainerServiceImplTest {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
         Trainer trainer = GymTestProvider.constructTrainer();
         Trainer trainerWithCreds = GymTestProvider.constructTrainer();
-        TrainerDTO expected = GymTestProvider.constructTrainerResponse();
+        UserCreationResponse expected = GymTestProvider.constructUserCreationResponse();
 
-        when(userDAO.getById(any(Long.class))).thenReturn(trainer.getUser());
-        when(mapper.toEntity(request)).thenReturn(trainer);
+        when(userService.createUser(any(UserCreateRequest.class))).thenReturn(trainer.getUser());
+        when(trainingTypeDAO.getById(any(Long.class))).thenReturn(TrainingType.builder().name("Yoga").build());
         when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
-        when(mapper.toResponse(any(Trainer.class))).thenReturn(expected);
+        when(userMapper.toResponse(any(User.class))).thenReturn(expected);
 
-        TrainerDTO actual = service.createTrainer(request);
+        UserCreationResponse actual = service.createTrainer(request);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getSpecialization(), actual.getSpecialization());
-        verify(mapper).toEntity(request);
+        assertEquals(expected.getPassword(), actual.getPassword());
+        assertEquals(expected.getUsername(), actual.getUsername());
         verify(dao).create(any(Trainer.class));
-        verify(mapper).toResponse(any(Trainer.class));
+        verify(userMapper).toResponse(any(User.class));
     }
 
     @Test
@@ -76,44 +89,48 @@ class TrainerServiceImplTest {
         TrainerUpdateRequest updateRequest = GymTestProvider.createTrainerUpdateRequest();
         Trainer existing = GymTestProvider.constructInactiveTrainer();
         Trainer updated = GymTestProvider.constructUpdatedTrainer();
-        TrainerDTO expected = GymTestProvider.constructUpdatedTrainerResponse();
+        TrainerUpdateResponse expected = GymTestProvider.createTrainerUpdateResponse();
 
-        when(dao.getById(2L)).thenReturn(existing);
-        when(mapper.toEntity(updateRequest)).thenReturn(updated);
+        when(dao.findByUsername(updateRequest.getUsername())).thenReturn(existing);
         when(dao.update(existing)).thenReturn(updated);
-        when(mapper.toResponse(updated)).thenReturn(expected);
+        when(mapper.toUpdateResponse(updated)).thenReturn(expected);
 
-        TrainerDTO actual = service.updateTrainer(updateRequest);
+        TrainerUpdateResponse actual = service.updateTrainer(updateRequest);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getSpecialization(), actual.getSpecialization());
-        verify(dao).getById(2L);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getFirstName(), actual.getFirstName());
+        assertEquals(expected.getSpecializationId(), actual.getSpecializationId());
+        assertEquals(expected.getTrainees().size(), actual.getTrainees().size());
+
+        verify(dao).findByUsername(updateRequest.getUsername());
         verify(dao).update(existing);
-        verify(mapper).toResponse(updated);
+        verify(mapper).toUpdateResponse(updated);
     }
 
     @Test
     void updateTrainer_notFound_throwsException() {
-        TrainerUpdateRequest updateRequest = GymTestProvider.createTrainerUpdateRequestNotFound();
+        TrainerUpdateRequest updateRequest = GymTestProvider.createTrainerUpdateRequest();
 
-        when(dao.getById(3L)).thenReturn(null);
+        when(dao.findByUsername(updateRequest.getUsername())).thenReturn(null);
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainer(updateRequest));
 
-        assertEquals("Invalid trainer ID: 3", ex.getMessage());
+        assertEquals("Invalid trainer username: john.doe", ex.getMessage());
     }
 
     @Test
     void getTrainerByUsername_success() {
         String username = "john_doe";
         Trainer mockTrainer = GymTestProvider.constructTrainer();
-        TrainerDTO expectedResponse = GymTestProvider.constructTrainerResponse();
+        TrainerResponse expectedResponse = GymTestProvider.constructTrainerResponse();
 
         when(dao.findByUsername(username)).thenReturn(mockTrainer);
         when(mapper.toResponse(mockTrainer)).thenReturn(expectedResponse);
 
-        TrainerDTO actualResponse = service.getTrainerByUsername(username);
+        TrainerResponse actualResponse = service.getTrainerByUsername(username);
 
         assertEquals(expectedResponse, actualResponse);
 
@@ -136,16 +153,16 @@ class TrainerServiceImplTest {
         Trainee trainee = GymTestProvider.constructTrainee();
         trainee.setTrainers(assigned);
 
-        TrainerDTO unassignedTrainerDTO = GymTestProvider.constructTrainerResponse();
+        TrainerResponse unassignedTrainerResponse = GymTestProvider.constructTrainerResponse();
 
         when(trainerDAO.findByUsername(traineeUsername)).thenReturn(trainee);
         when(dao.getAllTrainers()).thenReturn(allTrainers);
-        when(mapper.toResponse(unassignedTrainer)).thenReturn(unassignedTrainerDTO);
+        when(mapper.toResponse(unassignedTrainer)).thenReturn(unassignedTrainerResponse);
 
-        List<TrainerDTO> actual = service.getUnassignedTrainers(traineeUsername);
+        List<TrainerResponse> actual = service.getUnassignedTrainers(traineeUsername);
 
         assertEquals(1, actual.size());
-        assertTrue(actual.contains(unassignedTrainerDTO));
+        assertTrue(actual.contains(unassignedTrainerResponse));
 
         verify(validator).validateUsername(traineeUsername);
         verify(mapper).toResponse(unassignedTrainer);

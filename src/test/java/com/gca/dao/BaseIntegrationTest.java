@@ -1,6 +1,6 @@
 package com.gca.dao;
 
-import com.gca.config.LiquibaseConfigTest;
+import com.gca.config.AppConfig;
 import com.gca.config.PersistenceConfigTest;
 import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.spring.api.DBRider;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -18,12 +17,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
         PersistenceConfigTest.class,
-        LiquibaseConfigTest.class
+        AppConfig.class
 })
 @ActiveProfiles("test")
 @DBRider
 @DBUnit(cacheConnection = true, leakHunter = true, caseSensitiveTableNames = false, schema = "PUBLIC")
-@ComponentScan(basePackages = "com.gca.dao")
 public abstract class BaseIntegrationTest<T> {
 
     @Autowired

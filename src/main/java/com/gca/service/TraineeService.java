@@ -1,18 +1,20 @@
 package com.gca.service;
 
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.TraineeResponse;
+import com.gca.dto.trainee.TraineeUpdateData;
+import com.gca.dto.trainee.TraineeUpdateResponse;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
+import com.gca.dto.user.UserCreationResponse;
 
 public interface TraineeService {
-    TraineeDTO createTrainee(TraineeCreateRequest request);
+    UserCreationResponse createTrainee(TraineeCreateRequest request);
 
-    TraineeDTO updateTrainee(TraineeUpdateRequest request);
+    TraineeUpdateResponse updateTrainee(TraineeUpdateData request);
 
-    TraineeDTO getTraineeByUsername(String username);
+    TraineeResponse getTraineeByUsername(String username);
 
-    TraineeDTO updateTraineeTrainers(UpdateTraineeTrainersRequest request);
+    TraineeResponse updateTraineeTrainers(UpdateTraineeTrainersRequest request);
 
     void deleteTraineeByUsername(String username);
 }

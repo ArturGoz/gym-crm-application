@@ -2,23 +2,16 @@ package com.gca.service;
 
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserDTO;
-import com.gca.dto.user.UserUpdateRequest;
+import com.gca.model.User;
 
 public interface UserService {
-    UserDTO createUser(UserCreateRequest request);
+    User createUser(UserCreateRequest request);
 
-    UserDTO updateUser(UserUpdateRequest request);
+    boolean isUserCredentialsValid(String username, String rawPassword);
 
-    UserDTO getUserById(Long id);
+    void changeUserPassword(PasswordChangeRequest passwordChangeRequest);
 
-    UserDTO getUserByUsername(String username);
+    void toggleActiveStatus(String username);
 
-    void deleteUser(Long id);
-
-    boolean isUserCredentialsValid(String username, String password);
-
-    void changeUserPassword(PasswordChangeRequest request);
-
-    UserDTO toggleActiveStatus(String username);
+    User getUserById(Long id);
 }

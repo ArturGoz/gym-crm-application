@@ -1,14 +1,11 @@
 package com.gca.service.impl;
 
 import com.gca.dao.UserDAO;
+import com.gca.dao.transaction.Transactional;
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserDTO;
-import com.gca.dto.user.UserUpdateRequest;
-import com.gca.exception.ServiceException;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
-import com.gca.dao.transaction.Transactional;
 import com.gca.service.UserService;
 import com.gca.service.common.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,12 +23,11 @@ import static java.lang.String.format;
 @Service
 @Validated
 public class UserServiceImpl implements UserService {
-
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private UserDAO userDAO;
-    private UserMapper userMapper;
     private UserProfileService userProfileService;
+    private UserMapper userMapper;
 
     @Autowired
     public void setUserDAO(UserDAO userDAO) {
@@ -43,14 +39,8 @@ public class UserServiceImpl implements UserService {
         this.userMapper = userMapper;
     }
 
-    @Autowired
-    public void setUserProfileService(UserProfileService userProfileService) {
-        this.userProfileService = userProfileService;
-    }
-
-    @Transactional
     @Override
-    public UserDTO createUser(@Valid UserCreateRequest request) {
+    public User createUser(@Valid UserCreateRequest request) {
         logger.debug("Creating user for {} {}", request.getFirstName(), request.getLastName());
 
         String username = userProfileService.generateUsername(request.getFirstName(), request.getLastName());
@@ -62,46 +52,15 @@ public class UserServiceImpl implements UserService {
                 .isActive(true)
                 .build();
 
-        User created = userDAO.create(user);
-
-        logger.info("Created user: {}", created);
-        return userMapper.toResponse(created);
+        logger.info("Created user: {}", user);
+        return user;
     }
 
-    @Transactional
-    @Override
-    public UserDTO updateUser(@Valid UserUpdateRequest request) {
-        logger.debug("Updating user with ID: {}", request.getId());
-
-        User existing = Optional.ofNullable(userDAO.getById(request.getId()))
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("User with ID %d not found", request.getId())
-                ));
-
-        User updatedEntity = userMapper.toEntity(request).toBuilder()
-                .id(existing.getId())
-                .build();
-
-        User updated = userDAO.update(updatedEntity);
-
-        logger.info("Updated user: {}", updated);
-        return userMapper.toResponse(updated);
+    @Autowired
+    public void setUserProfileService(UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
     }
 
-    @Transactional
-    @Override
-    public void deleteUser(Long id) {
-        logger.debug("Deleting user with ID: {}", id);
-
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ServiceException("User ID must not be null"));
-
-        userDAO.delete(id);
-
-        logger.info("Deleted user with ID: {}", id);
-    }
-
-    @Transactional(readOnly = true)
     @Override
     public boolean isUserCredentialsValid(String username, String rawPassword) {
         if (username == null || rawPassword == null) {
@@ -113,7 +72,6 @@ public class UserServiceImpl implements UserService {
                 .orElse(false);
     }
 
-    @Transactional
     @Override
     public void changeUserPassword(@Valid PasswordChangeRequest passwordChangeRequest) {
         Long userId = passwordChangeRequest.getUserId();
@@ -132,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDTO toggleActiveStatus(String username) {
+    public void toggleActiveStatus(String username) {
         logger.debug("Toggling active status for user with username: {}", username);
 
         User user = Optional.ofNullable(userDAO.findByUsername(username))
@@ -144,34 +102,16 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userDAO.update(user);
 
         logger.info("Toggled active status for user with username: {} to {}", username, updatedUser.getIsActive());
-
-        return userMapper.toResponse(updatedUser);
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public UserDTO getUserById(Long id) {
+    public User getUserById(Long id) {
         logger.debug("Retrieving user with ID: {}", id);
 
-        User user = Optional.ofNullable(userDAO.getById(id))
+        return Optional.ofNullable(userDAO.getById(id))
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("User with ID %d not found", id)
                 ));
-
-        return userMapper.toResponse(user);
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public UserDTO getUserByUsername(String username) {
-        logger.debug("Retrieving user with username: {}", username);
-
-        User user = Optional.ofNullable(userDAO.findByUsername(username))
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("User with username %s not found", username)
-                ));
-
-        return userMapper.toResponse(user);
     }
 }
 
