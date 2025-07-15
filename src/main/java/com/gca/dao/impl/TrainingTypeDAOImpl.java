@@ -2,6 +2,7 @@ package com.gca.dao.impl;
 
 import com.gca.dao.TrainingTypeDAO;
 import com.gca.model.TrainingType;
+import com.gca.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,5 +22,15 @@ public class TrainingTypeDAOImpl implements TrainingTypeDAO {
         Session session = sessionFactory.getCurrentSession();
 
         return session.find(TrainingType.class, id);
+    }
+
+    @Override
+    public TrainingType getByName(String name) {
+        Session session = sessionFactory.getCurrentSession();
+
+        return session.createQuery(
+                        "FROM TrainingType u WHERE u.name = :name", TrainingType.class)
+                .setParameter("name", name)
+                .uniqueResult();
     }
 }
