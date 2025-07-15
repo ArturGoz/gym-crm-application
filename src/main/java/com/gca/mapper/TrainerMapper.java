@@ -16,14 +16,14 @@ public interface TrainerMapper {
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.username", target = "username")
-    @Mapping(source = "specialization.id", target = "specializationId")
+    @Mapping(source = "specialization.name", target = "specialization")
     TrainerDTO toResponse(Trainer trainer);
 
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "user.isActive", target = "isActive")
-    @Mapping(source = "specialization.id", target = "specializationId")
+    @Mapping(source = "specialization.name", target = "specialization")
     @Mapping(source = "trainees", target = "trainees")
     TrainerUpdateDTO toUpdateResponse(Trainer trainer);
 

@@ -106,7 +106,7 @@ class TrainingAppFacadeTest {
         assertEquals(expected, actual);
         assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getTrainees(), actual.getTrainees());
-        assertEquals(expected.getSpecializationId(), actual.getSpecializationId());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
 
         verify(trainerService).updateTrainer(request);
     }

@@ -93,7 +93,7 @@ public class TrainerServiceImpl implements TrainerService {
                 .build();
 
         User user = userService.createUser(userCreateRequest);
-        TrainingType trainingType = trainingTypeDAO.getById(request.getSpecializationId());
+        TrainingType trainingType = trainingTypeDAO.getByName(request.getSpecialization());
 
         if (trainingType == null) {
             throw new ServiceException("Invalid training type");
@@ -122,7 +122,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         User updatedUser = trainerMapper.fillUserFields(trainer.getUser(), request);
 
-        TrainingType trainingType = Optional.ofNullable(trainingTypeDAO.getById(request.getSpecializationId()))
+        TrainingType trainingType = Optional.ofNullable(trainingTypeDAO.getByName(request.getSpecialization()))
                 .orElse(trainer.getSpecialization());
 
         Trainer updatedTrainer = trainerMapper.fillTrainerFields(trainer, updatedUser, trainingType);

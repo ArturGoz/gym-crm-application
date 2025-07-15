@@ -2,7 +2,6 @@ package com.gca.dao.impl;
 
 import com.gca.dao.TrainingTypeDAO;
 import com.gca.model.TrainingType;
-import com.gca.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

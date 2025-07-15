@@ -34,7 +34,7 @@ class TrainerMapperTest {
         assertEquals(expected.getUser().getLastName(), actual.getLastName());
         assertEquals(expected.getUser().getFirstName(), actual.getFirstName());
         assertEquals(expected.getUser().getUsername(), actual.getUsername());
-        assertEquals(expected.getSpecialization().getId(), actual.getSpecializationId());
+        assertEquals(expected.getSpecialization().getName(), actual.getSpecialization());
         assertEquals(expected.getTrainees().size(), actual.getTrainees().size());
     }
 
@@ -53,7 +53,7 @@ class TrainerMapperTest {
 
         assertNotNull(actual);
         assertEquals(expected.getUser().getUsername(), actual.getUsername());
-        assertEquals(expected.getSpecialization().getId(), actual.getSpecializationId());
+        assertEquals(expected.getSpecialization().getName(), actual.getSpecialization());
     }
 
     private User buildUser() {

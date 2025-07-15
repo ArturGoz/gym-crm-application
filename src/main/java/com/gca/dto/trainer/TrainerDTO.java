@@ -13,5 +13,5 @@ public class TrainerDTO {
     private String firstName;
     private String lastName;
     private String username;
-    private Long specializationId;
+    private String specialization;
 }

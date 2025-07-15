@@ -1,7 +1,7 @@
 package com.gca.dto.trainer;
 
 import com.gca.dto.user.UserUpdateData;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,6 +14,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainerUpdateRequest extends UserUpdateData {
-    @NotNull(message = "Specialization cannot be null")
-    private Long specializationId;
+    @NotBlank(message = "Specialization cannot be blank")
+    private String specialization;
 }

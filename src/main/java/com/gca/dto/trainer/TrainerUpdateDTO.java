@@ -16,6 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainerUpdateDTO extends UserUpdateData {
-    private Long specializationId;
+    private String specialization;
     private List<TraineeDTO> trainees;
 }

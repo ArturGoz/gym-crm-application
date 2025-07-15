@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 import java.util.HashSet;
 import java.util.List;
 
+import static java.lang.String.format;
+
 @Repository
 public class TraineeDAOImpl implements TraineeDAO {
 
@@ -36,7 +38,7 @@ public class TraineeDAOImpl implements TraineeDAO {
         Trainee existingTrainee = session.find(Trainee.class, trainee.getId());
 
         if (existingTrainee == null) {
-            throw new DaoException(String.format("Trainee with id: %d not found", trainee.getId()));
+            throw new DaoException(format("Trainee with id: %d not found", trainee.getId()));
         }
 
         return session.merge(trainee);
@@ -58,7 +60,7 @@ public class TraineeDAOImpl implements TraineeDAO {
                 )
                 .setParameter("username", username)
                 .uniqueResultOptional()
-                .orElseThrow(() -> new DaoException(String.format("Trainee with username: %s not found", username)));
+                .orElseThrow(() -> new DaoException(format("Trainee with username: %s not found", username)));
     }
 
     @Override
@@ -94,7 +96,7 @@ public class TraineeDAOImpl implements TraineeDAO {
                 .executeUpdate();
 
         if (deletedCount == 0) {
-            throw new DaoException(String.format("Trainee with username: %s not found for deleting", username));
+            throw new DaoException(format("Trainee with username: %s not found for deleting", username));
         }
     }
 }

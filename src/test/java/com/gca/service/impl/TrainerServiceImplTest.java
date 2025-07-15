@@ -71,7 +71,7 @@ class TrainerServiceImplTest {
         UserCreationDTO expected = GymTestProvider.constructUserCreationResponse();
 
         when(userService.createUser(any(UserCreateRequest.class))).thenReturn(trainer.getUser());
-        when(trainingTypeDAO.getById(any(Long.class))).thenReturn(TrainingType.builder().name("Yoga").build());
+        when(trainingTypeDAO.getByName(any(String.class))).thenReturn(TrainingType.builder().name("Yoga").build());
         when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
         when(userMapper.toResponse(any(User.class))).thenReturn(expected);
 
@@ -104,7 +104,7 @@ class TrainerServiceImplTest {
 
         when(dao.findByUsername(updateRequest.getUsername())).thenReturn(existing);
         when(mapper.fillUserFields(existing.getUser(), updateRequest)).thenReturn(filledUser);
-        when(trainingTypeDAO.getById(updateRequest.getSpecializationId())).thenReturn(filledTrainingType);
+        when(trainingTypeDAO.getByName(updateRequest.getSpecialization())).thenReturn(filledTrainingType);
         when(mapper.fillTrainerFields(existing, filledUser, filledTrainingType)).thenReturn(filledTrainer);
         when(dao.update(filledTrainer)).thenReturn(updated);
         when(mapper.toUpdateResponse(updated)).thenReturn(expected);
@@ -115,7 +115,7 @@ class TrainerServiceImplTest {
         assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getLastName(), actual.getLastName());
         assertEquals(expected.getFirstName(), actual.getFirstName());
-        assertEquals(expected.getSpecializationId(), actual.getSpecializationId());
+        assertEquals(expected.getSpecialization(), actual.getSpecialization());
         assertEquals(expected.getTrainees().size(), actual.getTrainees().size());
 
         verify(dao).findByUsername(updateRequest.getUsername());
@@ -149,7 +149,7 @@ class TrainerServiceImplTest {
         assertEquals(expectedResponse, actualResponse);
         assertEquals(expectedResponse.getUsername(), actualResponse.getUsername());
         assertEquals(expectedResponse.getLastName(), actualResponse.getLastName());
-        assertEquals(expectedResponse.getSpecializationId(), actualResponse.getSpecializationId());
+        assertEquals(expectedResponse.getSpecialization(), actualResponse.getSpecialization());
         verify(dao).findByUsername(username);
         verify(mapper).toResponse(mockTrainer);
     }

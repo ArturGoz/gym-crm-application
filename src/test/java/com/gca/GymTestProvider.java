@@ -40,7 +40,7 @@ public class GymTestProvider {
                 .username("username")
                 .isActive(true)
                 .trainees(List.of(constructTraineeResponse()))
-                .specializationId(1L)
+                .specialization("Yoga")
                 .build();
     }
 
@@ -51,7 +51,7 @@ public class GymTestProvider {
                 .username(trainer.getUser().getUsername())
                 .isActive(trainer.getUser().getIsActive())
                 .trainees(List.of(constructTraineeResponse()))
-                .specializationId(trainer.getSpecialization().getId())
+                .specialization(trainer.getSpecialization().getName())
                 .build();
     }
 
@@ -83,7 +83,7 @@ public class GymTestProvider {
         return TrainerCreateRequest.builder()
                 .firstName("John")
                 .lastName("Doe")
-                .specializationId(1L)
+                .specialization("Boxing")
                 .build();
     }
 
@@ -93,7 +93,7 @@ public class GymTestProvider {
                 .lastName("Doe")
                 .isActive(true)
                 .username("john.doe")
-                .specializationId(1L)
+                .specialization("Crossfit")
                 .build();
     }
 
@@ -126,7 +126,7 @@ public class GymTestProvider {
                 .firstName("john")
                 .lastName("doe")
                 .username("john.doe")
-                .specializationId(1L)
+                .specialization("Yoga")
                 .build();
     }
 
