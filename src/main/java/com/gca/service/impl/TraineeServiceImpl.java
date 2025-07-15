@@ -1,17 +1,21 @@
 package com.gca.service.impl;
 
 import com.gca.dao.TraineeDAO;
-import com.gca.dao.UserDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.TraineeUpdateData;
+import com.gca.dto.trainee.TraineeUpdateDTO;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
+import com.gca.dto.user.UserCreateRequest;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
+import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
 import com.gca.model.User;
 import com.gca.service.TraineeService;
+import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -32,8 +36,11 @@ public class TraineeServiceImpl implements TraineeService {
     private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
 
     private TraineeDAO traineeDAO;
-    private UserDAO userDAO;
+    private UserService userService;
+
     private TraineeMapper traineeMapper;
+    private UserMapper userMapper;
+
     private CoreValidator validator;
 
     @Autowired
@@ -42,8 +49,13 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Autowired
-    public void setUserDAO(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     @Autowired
@@ -58,13 +70,15 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeDTO createTrainee(@Valid TraineeCreateRequest request) {
+    public UserCreationDTO createTrainee(@Valid TraineeCreateRequest request) {
         logger.debug("Creating trainee");
 
-        User user = Optional.ofNullable(userDAO.getById(request.getUserId()))
-                .orElseThrow(() -> new ServiceException(
-                        format("Invalid user ID: %d", request.getUserId())
-                ));
+        UserCreateRequest userCreateRequest = UserCreateRequest.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .build();
+
+        User user = userService.createUser(userCreateRequest);
 
         Trainee trainee = traineeMapper.toEntity(request).toBuilder()
                 .user(user)
@@ -73,28 +87,26 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee created = traineeDAO.create(trainee);
 
         logger.info("Created trainee: {}", created);
-        return traineeMapper.toResponse(created);
+        return userMapper.toResponse(user);
     }
 
     @Transactional
     @Override
-    public TraineeDTO updateTrainee(@Valid TraineeUpdateRequest request) {
+    public TraineeUpdateDTO updateTrainee(@Valid TraineeUpdateData request) {
         logger.debug("Updating trainee");
 
-        Trainee trainee = Optional.ofNullable(traineeDAO.getById(request.getId()))
+        Trainee trainee = Optional.ofNullable(traineeDAO.findByUsername(request.getUsername()))
                 .orElseThrow(() -> new ServiceException(
-                        format("Invalid trainee ID: %d", request.getId())
+                        format("Invalid trainee username: %s", request.getUsername())
                 ));
 
-        Trainee updatedTrainee = traineeMapper.toEntity(request).toBuilder()
-                .id(trainee.getId())
-                .user(trainee.getUser())
-                .build();
+        User filledUser = traineeMapper.fillUserFields(trainee.getUser(), request);
+        Trainee filledTrainee = traineeMapper.fillTraineeFields(trainee, filledUser, request);
 
-        Trainee updated = traineeDAO.update(updatedTrainee);
+        Trainee updated = traineeDAO.update(filledTrainee);
 
         logger.info("Updated trainee: {}", updated);
-        return traineeMapper.toResponse(updated);
+        return traineeMapper.toUpdateResponse(updated);
     }
 
     @Transactional(readOnly = true)

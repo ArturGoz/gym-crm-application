@@ -5,14 +5,16 @@ import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.TraineeUpdateData;
+import com.gca.dto.trainee.TraineeUpdateDTO;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingDTO;
-import com.gca.dto.user.UserDTO;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.security.Authenticated;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
@@ -35,25 +37,25 @@ public class TrainingAppFacade {
     private final TrainingService trainingService;
     private final UserService userService;
 
-    public TraineeDTO createTrainee(TraineeCreateRequest request) {
-        logger.info("Facade: Creating trainee {} ", request.getUserId());
+    public UserCreationDTO createTrainee(TraineeCreateRequest request) {
+        logger.info("Facade: Creating trainee {} ", request.getFirstName());
         return traineeService.createTrainee(request);
     }
 
     @Authenticated
-    public TraineeDTO updateTrainee(TraineeUpdateRequest request) {
-        logger.info("Facade: Updating trainee with ID {}", request.getUserId());
+    public TraineeUpdateDTO updateTrainee(TraineeUpdateData request) {
+        logger.info("Facade: Updating trainee with request {}", request);
         return traineeService.updateTrainee(request);
     }
 
-    public TrainerDTO createTrainer(TrainerCreateRequest request) {
-        logger.info("Facade: Creating trainer {}", request.getUserId());
+    public UserCreationDTO createTrainer(TrainerCreateRequest request) {
+        logger.info("Facade: Creating trainer {}", request.getFirstName());
         return trainerService.createTrainer(request);
     }
 
     @Authenticated
-    public TrainerDTO updateTrainer(TrainerUpdateRequest request) {
-        logger.info("Facade: Updating trainer with ID {}", request.getId());
+    public TrainerUpdateDTO updateTrainer(TrainerUpdateRequest request) {
+        logger.info("Facade: Updating trainer with username {}", request.getUsername());
         return trainerService.updateTrainer(request);
     }
 
@@ -107,10 +109,10 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public UserDTO toggleUserActiveStatus(String username) {
+    public void toggleUserActiveStatus(String username) {
         logger.info("Facade: Toggle user active status for user {}", username);
 
-        return userService.toggleActiveStatus(username);
+        userService.toggleActiveStatus(username);
     }
 
     @Authenticated

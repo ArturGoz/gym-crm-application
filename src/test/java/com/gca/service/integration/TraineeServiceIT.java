@@ -1,14 +1,16 @@
 package com.gca.service.integration;
 
+import com.gca.GymTestProvider;
 import com.gca.dao.TraineeDAO;
-import com.gca.dao.UserDAO;
 import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.TraineeUpdateData;
+import com.gca.dto.trainee.TraineeUpdateDTO;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.exception.DaoException;
 import com.gca.mapper.TraineeMapper;
+import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
-import com.gca.model.User;
+import com.gca.service.UserService;
 import com.gca.service.impl.TraineeServiceImpl;
 import com.github.database.rider.core.api.dataset.DataSet;
 import org.junit.jupiter.api.AfterEach;
@@ -17,8 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDate;
-
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,7 +31,10 @@ class TraineeServiceIT extends AbstractServiceIT {
     private TraineeDAO traineeDAO;
 
     @Autowired
-    private UserDAO userDAO;
+    private UserMapper userMapper;
+
+    @Autowired
+    private UserService userService;
 
     @BeforeEach
     void setUp() {
@@ -40,9 +44,10 @@ class TraineeServiceIT extends AbstractServiceIT {
 
         traineeService = new TraineeServiceImpl();
         traineeService.setTraineeDAO(traineeDAO);
-        traineeService.setUserDAO(userDAO);
         traineeService.setTraineeMapper(traineeMapper);
         traineeService.setValidator(validator);
+        traineeService.setUserService(userService);
+        traineeService.setUserMapper(userMapper);
     }
 
     @AfterEach
@@ -55,31 +60,26 @@ class TraineeServiceIT extends AbstractServiceIT {
     @Test
     @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldUpdateTrainee() {
-        TraineeUpdateRequest updateRequest = TraineeUpdateRequest.builder()
-                .id(1L)
-                .address("Updated Address")
-                .build();
+        TraineeUpdateData expected = GymTestProvider.createTraineeUpdateRequest();
 
-        TraineeDTO actual = traineeService.updateTrainee(updateRequest);
+        TraineeUpdateDTO actual = traineeService.updateTrainee(expected);
 
-        assertEquals("Updated Address", actual.getAddress());
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getAddress(), actual.getAddress());
+        assertEquals(expected.getIsActive(), actual.getIsActive());
+        assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
     }
 
     @Test
-    @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
+    @DataSet(value = "dataset/trainee/trainee-creation-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldCreateTrainee() {
-        User user = userDAO.getById(2L);
+        TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
 
-        TraineeCreateRequest request = TraineeCreateRequest.builder()
-                .userId(user.getId())
-                .address("New Address")
-                .dateOfBirth(LocalDate.of(2002, 3, 3))
-                .build();
+        UserCreationDTO actual = traineeService.createTrainee(request);
 
-        TraineeDTO actual = traineeService.createTrainee(request);
+        String expected = format("%s.%s1", request.getFirstName(), request.getLastName()).toLowerCase();
 
-        assertNotNull(actual.getId());
-        assertEquals("New Address", actual.getAddress());
+        assertEquals(expected, actual.getUsername());
     }
 
     @Test

@@ -5,7 +5,6 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.User;
 import com.github.database.rider.core.api.dataset.DataSet;
-import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -43,7 +42,7 @@ class TraineeDAOImplTest extends BaseIntegrationTest<TraineeDAOImpl> {
     @Test
     @DataSet(value = "dataset/trainee/trainee-creation-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldCreateTrainee() {
-        Trainee expected = buildTraineeFromExistingUser();
+        Trainee expected = buildTrainee();
 
         Trainee actual = dao.create(expected);
 
@@ -83,13 +82,21 @@ class TraineeDAOImplTest extends BaseIntegrationTest<TraineeDAOImpl> {
         assertEquals(expectedUsername, actual.getUser().getUsername());
     }
 
-    private Trainee buildTraineeFromExistingUser() {
-        Session session = sessionFactory.getCurrentSession();
-        User existingUser = session.find(User.class, 2L);
+    private User buildUser() {
+        return User.builder()
+                .firstName("John22")
+                .lastName("Doe22")
+                .username("John22.Doe22")
+                .password("password")
+                .isActive(true)
+                .build();
+    }
+
+    private Trainee buildTrainee() {
         return Trainee.builder()
                 .dateOfBirth(BIRTHDAY)
                 .address(ADDRESS)
-                .user(existingUser)
+                .user(buildUser())
                 .build();
     }
 }

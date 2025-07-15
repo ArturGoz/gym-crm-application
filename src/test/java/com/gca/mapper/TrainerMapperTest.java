@@ -1,8 +1,8 @@
 package com.gca.mapper;
 
-import com.gca.dto.trainer.TrainerCreateRequest;
+import com.gca.GymTestProvider;
 import com.gca.dto.trainer.TrainerDTO;
-import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
@@ -25,49 +25,35 @@ class TrainerMapperTest {
     TrainerMapper mapper = new TrainerMapperImpl();
 
     @Test
-    void testToEntity_fromCreateRequest() {
-        TrainerCreateRequest request = TrainerCreateRequest.builder()
-                .userId(USER_ID)
-                .specialization(buildTrainingType("Crossfit"))
-                .build();
+    void testToEntity_fromUpdateResponse() {
+        Trainer expected = GymTestProvider.constructTrainer();
 
-        Trainer actual = mapper.toEntity(request);
+        TrainerUpdateDTO actual = mapper.toUpdateResponse(expected);
 
         assertNotNull(actual);
-        assertEquals("Crossfit", actual.getSpecialization().getName());
-    }
-
-    @Test
-    void testToEntity_fromUpdateRequest() {
-        TrainerUpdateRequest request = TrainerUpdateRequest.builder()
-                .id(20L)
-                .specialization(buildTrainingType("Yoga"))
-                .build();
-
-        Trainer actual = mapper.toEntity(request);
-
-        assertNotNull(actual);
-        assertEquals(20L, actual.getId());
-        assertEquals("Yoga", actual.getSpecialization().getName());
+        assertEquals(expected.getUser().getLastName(), actual.getLastName());
+        assertEquals(expected.getUser().getFirstName(), actual.getFirstName());
+        assertEquals(expected.getUser().getUsername(), actual.getUsername());
+        assertEquals(expected.getSpecialization().getName(), actual.getSpecialization());
+        assertEquals(expected.getTrainees().size(), actual.getTrainees().size());
     }
 
     @Test
     void testToResponse() {
         User user = buildUser();
-        Trainer entity = Trainer.builder()
+        Trainer expected = Trainer.builder()
                 .id(100L)
                 .user(user)
-                .specialization(buildTrainingType(SPECIALIZATION_NAME))
+                .specialization(buildTrainingType())
                 .trainings(Collections.emptyList())
                 .trainees(Collections.emptySet())
                 .build();
 
-        TrainerDTO actual = mapper.toResponse(entity);
+        TrainerDTO actual = mapper.toResponse(expected);
 
         assertNotNull(actual);
-        assertEquals(100L, actual.getId());
-        assertEquals(SPECIALIZATION_ID, actual.getSpecialization().getId());
-        assertEquals(SPECIALIZATION_NAME, actual.getSpecialization().getName());
+        assertEquals(expected.getUser().getUsername(), actual.getUsername());
+        assertEquals(expected.getSpecialization().getName(), actual.getSpecialization());
     }
 
     private User buildUser() {
@@ -80,10 +66,10 @@ class TrainerMapperTest {
                 .build();
     }
 
-    private TrainingType buildTrainingType(String name) {
+    private TrainingType buildTrainingType() {
         return TrainingType.builder()
                 .id(SPECIALIZATION_ID)
-                .name(name)
+                .name(TrainerMapperTest.SPECIALIZATION_NAME)
                 .build();
     }
 }

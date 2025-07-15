@@ -1,6 +1,6 @@
 package com.gca.dto.trainee;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -15,8 +15,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TraineeCreateRequest {
-    @NotNull(message = "User ID cannot be null")
-    private Long userId;
+    @NotBlank(message = "First name cannot be blank")
+    @Size(min = 1, max = 50, message = "First name must be 1-50 characters")
+    private String firstName;
+
+    @NotBlank(message = "Last name cannot be blank")
+    @Size(min = 1, max = 50, message = "Last name must be 1-50 characters")
+    private String lastName;
 
     @PastOrPresent(message = "Date of birth must be in the past or present")
     private LocalDate dateOfBirth;

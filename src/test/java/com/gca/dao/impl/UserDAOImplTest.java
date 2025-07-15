@@ -62,25 +62,6 @@ public class UserDAOImplTest extends BaseIntegrationTest<UserDAOImpl> {
     }
 
     @Test
-    @DataSet(value = "dataset/user/no-user-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldCreateUser() {
-        User newUser = User.builder()
-                .firstName("New")
-                .lastName("User")
-                .username("new.user")
-                .password("password")
-                .isActive(true)
-                .build();
-
-        User actual = dao.create(newUser);
-
-        assertNotNull(actual.getId(), "Created user should have ID");
-        assertEquals(newUser.getUsername(), actual.getUsername());
-        assertEquals(newUser.getPassword(), actual.getPassword());
-        assertEquals(newUser.getIsActive(), actual.getIsActive());
-    }
-
-    @Test
     void shouldUpdateUser() {
         User user = sessionFactory.getCurrentSession().find(User.class, EXISTING_ID);
         user.setFirstName("UpdatedName");

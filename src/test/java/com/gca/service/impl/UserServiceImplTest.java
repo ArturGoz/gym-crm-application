@@ -4,8 +4,6 @@ import com.gca.GymTestProvider;
 import com.gca.dao.UserDAO;
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserDTO;
-import com.gca.dto.user.UserUpdateRequest;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.common.UserProfileService;
@@ -22,146 +20,85 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
     @Mock
-    private UserDAO userDAO;
+    private UserDAO dao;
 
     @Mock
-    private UserMapper userMapper;
+    private UserProfileService profileService;
 
     @Mock
-    private UserProfileService userProfileService;
+    private UserMapper mapper;
 
     @InjectMocks
-    private UserServiceImpl userService;
+    private UserServiceImpl service;
 
     @Test
     void createUser_success() {
         UserCreateRequest request = GymTestProvider.createUserCreateRequest();
-        User mapped = GymTestProvider.constructUser().toBuilder().id(null).build();
         User saved = GymTestProvider.constructUser();
-        UserDTO expected = GymTestProvider.constructUserResponse();
 
-        when(userProfileService.generateUsername(request.getFirstName(), request.getLastName()))
+        when(profileService.generateUsername(request.getFirstName(), request.getLastName()))
                 .thenReturn("john_doe");
-        when(userProfileService.generatePassword()).thenReturn("securePass123");
-        when(userMapper.toEntity(request)).thenReturn(mapped);
-        when(userDAO.create(any(User.class))).thenReturn(saved);
-        when(userMapper.toResponse(saved)).thenReturn(expected);
+        when(profileService.generatePassword()).thenReturn("securePass123");
+        when(mapper.toEntity(request)).thenReturn(saved);
 
-        UserDTO actual = userService.createUser(request);
+        User actual = service.createUser(request);
 
-        assertEquals(expected, actual);
-        verify(userProfileService).generateUsername(request.getFirstName(), request.getLastName());
-        verify(userProfileService).generatePassword();
-        verify(userMapper).toEntity(request);
-        verify(userDAO).create(any(User.class));
-        verify(userMapper).toResponse(saved);
-    }
-
-    @Test
-    void updateUser_success() {
-        UserUpdateRequest request = GymTestProvider.createUserUpdateRequest();
-        User existing = GymTestProvider.constructUser();
-        User updatedEntity = existing.toBuilder().firstName("Updated").build();
-        UserDTO expected = GymTestProvider.constructUserResponse();
-
-        when(userDAO.getById(request.getId())).thenReturn(existing);
-        when(userMapper.toEntity(request)).thenReturn(updatedEntity);
-        when(userDAO.update(any(User.class))).thenReturn(updatedEntity);
-        when(userMapper.toResponse(updatedEntity)).thenReturn(expected);
-
-        UserDTO actual = userService.updateUser(request);
-
-        assertEquals(expected, actual);
-        verify(userDAO).getById(request.getId());
-        verify(userMapper).toEntity(request);
-        verify(userDAO).update(any(User.class));
-        verify(userMapper).toResponse(updatedEntity);
-    }
-
-    @Test
-    void updateUser_notFound_throwsException() {
-        UserUpdateRequest request = GymTestProvider.createUserUpdateRequest();
-        when(userDAO.getById(request.getId())).thenReturn(null);
-
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> userService.updateUser(request));
-
-        assertEquals("User with ID 1 not found", ex.getMessage());
-        verify(userDAO).getById(request.getId());
-        verifyNoMoreInteractions(userMapper, userDAO);
-    }
-
-    @Test
-    void deleteUser_success() {
-        userService.deleteUser(1L);
-        verify(userDAO).delete(1L);
+        assertEquals(saved, actual);
+        verify(profileService).generateUsername(request.getFirstName(), request.getLastName());
+        verify(profileService).generatePassword();
     }
 
     @Test
     void getUserById_success() {
         User user = GymTestProvider.constructUser();
-        UserDTO expected = GymTestProvider.constructUserResponse();
 
-        when(userDAO.getById(1L)).thenReturn(user);
-        when(userMapper.toResponse(user)).thenReturn(expected);
+        when(dao.getById(1L)).thenReturn(user);
 
-        UserDTO actual = userService.getUserById(1L);
+        User actual = service.getUserById(1L);
 
-        assertEquals(expected, actual);
-        verify(userDAO).getById(1L);
-        verify(userMapper).toResponse(user);
+        assertEquals(user, actual);
+        verify(dao).getById(1L);
     }
 
     @Test
     void getUserById_notFound_throwsException() {
-        when(userDAO.getById(1L)).thenReturn(null);
+        when(dao.getById(1L)).thenReturn(null);
 
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> userService.getUserById(1L));
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.getUserById(1L));
 
         assertEquals("User with ID 1 not found", ex.getMessage());
-        verify(userDAO).getById(1L);
-        verifyNoInteractions(userMapper);
+        verify(dao).getById(1L);
     }
 
     @Test
     void isUserCredentialsValid_validCredentials_returnsTrue() {
         User user = GymTestProvider.constructUser();
 
-        when(userDAO.findByUsername(user.getUsername())).thenReturn(user);
-        when(userProfileService.verifyPassword(any(String.class), any(String.class))).thenReturn(true);
+        when(dao.findByUsername(user.getUsername())).thenReturn(user);
+        when(profileService.verifyPassword(any(String.class), any(String.class))).thenReturn(true);
 
-        boolean result = userService.isUserCredentialsValid(user.getUsername(), user.getPassword());
+        boolean result = service.isUserCredentialsValid(user.getUsername(), user.getPassword());
 
         assertTrue(result);
-        verify(userDAO).findByUsername(user.getUsername());
+        verify(dao).findByUsername(user.getUsername());
     }
 
     @Test
     void isUserCredentialsValid_invalidPassword_returnsFalse() {
         User user = GymTestProvider.constructUser();
-        when(userDAO.findByUsername(user.getUsername())).thenReturn(user);
 
-        boolean result = userService.isUserCredentialsValid(user.getUsername(), "wrongPass");
+        when(dao.findByUsername(user.getUsername())).thenReturn(user);
 
-        assertFalse(result);
-        verify(userDAO).findByUsername(user.getUsername());
-    }
-
-    @Test
-    void isUserCredentialsValid_userNotFound_returnsFalse() {
-        when(userDAO.findByUsername("unknown")).thenReturn(null);
-
-        boolean result = userService.isUserCredentialsValid("unknown", "any");
+        boolean result = service.isUserCredentialsValid(user.getUsername(), "wrongPass");
 
         assertFalse(result);
-        verify(userDAO).findByUsername("unknown");
+        verify(dao).findByUsername(user.getUsername());
     }
 
     @Test
@@ -170,14 +107,14 @@ class UserServiceImplTest {
         PasswordChangeRequest request
                 = new PasswordChangeRequest(actual.getId(), "newPassword");
 
-        when(userDAO.getById(actual.getId())).thenReturn(actual);
-        when(userProfileService.encryptPassword(any(String.class))).thenReturn(request.getPassword());
+        when(dao.getById(actual.getId())).thenReturn(actual);
+        when(profileService.encryptPassword(any(String.class))).thenReturn(request.getPassword());
 
-        userService.changeUserPassword(request);
+        service.changeUserPassword(request);
 
         assertEquals(request.getPassword(), actual.getPassword());
-        verify(userDAO).getById(actual.getId());
-        verify(userDAO).update(actual);
+        verify(dao).getById(actual.getId());
+        verify(dao).update(actual);
     }
 
     @Test
@@ -185,33 +122,25 @@ class UserServiceImplTest {
         PasswordChangeRequest request
                 = new PasswordChangeRequest(1L, "newPass");
 
-        when(userDAO.getById(1L)).thenReturn(null);
+        when(dao.getById(1L)).thenReturn(null);
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () ->
-                userService.changeUserPassword(request));
+                service.changeUserPassword(request));
 
         assertEquals("User with ID 1 not found", ex.getMessage());
-        verify(userDAO).getById(1L);
+        verify(dao).getById(1L);
     }
 
     @Test
     void toggleActiveStatus_success() {
         User expected = GymTestProvider.constructUser();
         User updated = expected.toBuilder().isActive(!expected.getIsActive()).build();
-        UserDTO expectedResponse = GymTestProvider.constructUserResponse().toBuilder()
-                .isActive(updated.getIsActive())
-                .build();
 
-        when(userDAO.findByUsername(expected.getUsername())).thenReturn(expected);
-        when(userDAO.update(any(User.class))).thenReturn(updated);
-        when(userMapper.toResponse(updated)).thenReturn(expectedResponse);
+        when(dao.findByUsername(expected.getUsername())).thenReturn(expected);
+        when(dao.update(any(User.class))).thenReturn(updated);
 
-        UserDTO actual = userService.toggleActiveStatus(expected.getUsername());
+        service.toggleActiveStatus(expected.getUsername());
 
-        assertEquals(expectedResponse, actual);
-        assertEquals(expected.getIsActive(), actual.getIsActive());
-        assertEquals(expected.getId(), actual.getId());
-        verify(userDAO).update(any(User.class));
-        verify(userMapper).toResponse(updated);
+        verify(dao).update(any(User.class));
     }
 }

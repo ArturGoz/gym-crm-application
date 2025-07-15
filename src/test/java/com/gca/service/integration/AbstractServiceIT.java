@@ -1,6 +1,6 @@
 package com.gca.service.integration;
 
-import com.gca.config.LiquibaseConfigTest;
+import com.gca.config.AppConfig;
 import com.gca.config.PersistenceConfigTest;
 import com.gca.service.common.CoreValidator;
 import com.gca.service.impl.TraineeServiceImpl;
@@ -18,8 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
         PersistenceConfigTest.class,
-        LiquibaseConfigTest.class,
-        CoreValidator.class
+        AppConfig.class
 })
 @ActiveProfiles("test")
 @DBRider

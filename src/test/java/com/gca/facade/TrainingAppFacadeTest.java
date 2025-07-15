@@ -6,14 +6,16 @@ import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateRequest;
+import com.gca.dto.trainee.TraineeUpdateData;
+import com.gca.dto.trainee.TraineeUpdateDTO;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingDTO;
-import com.gca.dto.user.UserDTO;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
@@ -51,25 +53,26 @@ class TrainingAppFacadeTest {
     @Test
     void createTrainee_delegatesToService() {
         TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
-        TraineeDTO expected = GymTestProvider.constructTraineeResponse();
+        UserCreationDTO expected = GymTestProvider.constructUserCreationResponse();
 
         when(traineeService.createTrainee(request)).thenReturn(expected);
 
-        TraineeDTO actual = facade.createTrainee(request);
+        UserCreationDTO actual = facade.createTrainee(request);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getAddress(), actual.getAddress());
+        assertEquals(expected.getPassword(), actual.getPassword());
+        assertEquals(expected.getUsername(), actual.getUsername());
         verify(traineeService).createTrainee(request);
     }
 
     @Test
     void updateTrainee_delegatesToService() {
-        TraineeUpdateRequest request = GymTestProvider.createTraineeUpdateRequest();
-        TraineeDTO expected = GymTestProvider.constructTraineeResponse();
+        TraineeUpdateData request = GymTestProvider.createTraineeUpdateRequest();
+        TraineeUpdateDTO expected = GymTestProvider.createTraineeUpdateResponse();
 
         when(traineeService.updateTrainee(request)).thenReturn(expected);
 
-        TraineeDTO actual = facade.updateTrainee(request);
+        TraineeUpdateDTO actual = facade.updateTrainee(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getAddress(), actual.getAddress());
@@ -79,28 +82,32 @@ class TrainingAppFacadeTest {
     @Test
     void createTrainer_delegatesToService() {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
-        TrainerDTO expected = GymTestProvider.constructTrainerResponse();
+        UserCreationDTO expected = GymTestProvider.constructUserCreationResponse();
 
         when(trainerService.createTrainer(request)).thenReturn(expected);
 
-        TrainerDTO actual = facade.createTrainer(request);
+        UserCreationDTO actual = facade.createTrainer(request);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getSpecialization(), actual.getSpecialization());
+        assertEquals(expected.getPassword(), actual.getPassword());
+        assertEquals(expected.getUsername(), actual.getUsername());
         verify(trainerService).createTrainer(request);
     }
 
     @Test
     void updateTrainer_delegatesToService() {
         TrainerUpdateRequest request = GymTestProvider.createTrainerUpdateRequest();
-        TrainerDTO expected = GymTestProvider.constructUpdatedTrainerResponse();
+        TrainerUpdateDTO expected = GymTestProvider.createTrainerUpdateResponse();
 
         when(trainerService.updateTrainer(request)).thenReturn(expected);
 
-        TrainerDTO actual = facade.updateTrainer(request);
+        TrainerUpdateDTO actual = facade.updateTrainer(request);
 
         assertEquals(expected, actual);
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getTrainees(), actual.getTrainees());
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
+
         verify(trainerService).updateTrainer(request);
     }
 
@@ -193,13 +200,9 @@ class TrainingAppFacadeTest {
     @Test
     void toggleUserActiveStatus_delegatesToService() {
         String username = "john.doe";
-        UserDTO expected = GymTestProvider.constructUserResponse();
 
-        when(userService.toggleActiveStatus(username)).thenReturn(expected);
+        facade.toggleUserActiveStatus(username);
 
-        UserDTO actual = facade.toggleUserActiveStatus(username);
-
-        assertEquals(expected, actual);
         verify(userService).toggleActiveStatus(username);
     }
 

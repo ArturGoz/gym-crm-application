@@ -2,17 +2,23 @@ package com.gca.service.impl;
 
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
-import com.gca.dao.UserDAO;
+import com.gca.dao.TrainingTypeDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
+import com.gca.dto.trainer.TrainerUpdateDTO;
+import com.gca.dto.user.UserCreateRequest;
+import com.gca.dto.user.UserCreationDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainerMapper;
+import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
+import com.gca.model.TrainingType;
 import com.gca.model.User;
 import com.gca.service.TrainerService;
+import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -36,10 +42,14 @@ public class TrainerServiceImpl implements TrainerService {
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
     private TrainerDAO trainerDAO;
-    private UserDAO userDAO;
     private TraineeDAO traineeDAO;
+    private TrainingTypeDAO trainingTypeDAO;
 
+    private UserService userService;
+
+    private UserMapper userMapper;
     private TrainerMapper trainerMapper;
+
     private CoreValidator validator;
 
     @Autowired
@@ -48,8 +58,8 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Autowired
-    public void setUserDAO(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public void setUserDAO(UserService userService) {
+        this.userService = userService;
     }
 
     @Autowired
@@ -67,45 +77,60 @@ public class TrainerServiceImpl implements TrainerService {
         this.traineeDAO = traineeDAO;
     }
 
+    @Autowired
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
     @Transactional
     @Override
-    public TrainerDTO createTrainer(@Valid TrainerCreateRequest request) {
+    public UserCreationDTO createTrainer(@Valid TrainerCreateRequest request) {
         logger.debug("Creating trainer");
 
-        User user = Optional.ofNullable(userDAO.getById(request.getUserId()))
-                .orElseThrow(() -> new ServiceException(
-                        format("Invalid user ID: %d", request.getUserId())
-                ));
+        UserCreateRequest userCreateRequest = UserCreateRequest.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .build();
 
-        Trainer trainer = trainerMapper.toEntity(request).toBuilder()
+        User user = userService.createUser(userCreateRequest);
+        TrainingType trainingType = trainingTypeDAO.getByName(request.getSpecialization());
+
+        if (trainingType == null) {
+            throw new ServiceException("Invalid training type");
+        }
+
+        Trainer trainer = Trainer.builder()
+                .specialization(trainingType)
                 .user(user)
                 .build();
 
         Trainer created = trainerDAO.create(trainer);
 
         logger.info("Trainer created: {}", created);
-        return trainerMapper.toResponse(created);
+        return userMapper.toResponse(user);
     }
 
     @Transactional
     @Override
-    public TrainerDTO updateTrainer(@Valid TrainerUpdateRequest request) {
+    public TrainerUpdateDTO updateTrainer(@Valid TrainerUpdateRequest request) {
         logger.debug("Updating trainer");
 
-        Trainer trainer = Optional.ofNullable(trainerDAO.getById(request.getId()))
+        Trainer trainer = Optional.ofNullable(trainerDAO.findByUsername(request.getUsername()))
                 .orElseThrow(() -> new ServiceException(
-                        format("Invalid trainer ID: %d", request.getId())
+                        format("Invalid trainer username: %s", request.getUsername())
                 ));
 
-        Trainer updatedTrainer = trainerMapper.toEntity(request).toBuilder()
-                .id(trainer.getId())
-                .user(trainer.getUser())
-                .build();
+        User updatedUser = trainerMapper.fillUserFields(trainer.getUser(), request);
+
+        TrainingType trainingType = Optional.ofNullable(trainingTypeDAO.getByName(request.getSpecialization()))
+                .orElse(trainer.getSpecialization());
+
+        Trainer updatedTrainer = trainerMapper.fillTrainerFields(trainer, updatedUser, trainingType);
 
         Trainer updated = trainerDAO.update(updatedTrainer);
 
         logger.info("Trainer updated: {}", updated);
-        return trainerMapper.toResponse(updated);
+        return trainerMapper.toUpdateResponse(updated);
     }
 
     @Transactional(readOnly = true)

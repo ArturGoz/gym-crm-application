@@ -1,6 +1,5 @@
 package com.gca.dto.trainer;
 
-import com.gca.model.TrainingType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainerDTO {
-    private Long id;
-    private Long userId;
-    private TrainingType specialization;
+    private String firstName;
+    private String lastName;
+    private String username;
+    private String specialization;
 }

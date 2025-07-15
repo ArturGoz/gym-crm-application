@@ -22,4 +22,14 @@ public class TrainingTypeDAOImpl implements TrainingTypeDAO {
 
         return session.find(TrainingType.class, id);
     }
+
+    @Override
+    public TrainingType getByName(String name) {
+        Session session = sessionFactory.getCurrentSession();
+
+        return session.createQuery(
+                        "FROM TrainingType u WHERE u.name = :name", TrainingType.class)
+                .setParameter("name", name)
+                .uniqueResult();
+    }
 }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 @Repository
 public class TrainerDAOImpl implements TrainerDAO {
 
@@ -34,7 +36,7 @@ public class TrainerDAOImpl implements TrainerDAO {
         Trainer existingTrainer = session.find(Trainer.class, trainer.getId());
 
         if (existingTrainer == null) {
-            throw new DaoException(String.format("Trainer with id: %d not found", trainer.getId()));
+            throw new DaoException(format("Trainer with id: %d not found", trainer.getId()));
         }
 
         return session.merge(trainer);
@@ -56,7 +58,7 @@ public class TrainerDAOImpl implements TrainerDAO {
                 )
                 .setParameter("username", username)
                 .uniqueResultOptional()
-                .orElseThrow(() -> new DaoException(String.format("Trainer with username: %s not found", username)));
+                .orElseThrow(() -> new DaoException(format("Trainer with username: %s not found", username)));
     }
 
     @Override
