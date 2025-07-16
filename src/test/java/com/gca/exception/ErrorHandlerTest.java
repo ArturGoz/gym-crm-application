@@ -56,7 +56,7 @@ class ErrorHandlerTest {
 
     @Test
     void handleAllOtherExceptions_shouldReturnInternalServerErrorWithGenericMessage() {
-        Exception exception = new Exception("Unexpected failure");
+        RuntimeException exception = new RuntimeException("Unexpected failure");
 
         ResponseEntity<Map<String, Object>> response = errorHandler.handleAllOtherExceptions(exception);
 

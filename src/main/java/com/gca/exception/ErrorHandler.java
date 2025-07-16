@@ -41,8 +41,8 @@ public class ErrorHandler {
         return new ResponseEntity<>(body, INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleAllOtherExceptions(Exception ex) {
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleAllOtherExceptions(RuntimeException ex) {
         log.error("Unhandled Exception: {}", ex.getMessage(), ex);
 
         Map<String, Object> body = createResponseBody(
