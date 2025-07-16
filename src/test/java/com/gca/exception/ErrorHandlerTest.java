@@ -34,15 +34,12 @@ class ErrorHandlerTest {
         String message = "Invalid trainee username format is wrong";
         ServiceException ex = new ServiceException(message);
 
-        ResponseEntity<ErrorResponse> response = errorHandler.handleServiceException(ex);
+        ResponseEntity<ErrorResponse> actual = errorHandler.handleServiceException(ex);
 
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-
-        ErrorResponse body = response.getBody();
-
-        assertNotNull(body);
-        assertEquals(String.valueOf(INVALID_REQUEST_ERROR.getCode()), body.getErrorCode());
-        assertTrue(body.getErrorMessage().contains(INVALID_REQUEST_ERROR.getMessage()));
+        assertNotNull(actual.getBody());
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+        assertEquals(String.valueOf(INVALID_REQUEST_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertTrue(actual.getBody().getErrorMessage().contains(INVALID_REQUEST_ERROR.getMessage()));
     }
 
     @Test
@@ -50,30 +47,24 @@ class ErrorHandlerTest {
         String message = "Some unknown service exception";
         ServiceException ex = new ServiceException(message);
 
-        ResponseEntity<ErrorResponse> response = errorHandler.handleServiceException(ex);
+        ResponseEntity<ErrorResponse> actual = errorHandler.handleServiceException(ex);
 
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-
-        ErrorResponse body = response.getBody();
-
-        assertNotNull(body);
-        assertEquals(String.valueOf(SERVER_ERROR.getCode()), body.getErrorCode());
-        assertEquals(SERVER_ERROR.getMessage(), body.getErrorMessage());
+        assertNotNull(actual.getBody());
+        assertEquals(INTERNAL_SERVER_ERROR, actual.getStatusCode());
+        assertEquals(String.valueOf(SERVER_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(SERVER_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
 
     @Test
     void handleDaoException_shouldReturnDatabaseError() {
         DaoException ex = new DaoException("DB failure");
 
-        ResponseEntity<ErrorResponse> response = errorHandler.handleDaoException(ex);
+        ResponseEntity<ErrorResponse> actual = errorHandler.handleDaoException(ex);
 
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-
-        ErrorResponse body = response.getBody();
-
-        assertNotNull(body);
-        assertEquals(String.valueOf(DATABASE_ERROR.getCode()), body.getErrorCode());
-        assertEquals(DATABASE_ERROR.getMessage(), body.getErrorMessage());
+        assertNotNull(actual.getBody());
+        assertEquals(INTERNAL_SERVER_ERROR, actual.getStatusCode());
+        assertEquals(String.valueOf(DATABASE_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(DATABASE_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
 
     @Test
@@ -81,16 +72,13 @@ class ErrorHandlerTest {
         String message = "Trainee with ID 5 not found";
         EntityNotFoundException ex = new EntityNotFoundException(message);
 
-        ResponseEntity<ErrorResponse> response = errorHandler.handleEntityNotFoundExceptions(ex);
+        ResponseEntity<ErrorResponse> actual = errorHandler.handleEntityNotFoundExceptions(ex);
 
-        assertEquals(NOT_FOUND, response.getStatusCode());
-
-        ErrorResponse body = response.getBody();
-
-        assertNotNull(body);
-        assertEquals(String.valueOf(NOT_FOUND_ERROR.getCode()), body.getErrorCode());
-        assertTrue(body.getErrorMessage().contains(NOT_FOUND_ERROR.getMessage()));
-        assertTrue(body.getErrorMessage().contains(message));
+        assertNotNull(actual.getBody());
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+        assertEquals(String.valueOf(NOT_FOUND_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertTrue(actual.getBody().getErrorMessage().contains(NOT_FOUND_ERROR.getMessage()));
+        assertTrue(actual.getBody().getErrorMessage().contains(message));
     }
 
     @Test
@@ -98,46 +86,36 @@ class ErrorHandlerTest {
         String message = "Field must not be blank";
         ConstraintViolationException ex = new ConstraintViolationException(message, null);
 
-        ResponseEntity<ErrorResponse> response = errorHandler.handleValidationExceptions(ex);
+        ResponseEntity<ErrorResponse> actual = errorHandler.handleValidationExceptions(ex);
 
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-
-        ErrorResponse body = response.getBody();
-
-        assertNotNull(body);
-        assertEquals(String.valueOf(VALIDATION_ERROR.getCode()), body.getErrorCode());
-        assertTrue(body.getErrorMessage().contains(VALIDATION_ERROR.getMessage()));
-        assertTrue(body.getErrorMessage().contains(message));
+        assertNotNull(actual.getBody());
+        assertEquals(BAD_REQUEST, actual.getStatusCode());
+        assertEquals(String.valueOf(VALIDATION_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertTrue(actual.getBody().getErrorMessage().contains(VALIDATION_ERROR.getMessage()));
+        assertTrue(actual.getBody().getErrorMessage().contains(message));
     }
 
     @Test
     void handleUserNotAuthenticatedExceptions_shouldReturnAuthenticationError() {
         UserNotAuthenticatedException ex = new UserNotAuthenticatedException("No token");
 
-        ResponseEntity<ErrorResponse> response = errorHandler.handleUserNotAuthenticatedExceptions(ex);
+        ResponseEntity<ErrorResponse> actual = errorHandler.handleUserNotAuthenticatedExceptions(ex);
 
-        assertEquals(UNAUTHORIZED, response.getStatusCode());
-
-        ErrorResponse body = response.getBody();
-
-        assertNotNull(body);
-        assertEquals(String.valueOf(AUTHENTICATION_ERROR.getCode()), body.getErrorCode());
-        assertEquals(AUTHENTICATION_ERROR.getMessage(), body.getErrorMessage());
+        assertNotNull(actual.getBody());
+        assertEquals(UNAUTHORIZED, actual.getStatusCode());
+        assertEquals(String.valueOf(AUTHENTICATION_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(AUTHENTICATION_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
 
     @Test
     void handleUnhandledExceptions_shouldReturnServerError() {
         RuntimeException ex = new RuntimeException("Unknown runtime issue");
 
-        ResponseEntity<ErrorResponse> response = errorHandler.handleUnhandledExceptions(ex);
+        ResponseEntity<ErrorResponse> actual = errorHandler.handleUnhandledExceptions(ex);
 
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-
-        ErrorResponse body = response.getBody();
-
-        assertNotNull(body);
-        assertEquals(String.valueOf(SERVER_ERROR.getCode()), body.getErrorCode());
-        assertEquals(SERVER_ERROR.getMessage(), body.getErrorMessage());
+        assertNotNull(actual.getBody());
+        assertEquals(INTERNAL_SERVER_ERROR, actual.getStatusCode());
+        assertEquals(String.valueOf(SERVER_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(SERVER_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
-
 }
