@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-class GymErrorHandlerTest {
+class ErrorHandlerTest {
 
     private static final int STATUS_BAD_REQUEST = BAD_REQUEST.value();
     private static final int STATUS_INTERNAL_SERVER_ERROR = INTERNAL_SERVER_ERROR.value();
