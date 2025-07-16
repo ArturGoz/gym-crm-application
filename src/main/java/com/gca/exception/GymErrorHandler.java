@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +14,7 @@ import java.util.Map;
 public class GymErrorHandler {
 
     @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<Object> handleServiceException(ServiceException ex, WebRequest request) {
+    public ResponseEntity<Object> handleServiceException(ServiceException ex) {
         log.error("ServiceException: {}", ex.getMessage(), ex);
 
         Map<String, Object> body = createResponseBody(
@@ -27,7 +26,7 @@ public class GymErrorHandler {
     }
 
     @ExceptionHandler(DaoException.class)
-    public ResponseEntity<Object> handleDaoException(DaoException ex, WebRequest request) {
+    public ResponseEntity<Object> handleDaoException(DaoException ex) {
         log.error("DaoException: {}", ex.getMessage(), ex);
 
         Map<String, Object> body = createResponseBody(
@@ -38,7 +37,7 @@ public class GymErrorHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAllOtherExceptions(Exception ex, WebRequest request) {
+    public ResponseEntity<Object> handleAllOtherExceptions(Exception ex) {
         log.error("Unhandled Exception: {}", ex.getMessage(), ex);
 
         Map<String, Object> body = createResponseBody(
