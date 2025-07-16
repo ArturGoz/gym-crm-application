@@ -1,7 +1,6 @@
 package com.gca.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,49 +8,56 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+
 @ControllerAdvice
 @Slf4j
-public class GymErrorHandler {
+public class ErrorHandler {
+
+    private static final int STATUS_BAD_REQUEST = BAD_REQUEST.value();
+    private static final int STATUS_INTERNAL_SERVER_ERROR = INTERNAL_SERVER_ERROR.value();
 
     @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<Object> handleServiceException(ServiceException ex) {
+    public ResponseEntity<Map<String, Object>> handleServiceException(ServiceException ex) {
         log.error("ServiceException: {}", ex.getMessage(), ex);
 
         Map<String, Object> body = createResponseBody(
-                HttpStatus.BAD_REQUEST.value(),
+                STATUS_BAD_REQUEST,
                 ex.getMessage()
         );
 
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(body, BAD_REQUEST);
     }
 
     @ExceptionHandler(DaoException.class)
-    public ResponseEntity<Object> handleDaoException(DaoException ex) {
+    public ResponseEntity<Map<String, Object>> handleDaoException(DaoException ex) {
         log.error("DaoException: {}", ex.getMessage(), ex);
 
         Map<String, Object> body = createResponseBody(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                STATUS_INTERNAL_SERVER_ERROR,
                 "Data Access Error"
         );
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(body, INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAllOtherExceptions(Exception ex) {
+    public ResponseEntity<Map<String, Object>> handleAllOtherExceptions(Exception ex) {
         log.error("Unhandled Exception: {}", ex.getMessage(), ex);
 
         Map<String, Object> body = createResponseBody(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                STATUS_INTERNAL_SERVER_ERROR,
                 "Something went wrong."
         );
 
-        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(body, INTERNAL_SERVER_ERROR);
     }
 
     private Map<String, Object> createResponseBody(int error, String message) {
         Map<String, Object> body = new HashMap<>();
         body.put("errorCode", error);
         body.put("errorMessage", message);
+
         return body;
     }
 }

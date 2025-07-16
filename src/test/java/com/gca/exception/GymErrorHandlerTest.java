@@ -1,54 +1,70 @@
 package com.gca.exception;
 
-import com.gca.config.WebConfig;
-import com.gca.controller.TestExceptionController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.http.ResponseEntity;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.Map;
 
-@SpringJUnitConfig(classes = {WebConfig.class, TestExceptionController.class, GymErrorHandler.class})
-@WebAppConfiguration
-public class GymErrorHandlerTest {
-    @Autowired
-    private WebApplicationContext wac;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-    private MockMvc mockMvc;
+class GymErrorHandlerTest {
+
+    private static final int STATUS_BAD_REQUEST = BAD_REQUEST.value();
+    private static final int STATUS_INTERNAL_SERVER_ERROR = INTERNAL_SERVER_ERROR.value();
+
+    private ErrorHandler errorHandler;
 
     @BeforeEach
-    void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+    void setUp() {
+        errorHandler = new ErrorHandler();
     }
 
     @Test
-    void shouldHandleServiceException() throws Exception {
-        mockMvc.perform(get("/test/service"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errorCode").value(400))
-                .andExpect(jsonPath("$.errorMessage").value("This is a test ServiceException"));
+    void handleServiceException_shouldReturnBadRequestWithProperBody() {
+        String errorMessage = "Something went wrong";
+        ServiceException exception = new ServiceException(errorMessage);
+
+        ResponseEntity<Map<String, Object>> response = errorHandler.handleServiceException(exception);
+
+        assertEquals(BAD_REQUEST, response.getStatusCode());
+
+        Map<String, Object> body = response.getBody();
+
+        assertNotNull(body);
+        assertEquals(STATUS_BAD_REQUEST, body.get("errorCode"));
+        assertEquals(errorMessage, body.get("errorMessage"));
     }
 
     @Test
-    void shouldHandleDaoException() throws Exception {
-        mockMvc.perform(get("/test/dao"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.errorCode").value(500))
-                .andExpect(jsonPath("$.errorMessage").value("Data Access Error"));
+    void handleDaoException_shouldReturnInternalServerErrorWithProperBody() {
+        String daoErrorMessage = "Database down";
+        DaoException exception = new DaoException(daoErrorMessage);
+
+        ResponseEntity<Map<String, Object>> response = errorHandler.handleDaoException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+
+        Map<String, Object> body = response.getBody();
+        assertNotNull(body);
+        assertEquals(STATUS_INTERNAL_SERVER_ERROR, body.get("errorCode"));
+        assertEquals("Data Access Error", body.get("errorMessage"));
     }
 
     @Test
-    void shouldHandleUnhandledException() throws Exception {
-        mockMvc.perform(get("/test/unhandled"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.errorCode").value(500))
-                .andExpect(jsonPath("$.errorMessage").value("Something went wrong."));
+    void handleAllOtherExceptions_shouldReturnInternalServerErrorWithGenericMessage() {
+        Exception exception = new Exception("Unexpected failure");
+
+        ResponseEntity<Map<String, Object>> response = errorHandler.handleAllOtherExceptions(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+
+        Map<String, Object> body = response.getBody();
+        assertNotNull(body);
+        assertEquals(STATUS_INTERNAL_SERVER_ERROR, body.get("errorCode"));
+        assertEquals("Something went wrong.", body.get("errorMessage"));
     }
 }
