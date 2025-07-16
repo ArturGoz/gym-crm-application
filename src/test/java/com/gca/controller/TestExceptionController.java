@@ -17,4 +17,9 @@ public class TestExceptionController {
     public void throwDaoException() {
         throw new DaoException("This is a test DaoException");
     }
+
+    @GetMapping("/test/unhandled")
+    public void throwUnhandled() {
+        throw new RuntimeException("Unexpected");
+    }
 }

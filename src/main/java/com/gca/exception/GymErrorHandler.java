@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +20,7 @@ public class GymErrorHandler {
 
         Map<String, Object> body = createResponseBody(
                 HttpStatus.BAD_REQUEST.value(),
-                "Service Error",
-                ex.getMessage(),
-                request
+                ex.getMessage()
         );
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
@@ -35,9 +32,7 @@ public class GymErrorHandler {
 
         Map<String, Object> body = createResponseBody(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Data Access Error",
-                "An internal data access error occurred.",
-                request
+                "Data Access Error"
         );
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -48,22 +43,16 @@ public class GymErrorHandler {
 
         Map<String, Object> body = createResponseBody(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Internal Server Error",
-                "Something went wrong.",
-                request
+                "Something went wrong."
         );
 
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private Map<String, Object> createResponseBody(int status, String error,
-                                                   String message, WebRequest request) {
+    private Map<String, Object> createResponseBody(int error, String message) {
         Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", status);
-        body.put("error", error);
-        body.put("message", message);
-        body.put("path", request.getDescription(false).replace("uri=", ""));
+        body.put("errorCode", error);
+        body.put("errorMessage", message);
         return body;
     }
 }

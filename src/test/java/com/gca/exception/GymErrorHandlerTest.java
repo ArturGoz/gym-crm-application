@@ -32,15 +32,23 @@ public class GymErrorHandlerTest {
     void shouldHandleServiceException() throws Exception {
         mockMvc.perform(get("/test/service"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Service Error"))
-                .andExpect(jsonPath("$.message").value("This is a test ServiceException"));
+                .andExpect(jsonPath("$.errorCode").value(400))
+                .andExpect(jsonPath("$.errorMessage").value("This is a test ServiceException"));
     }
 
     @Test
     void shouldHandleDaoException() throws Exception {
         mockMvc.perform(get("/test/dao"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.error").value("Data Access Error"))
-                .andExpect(jsonPath("$.message").value("An internal data access error occurred."));
+                .andExpect(jsonPath("$.errorCode").value(500))
+                .andExpect(jsonPath("$.errorMessage").value("Data Access Error"));
+    }
+
+    @Test
+    void shouldHandleUnhandledException() throws Exception {
+        mockMvc.perform(get("/test/unhandled"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.errorCode").value(500))
+                .andExpect(jsonPath("$.errorMessage").value("Something went wrong."));
     }
 }
