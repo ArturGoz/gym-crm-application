@@ -803,25 +803,7 @@ components:
               type: array
               description: List of assigned trainers
               items:
-                type: object
-                required:
-                  - username
-                  - firstName
-                  - lastName
-                  - specialization
-                properties:
-                  username:
-                    type: string
-                    description: Trainer's username
-                  firstName:
-                    type: string
-                    description: Trainer's first name
-                  lastName:
-                    type: string
-                    description: Trainer's last name
-                  specialization:
-                    type: string
-                    description: Trainer's specialization (training type)
+                $ref: '#/components/schemas/AssignedTrainerResponse'
       example:
         firstName: "Billy"
         lastName: "Herrington"
@@ -869,25 +851,7 @@ components:
               type: array
               description: List of assigned trainers
               items:
-                type: object
-                required:
-                  - username
-                  - firstName
-                  - lastName
-                  - specialization
-                properties:
-                  username:
-                    type: string
-                    description: Trainer's username
-                  firstName:
-                    type: string
-                    description: Trainer's first name
-                  lastName:
-                    type: string
-                    description: Trainer's last name
-                  specialization:
-                    type: string
-                    description: Trainer's specialization (training type)
+                $ref: '#/components/schemas/AssignedTrainerResponse'
       example:
         username: "jason.statham"
         firstName: "Jason"
@@ -930,25 +894,7 @@ components:
       type: array
       description: List of updated trainers
       items:
-        type: object
-        required:
-          - username
-          - firstName
-          - lastName
-          - specialization
-        properties:
-          username:
-            type: string
-            description: Trainer's username
-          firstName:
-            type: string
-            description: Trainer's first name
-          lastName:
-            type: string
-            description: Trainer's last name
-          specialization:
-            type: string
-            description: Trainer's specialization
+        $ref: '#/components/schemas/AssignedTrainerResponse'
       example:
         - username: "ricardo.milos"
           firstName: "Ricardo"
@@ -1031,6 +977,36 @@ components:
           example: "An error occurred while processing the request: error message"
     TrainerCreateRequest:
       $ref: '#/components/schemas/Trainer'
+    AssignedTrainerResponse:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Trainer's username
+        firstName:
+          type: string
+          description: Trainer's first name
+        lastName:
+          type: string
+          description: Trainer's last name
+        specialization:
+          type: string
+          description: Trainer's specialization (training type)
+    AssignedTraineeResponse:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Trainer's username
+        firstName:
+          type: string
+          description: Trainer's first name
+        lastName:
+          type: string
+          description: Trainer's last name
+        specialization:
+          type: string
+          description: Trainer's specialization (training type)
     TrainerCreateResponse:
       type: object
       properties:
@@ -1054,17 +1030,7 @@ components:
               type: array
               description: List of assigned trainees
               items:
-                type: object
-                properties:
-                  username:
-                    type: string
-                    description: Trainee's username
-                  firstName:
-                    type: string
-                    description: Trainee's first name
-                  lastName:
-                    type: string
-                    description: Trainee's last name
+                $ref: '#/components/schemas/AssignedTraineeResponse'
       example:
         firstName: "Ricardo"
         lastName: "Milos"
@@ -1101,17 +1067,7 @@ components:
               type: array
               description: List of assigned trainees
               items:
-                type: object
-                properties:
-                  username:
-                    type: string
-                    description: Trainee's username
-                  firstName:
-                    type: string
-                    description: Trainee's first name
-                  lastName:
-                    type: string
-                    description: Trainee's last name
+                $ref: '#/components/schemas/AssignedTraineeResponse'
       example:
         username: "ricardo.milos"
         firstName: "Ricardo"
