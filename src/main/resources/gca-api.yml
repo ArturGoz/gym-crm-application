@@ -476,7 +476,7 @@ paths:
   /trainers/{username}/trainings:
     get:
       tags:
-        - Trainer
+        - Training
       summary: Get trainer trainings
       description: Retrieves list of trainings associated with trainer
       operationId: getTrainerTrainings
