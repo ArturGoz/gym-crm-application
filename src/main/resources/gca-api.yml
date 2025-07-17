@@ -8,6 +8,16 @@ servers:
   - url: http://localhost:8080/gym-crm-app/api/v1
     description: Local development server
 
+tags:
+  - name: Trainee
+    description: Operations related to trainees
+  - name: Trainer
+    description: Operations related to trainers
+  - name: Training
+    description: Operations related to trainings
+  - name: Authentication
+    description: Login and account management
+
 paths:
   /trainees/register:
     post:
