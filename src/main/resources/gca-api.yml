@@ -269,7 +269,7 @@ paths:
     get:
       tags:
         - Training
-      summary: Get trainee's training schedule
+      summary: Get trainee's training
       description: Retrieves trainee's training schedule with optional filtering
       operationId: getTraineeTrainings
       parameters:
@@ -482,6 +482,9 @@ paths:
       operationId: getTrainerTrainings
       parameters:
         - $ref: '#/components/parameters/Username'
+        - $ref: '#/components/parameters/FromDate'
+        - $ref: '#/components/parameters/ToDate'
+        - $ref: '#/components/parameters/TraineeName'
       responses:
         '200':
           description: List of trainings
@@ -730,6 +733,14 @@ components:
       name: trainerName
       in: query
       description: Filter by trainer's first name
+      required: false
+      schema:
+        type: string
+        example: "Eren"
+    TraineeName:
+      name: traineeName
+      in: query
+      description: Filter by trainee's first name
       required: false
       schema:
         type: string
