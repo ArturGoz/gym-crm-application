@@ -568,7 +568,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TrainingCreationRequest'
+              $ref: '#/components/schemas/TrainingCreateRequest'
       responses:
         '200':
           description: Training created successfully
@@ -1100,7 +1100,7 @@ components:
           type: string
           description: First name of the trainee
           example: "Billy"
-    TrainingCreationRequest:
+    TrainingCreateRequest:
       type: object
       required:
         - traineeUsername
