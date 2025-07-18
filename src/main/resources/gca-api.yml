@@ -787,7 +787,8 @@ components:
               maxLength: 200
               example: "123 Main St"
     TraineeCreateRequest:
-      $ref: '#/components/schemas/Trainee'
+      allOf:
+        - $ref: '#/components/schemas/Trainee'
     TraineeCreateResponse:
       type: object
       required:
@@ -987,7 +988,8 @@ components:
           description: Human-readable description of the error
           example: "An error occurred while processing the request: error message"
     TrainerCreateRequest:
-      $ref: '#/components/schemas/Trainer'
+      allOf:
+        - $ref: '#/components/schemas/Trainer'
     AssignedTrainerResponse:
       type: object
       properties:
@@ -1008,16 +1010,13 @@ components:
       properties:
         username:
           type: string
-          description: Trainer's username
+          description: Trainee  username
         firstName:
           type: string
-          description: Trainer's first name
+          description: Trainee first name
         lastName:
           type: string
-          description: Trainer's last name
-        specialization:
-          type: string
-          description: Trainer's specialization (training type)
+          description: Trainee last name
     TrainerCreateResponse:
       type: object
       properties:
