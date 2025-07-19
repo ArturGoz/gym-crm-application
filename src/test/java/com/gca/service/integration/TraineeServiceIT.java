@@ -2,10 +2,10 @@ package com.gca.service.integration;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.TraineeDAO;
-import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.dto.trainee.TraineeUpdateDTO;
-import com.gca.dto.user.UserCreationDTO;
+import com.gca.dto.user.UserCreateDTO;
 import com.gca.exception.DaoException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.mapper.UserMapper;
@@ -73,9 +73,9 @@ class TraineeServiceIT extends AbstractServiceIT {
     @Test
     @DataSet(value = "dataset/trainee/trainee-creation-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldCreateTrainee() {
-        TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
+        TraineeCreateDTO request = GymTestProvider.createTraineeCreateDTO();
 
-        UserCreationDTO actual = traineeService.createTrainee(request);
+        UserCreateDTO actual = traineeService.createTrainee(request);
 
         String expected = format("%s.%s1", request.getFirstName(), request.getLastName()).toLowerCase();
 

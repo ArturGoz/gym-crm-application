@@ -4,7 +4,7 @@ import com.gca.GymTestProvider;
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
-import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.dto.trainee.TraineeUpdateDTO;
@@ -15,7 +15,10 @@ import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingDTO;
-import com.gca.dto.user.UserCreationDTO;
+import com.gca.dto.user.UserCreateDTO;
+import com.gca.mapper.rest.RestTraineeMapper;
+import com.gca.openapi.model.TraineeCreateRequest;
+import com.gca.openapi.model.TraineeCreateResponse;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
@@ -47,22 +50,29 @@ class TrainingAppFacadeTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private RestTraineeMapper restTraineeMapper;
+
     @InjectMocks
     private TrainingAppFacade facade;
 
     @Test
     void createTrainee_delegatesToService() {
-        TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
-        UserCreationDTO expected = GymTestProvider.constructUserCreationResponse();
+        TraineeCreateDTO internalDto = GymTestProvider.createTraineeCreateDTO();
+        UserCreateDTO userCreateDto = GymTestProvider.constructUserCreateDTO();
+        TraineeCreateRequest restRequest = GymTestProvider.createTraineeCreateRequest();
+        TraineeCreateResponse expectedResponse = GymTestProvider.constructTraineeCreateResponse();
 
-        when(traineeService.createTrainee(request)).thenReturn(expected);
+        when(restTraineeMapper.toDto(restRequest)).thenReturn(internalDto);
+        when(traineeService.createTrainee(internalDto)).thenReturn(userCreateDto);
+        when(restTraineeMapper.toRest(userCreateDto)).thenReturn(expectedResponse);
 
-        UserCreationDTO actual = facade.createTrainee(request);
+        TraineeCreateResponse actualResponse = facade.createTrainee(restRequest);
 
-        assertEquals(expected, actual);
-        assertEquals(expected.getPassword(), actual.getPassword());
-        assertEquals(expected.getUsername(), actual.getUsername());
-        verify(traineeService).createTrainee(request);
+        assertEquals(expectedResponse, actualResponse);
+        verify(restTraineeMapper).toDto(restRequest);
+        verify(traineeService).createTrainee(internalDto);
+        verify(restTraineeMapper).toRest(userCreateDto);
     }
 
     @Test
@@ -82,11 +92,11 @@ class TrainingAppFacadeTest {
     @Test
     void createTrainer_delegatesToService() {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
-        UserCreationDTO expected = GymTestProvider.constructUserCreationResponse();
+        UserCreateDTO expected = GymTestProvider.constructUserCreateDTO();
 
         when(trainerService.createTrainer(request)).thenReturn(expected);
 
-        UserCreationDTO actual = facade.createTrainer(request);
+        UserCreateDTO actual = facade.createTrainer(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getPassword(), actual.getPassword());

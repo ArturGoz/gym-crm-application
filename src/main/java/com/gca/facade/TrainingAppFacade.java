@@ -3,7 +3,9 @@ package com.gca.facade;
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
-import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeCreateDTO;
+import com.gca.mapper.rest.RestTraineeMapper;
+import com.gca.openapi.model.TraineeCreateRequest;
 import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.dto.trainee.TraineeUpdateDTO;
@@ -14,7 +16,8 @@ import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingDTO;
-import com.gca.dto.user.UserCreationDTO;
+import com.gca.dto.user.UserCreateDTO;
+import com.gca.openapi.model.TraineeCreateResponse;
 import com.gca.security.Authenticated;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
@@ -37,9 +40,15 @@ public class TrainingAppFacade {
     private final TrainingService trainingService;
     private final UserService userService;
 
-    public UserCreationDTO createTrainee(TraineeCreateRequest request) {
+    private final RestTraineeMapper restTraineeMapper;
+
+    public TraineeCreateResponse createTrainee(TraineeCreateRequest request) {
         logger.info("Facade: Creating trainee {} ", request.getFirstName());
-        return traineeService.createTrainee(request);
+
+        TraineeCreateDTO traineeCreateDTO = restTraineeMapper.toDto(request);
+        UserCreateDTO userCreateDTO = traineeService.createTrainee(traineeCreateDTO);
+
+        return restTraineeMapper.toRest(userCreateDTO);
     }
 
     @Authenticated
@@ -48,7 +57,7 @@ public class TrainingAppFacade {
         return traineeService.updateTrainee(request);
     }
 
-    public UserCreationDTO createTrainer(TrainerCreateRequest request) {
+    public UserCreateDTO createTrainer(TrainerCreateRequest request) {
         logger.info("Facade: Creating trainer {}", request.getFirstName());
         return trainerService.createTrainer(request);
     }

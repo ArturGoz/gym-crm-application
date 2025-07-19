@@ -2,13 +2,13 @@ package com.gca.service.impl;
 
 import com.gca.GymTestProvider;
 import com.gca.dao.TraineeDAO;
-import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.dto.trainee.TraineeUpdateDTO;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationDTO;
+import com.gca.dto.user.UserCreateDTO;
 import com.gca.mapper.TraineeMapper;
 import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
@@ -51,17 +51,17 @@ class TraineeServiceImplTest {
 
     @Test
     void createTrainee_success() {
-        TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
+        TraineeCreateDTO request = GymTestProvider.createTraineeCreateDTO();
         Trainee trainee = GymTestProvider.constructTrainee();
         Trainee traineeWithCreds = GymTestProvider.constructTrainee();
-        UserCreationDTO expected = GymTestProvider.constructUserCreationResponse();
+        UserCreateDTO expected = GymTestProvider.constructUserCreateDTO();
 
         when(userService.createUser(any(UserCreateRequest.class))).thenReturn(trainee.getUser());
         when(mapper.toEntity(request)).thenReturn(trainee);
         when(dao.create(any(Trainee.class))).thenReturn(traineeWithCreds);
         when(userMapper.toResponse(any(User.class))).thenReturn(expected);
 
-        UserCreationDTO actual = service.createTrainee(request);
+        UserCreateDTO actual = service.createTrainee(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getPassword(), actual.getPassword());

@@ -1,6 +1,6 @@
 package com.gca.mapper;
 
-import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.dto.trainee.TraineeUpdateDTO;
@@ -18,7 +18,7 @@ import static java.util.Optional.ofNullable;
         uses = {TrainerMapper.class}
 )
 public interface TraineeMapper {
-    Trainee toEntity(TraineeCreateRequest request);
+    Trainee toEntity(TraineeCreateDTO request);
 
     Trainee toEntity(TraineeUpdateData request);
 

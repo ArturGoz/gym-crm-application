@@ -9,7 +9,7 @@ import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationDTO;
+import com.gca.dto.user.UserCreateDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainerMapper;
 import com.gca.mapper.UserMapper;
@@ -84,7 +84,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional
     @Override
-    public UserCreationDTO createTrainer(@Valid TrainerCreateRequest request) {
+    public UserCreateDTO createTrainer(@Valid TrainerCreateRequest request) {
         logger.debug("Creating trainer");
 
         UserCreateRequest userCreateRequest = UserCreateRequest.builder()

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TraineeCreateRequest {
+public class TraineeCreateDTO {
     @NotBlank(message = "First name cannot be blank")
     @Size(min = 1, max = 50, message = "First name must be 1-50 characters")
     private String firstName;

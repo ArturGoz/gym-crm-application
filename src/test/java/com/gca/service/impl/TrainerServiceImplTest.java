@@ -9,7 +9,7 @@ import com.gca.dto.trainer.TrainerDTO;
 import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.trainer.TrainerUpdateDTO;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationDTO;
+import com.gca.dto.user.UserCreateDTO;
 import com.gca.mapper.TrainerMapper;
 import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
@@ -68,14 +68,14 @@ class TrainerServiceImplTest {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
         Trainer trainer = GymTestProvider.constructTrainer();
         Trainer trainerWithCreds = GymTestProvider.constructTrainer();
-        UserCreationDTO expected = GymTestProvider.constructUserCreationResponse();
+        UserCreateDTO expected = GymTestProvider.constructUserCreateDTO();
 
         when(userService.createUser(any(UserCreateRequest.class))).thenReturn(trainer.getUser());
         when(trainingTypeDAO.getByName(any(String.class))).thenReturn(TrainingType.builder().name("Yoga").build());
         when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
         when(userMapper.toResponse(any(User.class))).thenReturn(expected);
 
-        UserCreationDTO actual = service.createTrainer(request);
+        UserCreateDTO actual = service.createTrainer(request);
 
         assertEquals(expected, actual);
         assertEquals(expected.getPassword(), actual.getPassword());

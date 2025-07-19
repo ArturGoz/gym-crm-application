@@ -1,7 +1,7 @@
 package com.gca.mapper;
 
 import com.gca.GymTestProvider;
-import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.model.Trainee;
@@ -17,7 +17,7 @@ class TraineeMapperTest {
 
     @Test
     void testToEntity_fromCreateRequest() {
-        TraineeCreateRequest request = TraineeCreateRequest.builder()
+        TraineeCreateDTO request = TraineeCreateDTO.builder()
                 .dateOfBirth(LocalDate.of(2000, 1, 1))
                 .address("Kyiv")
                 .build();

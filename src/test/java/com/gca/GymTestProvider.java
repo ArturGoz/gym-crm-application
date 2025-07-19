@@ -2,29 +2,47 @@ package com.gca;
 
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
-import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.dto.trainee.TraineeUpdateDTO;
+import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.trainer.TrainerCreateRequest;
 import com.gca.dto.trainer.TrainerDTO;
-import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.trainer.TrainerUpdateDTO;
+import com.gca.dto.trainer.TrainerUpdateRequest;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingDTO;
+import com.gca.dto.user.UserCreateDTO;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationDTO;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
+import com.gca.openapi.model.TraineeCreateRequest;
+import com.gca.openapi.model.TraineeCreateResponse;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class GymTestProvider {
+
+    public static TraineeCreateResponse constructTraineeCreateResponse() {
+        TraineeCreateResponse traineeCreateResponse = new TraineeCreateResponse();
+        traineeCreateResponse.setUsername("john.doe");
+        traineeCreateResponse.setPassword("password");
+        return traineeCreateResponse;
+    }
+
+    public static TraineeCreateRequest createTraineeCreateRequest() {
+        TraineeCreateRequest request = new TraineeCreateRequest();
+        request.setFirstName("John");
+        request.setLastName("Doe");
+        request.setDateOfBirth(LocalDate.of(1990, 1, 1));
+        request.setAddress("Kyiv, Shevchenka 1");
+        return request;
+    }
 
     public static UpdateTraineeTrainersRequest createUpdateTraineeTrainersRequest() {
         return UpdateTraineeTrainersRequest.builder()
@@ -130,8 +148,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TraineeCreateRequest createTraineeCreateRequest() {
-        return TraineeCreateRequest.builder()
+    public static TraineeCreateDTO createTraineeCreateDTO() {
+        return TraineeCreateDTO.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
@@ -158,8 +176,8 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static UserCreationDTO constructUserCreationResponse() {
-        return UserCreationDTO.builder()
+    public static UserCreateDTO constructUserCreateDTO() {
+        return UserCreateDTO.builder()
                 .username("john.doe")
                 .password("password")
                 .build();

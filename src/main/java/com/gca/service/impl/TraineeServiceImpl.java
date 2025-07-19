@@ -2,13 +2,13 @@ package com.gca.service.impl;
 
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.transaction.Transactional;
-import com.gca.dto.trainee.TraineeCreateRequest;
+import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;
 import com.gca.dto.trainee.TraineeUpdateDTO;
 import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
 import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationDTO;
+import com.gca.dto.user.UserCreateDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.mapper.UserMapper;
@@ -70,7 +70,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public UserCreationDTO createTrainee(@Valid TraineeCreateRequest request) {
+    public UserCreateDTO createTrainee(@Valid TraineeCreateDTO request) {
         logger.debug("Creating trainee");
 
         UserCreateRequest userCreateRequest = UserCreateRequest.builder()
