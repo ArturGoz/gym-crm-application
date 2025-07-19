@@ -1,6 +1,6 @@
 package com.gca.service.impl;
 
-import com.gca.GymTestProvider;
+import com.gca.utils.GymTestProvider;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;

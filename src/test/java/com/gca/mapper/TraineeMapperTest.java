@@ -1,6 +1,6 @@
 package com.gca.mapper;
 
-import com.gca.GymTestProvider;
+import com.gca.utils.GymTestProvider;
 import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeDTO;
 import com.gca.dto.trainee.TraineeUpdateData;

@@ -1,6 +1,6 @@
 package com.gca.facade;
 
-import com.gca.GymTestProvider;
+import com.gca.utils.GymTestProvider;
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
@@ -61,7 +61,7 @@ class TrainingAppFacadeTest {
         TraineeCreateDTO internalDto = GymTestProvider.createTraineeCreateDTO();
         UserCreateDTO userCreateDto = GymTestProvider.constructUserCreateDTO();
         TraineeCreateRequest restRequest = GymTestProvider.createTraineeCreateRequest();
-        TraineeCreateResponse expectedResponse = GymTestProvider.constructTraineeCreateResponse();
+        TraineeCreateResponse expectedResponse = GymTestProvider.createTraineeCreateResponse();
 
         when(restTraineeMapper.toDto(restRequest)).thenReturn(internalDto);
         when(traineeService.createTrainee(internalDto)).thenReturn(userCreateDto);

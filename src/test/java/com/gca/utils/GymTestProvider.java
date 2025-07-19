@@ -1,4 +1,4 @@
-package com.gca;
+package com.gca.utils;
 
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
@@ -28,7 +28,7 @@ import java.util.List;
 
 public class GymTestProvider {
 
-    public static TraineeCreateResponse constructTraineeCreateResponse() {
+    public static TraineeCreateResponse createTraineeCreateResponse() {
         TraineeCreateResponse traineeCreateResponse = new TraineeCreateResponse();
         traineeCreateResponse.setUsername("john.doe");
         traineeCreateResponse.setPassword("password");

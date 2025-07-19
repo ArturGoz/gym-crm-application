@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.gca.controller.ApiConstant.BASE_PATH;
 
 @RestController
-@RequestMapping(BASE_PATH + "/trainers")
+@RequestMapping(BASE_PATH + "/trainees")
 @RequiredArgsConstructor
 public class TraineeController {
     private final TrainingAppFacade trainingAppFacade;

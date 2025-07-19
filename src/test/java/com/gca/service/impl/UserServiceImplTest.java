@@ -1,6 +1,6 @@
 package com.gca.service.impl;
 
-import com.gca.GymTestProvider;
+import com.gca.utils.GymTestProvider;
 import com.gca.dao.UserDAO;
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.user.UserCreateRequest;
