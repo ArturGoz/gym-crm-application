@@ -451,7 +451,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AvailableTrainerGetResponse'
+                  $ref: '#/components/schemas/AssignedTrainerResponse'
         '401':
           description: Unauthorized access
           content:
@@ -903,19 +903,22 @@ components:
           example: [ "ricardo.milos", "eren.yeager" ]
           minItems: 1
     TraineeAssignedTrainersUpdateResponse:
-      type: array
-      description: List of updated trainers
-      items:
-        $ref: '#/components/schemas/AssignedTrainerResponse'
-      example:
-        - username: "ricardo.milos"
-          firstName: "Ricardo"
-          lastName: "Milos"
-          specialization: "Yoga"
-        - username: "eren.yeager"
-          firstName: "Eren"
-          lastName: "Yeager"
-          specialization: "Cardio"
+      type: object
+      properties:
+        trainers:
+          type: array
+          description: List of updated trainers
+          items:
+            $ref: '#/components/schemas/AssignedTrainerResponse'
+          example:
+            - username: "ricardo.milos"
+              firstName: "Ricardo"
+              lastName: "Milos"
+              specialization: "Yoga"
+            - username: "eren.yeager"
+              firstName: "Eren"
+              lastName: "Yeager"
+              specialization: "Cardio"
     Trainer:
       allOf:
         - $ref: '#/components/schemas/User'
@@ -927,21 +930,6 @@ components:
               type: string
               description: Trainer's specialization (training type)
               example: "Yoga"
-    AvailableTrainerGetResponse:
-      allOf:
-        - $ref: '#/components/schemas/Trainer'
-        - type: object
-          required:
-            - username
-          properties:
-            username:
-              type: string
-              description: Trainer's username
-      example:
-        username: "ricardo.milos"
-        firstName: "Ricardo"
-        lastName: "Milos"
-        specialization: "Yoga"
     TraineeTrainingGetResponse:
       type: object
       required:
