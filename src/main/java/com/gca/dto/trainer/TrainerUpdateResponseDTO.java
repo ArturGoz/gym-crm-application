@@ -1,7 +1,6 @@
 package com.gca.dto.trainer;
 
-import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.user.UserUpdateData;
+import com.gca.dto.trainee.AssignedTraineeDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -15,7 +14,6 @@ import java.util.List;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainerUpdateDTO extends UserUpdateData {
-    private String specialization;
-    private List<TraineeDTO> trainees;
+public class TrainerUpdateResponseDTO extends TrainerUpdateRequestDTO {
+    private List<AssignedTraineeDTO> trainees;
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateTraineeTrainersRequest {
+public class TraineeTrainersUpdateDTO {
 
     @NotBlank(message = "Username cannot be blank")
     @Size(min = 1, max = 50, message = "Username must be 1-50 characters")

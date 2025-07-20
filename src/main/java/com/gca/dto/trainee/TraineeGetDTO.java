@@ -1,7 +1,7 @@
 package com.gca.dto.trainee;
 
-import com.gca.dto.trainer.TrainerDTO;
-import com.gca.dto.user.UserUpdateData;
+import com.gca.dto.trainer.AssignedTrainerDTO;
+import com.gca.dto.user.UserGetData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,8 +16,8 @@ import java.util.List;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TraineeUpdateDTO extends UserUpdateData {
+public class TraineeGetDTO extends UserGetData {
     private LocalDate dateOfBirth;
     private String address;
-    private List<TrainerDTO> trainers;
+    private List<AssignedTrainerDTO> trainers;
 }

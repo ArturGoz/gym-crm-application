@@ -2,8 +2,8 @@ package com.gca.mapper;
 
 import com.gca.utils.GymTestProvider;
 import com.gca.dto.trainee.TraineeCreateDTO;
-import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateData;
+import com.gca.dto.trainee.AssignedTraineeDTO;
+import com.gca.dto.trainee.TraineeUpdateRequestDTO;
 import com.gca.model.Trainee;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ class TraineeMapperTest {
 
     @Test
     void testToEntity_fromUpdateRequest() {
-        TraineeUpdateData request = GymTestProvider.createTraineeUpdateRequest();
+        TraineeUpdateRequestDTO request = GymTestProvider.createTraineeUpdateRequestDTO();
 
         Trainee entity = mapper.toEntity(request);
 
@@ -40,10 +40,10 @@ class TraineeMapperTest {
     }
 
     @Test
-    void testToResponse() {
+    void testToGetDto() {
         Trainee expected = GymTestProvider.constructTrainee();
 
-        TraineeDTO response = mapper.toResponse(expected);
+        AssignedTraineeDTO response = mapper.toAssignedDto(expected);
 
         assertNotNull(response);
         assertEquals(expected.getUser().getUsername(), response.getUsername());

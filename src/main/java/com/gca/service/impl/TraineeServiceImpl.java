@@ -3,14 +3,16 @@ package com.gca.service.impl;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainee.TraineeCreateDTO;
-import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateData;
-import com.gca.dto.trainee.TraineeUpdateDTO;
-import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
-import com.gca.dto.user.UserCreateRequest;
+import com.gca.dto.trainee.TraineeGetDTO;
+import com.gca.dto.trainee.TraineeTrainersUpdateDTO;
+import com.gca.dto.trainee.TraineeUpdateRequestDTO;
+import com.gca.dto.trainee.TraineeUpdateResponseDTO;
+import com.gca.dto.trainer.AssignedTrainerDTO;
 import com.gca.dto.user.UserCreateDTO;
+import com.gca.dto.user.UserCredentialsDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TraineeMapper;
+import com.gca.mapper.TrainerMapper;
 import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
 import com.gca.model.User;
@@ -25,7 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -39,6 +43,7 @@ public class TraineeServiceImpl implements TraineeService {
     private UserService userService;
 
     private TraineeMapper traineeMapper;
+    private TrainerMapper trainerMapper;
     private UserMapper userMapper;
 
     private CoreValidator validator;
@@ -70,15 +75,15 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public UserCreateDTO createTrainee(@Valid TraineeCreateDTO request) {
+    public UserCredentialsDTO createTrainee(@Valid TraineeCreateDTO request) {
         logger.debug("Creating trainee");
 
-        UserCreateRequest userCreateRequest = UserCreateRequest.builder()
+        UserCreateDTO userCreateDTO = UserCreateDTO.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .build();
 
-        User user = userService.createUser(userCreateRequest);
+        User user = userService.createUser(userCreateDTO);
 
         Trainee trainee = traineeMapper.toEntity(request).toBuilder()
                 .user(user)
@@ -92,7 +97,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeUpdateDTO updateTrainee(@Valid TraineeUpdateData request) {
+    public TraineeUpdateResponseDTO updateTrainee(@Valid TraineeUpdateRequestDTO request) {
         logger.debug("Updating trainee");
 
         Trainee trainee = Optional.ofNullable(traineeDAO.findByUsername(request.getUsername()))
@@ -111,7 +116,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional(readOnly = true)
     @Override
-    public TraineeDTO getTraineeByUsername(String username) {
+    public TraineeGetDTO getTraineeByUsername(String username) {
         logger.debug("Getting trainee by username: {}", username);
 
         validator.validateUsername(username);
@@ -119,7 +124,7 @@ public class TraineeServiceImpl implements TraineeService {
         return Optional.ofNullable(traineeDAO.findByUsername(username))
                 .map(trainee -> {
                     logger.debug("Trainee found by username: {}", username);
-                    return traineeMapper.toResponse(trainee);
+                    return traineeMapper.toGetDto(trainee);
                 })
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("Trainee with username '%s' not found", username)
@@ -128,14 +133,17 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Transactional
     @Override
-    public TraineeDTO updateTraineeTrainers(@Valid UpdateTraineeTrainersRequest request) {
+    public List<AssignedTrainerDTO> updateTraineeTrainers(@Valid TraineeTrainersUpdateDTO request) {
         logger.debug("Updating trainers for trainee usernames");
 
         Trainee updated = traineeDAO.updateTraineeTrainers
                 (request.getTraineeUsername(), request.getTrainerNames());
 
         logger.info("Updated trainers for trainee");
-        return traineeMapper.toResponse(updated);
+
+        return updated.getTrainers().stream()
+                .map(trainerMapper::toAssignedDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional

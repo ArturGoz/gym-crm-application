@@ -1,4 +1,4 @@
-package com.gca.dto.user;
+package com.gca.dto.trainee;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
-    private Long id;
+public class AssignedTraineeDTO {
     private String firstName;
     private String lastName;
     private String username;
-    private String password;
-    private Boolean isActive;
 }

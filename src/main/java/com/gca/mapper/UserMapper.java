@@ -1,17 +1,17 @@
 package com.gca.mapper;
 
-import com.gca.dto.trainee.TraineeUpdateData;
-import com.gca.dto.user.UserCreateRequest;
+import com.gca.dto.trainee.TraineeUpdateRequestDTO;
 import com.gca.dto.user.UserCreateDTO;
+import com.gca.dto.user.UserCredentialsDTO;
 import com.gca.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
-    User toEntity(UserCreateRequest request);
+    User toEntity(UserCreateDTO request);
 
-    User toEntity(TraineeUpdateData user);
+    User toEntity(TraineeUpdateRequestDTO user);
 
-    UserCreateDTO toResponse(User user);
+    UserCredentialsDTO toResponse(User user);
 }

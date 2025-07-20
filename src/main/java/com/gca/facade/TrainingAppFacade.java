@@ -4,20 +4,26 @@ import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateDTO;
-import com.gca.mapper.rest.RestTraineeMapper;
-import com.gca.openapi.model.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateData;
-import com.gca.dto.trainee.TraineeUpdateDTO;
-import com.gca.dto.trainee.UpdateTraineeTrainersRequest;
-import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerDTO;
-import com.gca.dto.trainer.TrainerUpdateRequest;
-import com.gca.dto.trainer.TrainerUpdateDTO;
+import com.gca.dto.trainee.TraineeTrainersUpdateDTO;
+import com.gca.dto.trainee.TraineeUpdateRequestDTO;
+import com.gca.dto.trainee.TraineeUpdateResponseDTO;
+import com.gca.dto.trainer.AssignedTrainerDTO;
+import com.gca.dto.trainer.TrainerCreateDTO;
+import com.gca.dto.trainer.TrainerUpdateRequestDTO;
+import com.gca.dto.trainer.TrainerUpdateResponseDTO;
 import com.gca.dto.training.TrainingCreateRequest;
 import com.gca.dto.training.TrainingDTO;
-import com.gca.dto.user.UserCreateDTO;
+import com.gca.dto.user.UserCredentialsDTO;
+import com.gca.mapper.rest.RestTraineeMapper;
+import com.gca.mapper.rest.RestTrainerMapper;
+import com.gca.openapi.model.AssignedTrainerResponse;
+import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
+import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
+import com.gca.openapi.model.TraineeCreateRequest;
 import com.gca.openapi.model.TraineeCreateResponse;
+import com.gca.openapi.model.TraineeGetResponse;
+import com.gca.openapi.model.TraineeUpdateRequest;
+import com.gca.openapi.model.TraineeUpdateResponse;
 import com.gca.security.Authenticated;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
@@ -41,29 +47,34 @@ public class TrainingAppFacade {
     private final UserService userService;
 
     private final RestTraineeMapper restTraineeMapper;
+    private final RestTrainerMapper restTrainerMapper;
 
     public TraineeCreateResponse createTrainee(TraineeCreateRequest request) {
         logger.info("Facade: Creating trainee {} ", request.getFirstName());
 
         TraineeCreateDTO traineeCreateDTO = restTraineeMapper.toDto(request);
-        UserCreateDTO userCreateDTO = traineeService.createTrainee(traineeCreateDTO);
+        UserCredentialsDTO userCredentialsDTO = traineeService.createTrainee(traineeCreateDTO);
 
-        return restTraineeMapper.toRest(userCreateDTO);
+        return restTraineeMapper.toRest(userCredentialsDTO);
     }
 
     @Authenticated
-    public TraineeUpdateDTO updateTrainee(TraineeUpdateData request) {
+    public TraineeUpdateResponse updateTrainee(String username, TraineeUpdateRequest request) {
         logger.info("Facade: Updating trainee with request {}", request);
-        return traineeService.updateTrainee(request);
+
+        TraineeUpdateRequestDTO requestDTO = restTraineeMapper.toDto(username, request);
+        TraineeUpdateResponseDTO responseDTO = traineeService.updateTrainee(requestDTO);
+
+        return restTraineeMapper.toRest(responseDTO);
     }
 
-    public UserCreateDTO createTrainer(TrainerCreateRequest request) {
+    public UserCredentialsDTO createTrainer(TrainerCreateDTO request) {
         logger.info("Facade: Creating trainer {}", request.getFirstName());
         return trainerService.createTrainer(request);
     }
 
     @Authenticated
-    public TrainerUpdateDTO updateTrainer(TrainerUpdateRequest request) {
+    public TrainerUpdateResponseDTO updateTrainer(TrainerUpdateRequestDTO request) {
         logger.info("Facade: Updating trainer with username {}", request.getUsername());
         return trainerService.updateTrainer(request);
     }
@@ -97,14 +108,14 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public TraineeDTO getTraineeByUsername(String username) {
+    public TraineeGetResponse getTraineeByUsername(String username) {
         logger.info("Facade: Retrieving traine by name {}", username);
 
-        return traineeService.getTraineeByUsername(username);
+        return restTraineeMapper.toRest(traineeService.getTraineeByUsername(username));
     }
 
     @Authenticated
-    public TrainerDTO getTrainerByUsername(String username) {
+    public AssignedTrainerDTO getTrainerByUsername(String username) {
         logger.info("Facade: Retrieving trainer by name {}", username);
 
         return trainerService.getTrainerByUsername(username);
@@ -125,17 +136,31 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public List<TrainerDTO> getUnassignedTrainers(String traineeUsername) {
+    public List<AssignedTrainerResponse> getUnassignedTrainers(String traineeUsername) {
         logger.info("Facade: Retrieving unassigned trainers");
 
-        return trainerService.getUnassignedTrainers(traineeUsername);
+        return trainerService.getUnassignedTrainers(traineeUsername).stream()
+                .map(restTrainerMapper::toRest)
+                .toList();
     }
 
     @Authenticated
-    public TraineeDTO updateTraineeTrainers(UpdateTraineeTrainersRequest request) {
+    public TraineeAssignedTrainersUpdateResponse updateTraineeTrainers(String username,
+                                                                       TraineeAssignedTrainersUpdateRequest request) {
         logger.info("Updating trainee list of trainers");
 
-        return traineeService.updateTraineeTrainers(request);
+        TraineeTrainersUpdateDTO traineeTrainersRequest
+                = new TraineeTrainersUpdateDTO(username, request.getTrainerUsernames());
+
+        List<AssignedTrainerResponse> trainerList =
+                traineeService.updateTraineeTrainers(traineeTrainersRequest).stream()
+                        .map(restTrainerMapper::toRest)
+                        .toList();
+
+        TraineeAssignedTrainersUpdateResponse response = new TraineeAssignedTrainersUpdateResponse();
+        response.setTrainers(trainerList);
+
+        return response;
     }
 }
 

@@ -1,0 +1,16 @@
+{
+  "trainers": [
+    {
+      "username": "john.doe",
+      "firstName": "John",
+      "lastName": "Doe",
+      "specialization": "Yoga"
+    },
+    {
+      "username": "jane.smith",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "specialization": "Cardio"
+    }
+  ]
+}

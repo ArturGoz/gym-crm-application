@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainerCreateRequest {
+public class TrainerCreateDTO {
     @NotBlank(message = "First name cannot be blank")
     @Size(min = 1, max = 50, message = "First name must be 1-50 characters")
     private String firstName;
