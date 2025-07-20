@@ -5,7 +5,6 @@ import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.AssignedTraineeDTO;
 import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeGetDTO;
-import com.gca.dto.trainee.TraineeTrainersUpdateDTO;
 import com.gca.dto.trainee.TraineeUpdateRequestDTO;
 import com.gca.dto.trainee.TraineeUpdateResponseDTO;
 import com.gca.dto.trainer.AssignedTrainerDTO;
@@ -64,13 +63,6 @@ public class GymTestProvider {
         request.setAddress("Kyiv, Shevchenka 1");
 
         return request;
-    }
-
-    public static TraineeTrainersUpdateDTO createUpdateTraineeTrainersRequest() {
-        return TraineeTrainersUpdateDTO.builder()
-                .traineeUsername("john_doe")
-                .trainerNames(List.of("trainer1", "trainer2"))
-                .build();
     }
 
     public static TrainerUpdateResponseDTO createTrainerUpdateResponse() {
