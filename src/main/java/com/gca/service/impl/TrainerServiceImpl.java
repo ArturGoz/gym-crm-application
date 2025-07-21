@@ -6,6 +6,7 @@ import com.gca.dao.TrainingTypeDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainer.AssignedTrainerDTO;
 import com.gca.dto.trainer.TrainerCreateDTO;
+import com.gca.dto.trainer.TrainerGetDTO;
 import com.gca.dto.trainer.TrainerUpdateRequestDTO;
 import com.gca.dto.trainer.TrainerUpdateResponseDTO;
 import com.gca.dto.user.UserCreateDTO;
@@ -135,7 +136,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional(readOnly = true)
     @Override
-    public AssignedTrainerDTO getTrainerByUsername(String username) {
+    public TrainerGetDTO getTrainerByUsername(String username) {
         logger.debug("Getting trainer by username: {}", username);
 
         validator.validateUsername(username);
@@ -143,7 +144,7 @@ public class TrainerServiceImpl implements TrainerService {
         return Optional.ofNullable(trainerDAO.findByUsername(username))
                 .map(trainer -> {
                     logger.debug("Trainer found by username: {}", username);
-                    return trainerMapper.toAssignedDto(trainer);
+                    return trainerMapper.toGetDto(trainer);
                 })
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("Trainer with username '%s' not found", username)
