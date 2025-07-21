@@ -7,7 +7,6 @@ import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeTrainersUpdateDTO;
 import com.gca.dto.trainee.TraineeUpdateRequestDTO;
 import com.gca.dto.trainee.TraineeUpdateResponseDTO;
-import com.gca.dto.trainer.AssignedTrainerDTO;
 import com.gca.dto.trainer.TrainerCreateDTO;
 import com.gca.dto.trainer.TrainerUpdateRequestDTO;
 import com.gca.dto.trainer.TrainerUpdateResponseDTO;
@@ -24,6 +23,11 @@ import com.gca.openapi.model.TraineeCreateResponse;
 import com.gca.openapi.model.TraineeGetResponse;
 import com.gca.openapi.model.TraineeUpdateRequest;
 import com.gca.openapi.model.TraineeUpdateResponse;
+import com.gca.openapi.model.TrainerCreateRequest;
+import com.gca.openapi.model.TrainerCreateResponse;
+import com.gca.openapi.model.TrainerGetResponse;
+import com.gca.openapi.model.TrainerUpdateRequest;
+import com.gca.openapi.model.TrainerUpdateResponse;
 import com.gca.security.Authenticated;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
@@ -68,15 +72,23 @@ public class TrainingAppFacade {
         return restTraineeMapper.toRest(responseDTO);
     }
 
-    public UserCredentialsDTO createTrainer(TrainerCreateDTO request) {
+    public TrainerCreateResponse createTrainer(TrainerCreateRequest request) {
         logger.info("Facade: Creating trainer {}", request.getFirstName());
-        return trainerService.createTrainer(request);
+
+        TrainerCreateDTO createDTO = restTrainerMapper.toDto(request);
+        UserCredentialsDTO credentialsDTO = trainerService.createTrainer(createDTO);
+
+        return restTrainerMapper.toRest(credentialsDTO);
     }
 
     @Authenticated
-    public TrainerUpdateResponseDTO updateTrainer(TrainerUpdateRequestDTO request) {
-        logger.info("Facade: Updating trainer with username {}", request.getUsername());
-        return trainerService.updateTrainer(request);
+    public TrainerUpdateResponse updateTrainer(String username, TrainerUpdateRequest trainer) {
+        logger.info("Facade: Updating trainer with username {}", username);
+
+        TrainerUpdateRequestDTO requestDTO = restTrainerMapper.toDto(username, trainer);
+        TrainerUpdateResponseDTO responseDTO = trainerService.updateTrainer(requestDTO);
+
+        return restTrainerMapper.toRest(responseDTO);
     }
 
     @Authenticated
@@ -115,10 +127,10 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public AssignedTrainerDTO getTrainerByUsername(String username) {
+    public TrainerGetResponse getTrainerByUsername(String username) {
         logger.info("Facade: Retrieving trainer by name {}", username);
 
-        return trainerService.getTrainerByUsername(username);
+        return restTrainerMapper.toRest(trainerService.getTrainerByUsername(username));
     }
 
     @Authenticated

@@ -1051,7 +1051,6 @@ components:
               description: Indicates if the trainer is active
               example: true
       example:
-        username: "ricardo.milos"
         firstName: "Ricardo"
         lastName: "Milos"
         specialization: "Yoga"
@@ -1061,6 +1060,9 @@ components:
         - $ref: '#/components/schemas/TrainerUpdateRequest'
         - type: object
           properties:
+            username:
+              type: string
+              description: Trainer's username
             trainees:
               type: array
               description: List of assigned trainees

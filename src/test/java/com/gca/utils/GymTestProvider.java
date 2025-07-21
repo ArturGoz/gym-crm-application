@@ -9,6 +9,7 @@ import com.gca.dto.trainee.TraineeUpdateRequestDTO;
 import com.gca.dto.trainee.TraineeUpdateResponseDTO;
 import com.gca.dto.trainer.AssignedTrainerDTO;
 import com.gca.dto.trainer.TrainerCreateDTO;
+import com.gca.dto.trainer.TrainerGetDTO;
 import com.gca.dto.trainer.TrainerUpdateRequestDTO;
 import com.gca.dto.trainer.TrainerUpdateResponseDTO;
 import com.gca.dto.training.TrainingCreateRequest;
@@ -20,6 +21,7 @@ import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
+import com.gca.openapi.model.AssignedTraineeResponse;
 import com.gca.openapi.model.AssignedTrainerResponse;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
@@ -28,6 +30,11 @@ import com.gca.openapi.model.TraineeCreateResponse;
 import com.gca.openapi.model.TraineeGetResponse;
 import com.gca.openapi.model.TraineeUpdateRequest;
 import com.gca.openapi.model.TraineeUpdateResponse;
+import com.gca.openapi.model.TrainerCreateRequest;
+import com.gca.openapi.model.TrainerCreateResponse;
+import com.gca.openapi.model.TrainerGetResponse;
+import com.gca.openapi.model.TrainerUpdateRequest;
+import com.gca.openapi.model.TrainerUpdateResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -65,7 +72,7 @@ public class GymTestProvider {
         return request;
     }
 
-    public static TrainerUpdateResponseDTO createTrainerUpdateResponse() {
+    public static TrainerUpdateResponseDTO createTrainerUpdateResponseDTO() {
         return TrainerUpdateResponseDTO.builder()
                 .firstName("Arnold")
                 .lastName("Schwarzenegger")
@@ -76,7 +83,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerUpdateResponseDTO createTrainerUpdateResponse(Trainer trainer) {
+    public static TrainerUpdateResponseDTO createTrainerUpdateResponseDTO(Trainer trainer) {
         return TrainerUpdateResponseDTO.builder()
                 .firstName(trainer.getUser().getFirstName())
                 .lastName(trainer.getUser().getLastName())
@@ -111,7 +118,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerCreateDTO createTrainerCreateRequest() {
+    public static TrainerCreateDTO createTrainerCreateDTO() {
         return TrainerCreateDTO.builder()
                 .firstName("Arnold")
                 .lastName("Schwarzenegger")
@@ -119,7 +126,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainerUpdateRequestDTO createTrainerUpdateRequest() {
+    public static TrainerUpdateRequestDTO createTrainerUpdateRequestDTO() {
         return TrainerUpdateRequestDTO.builder()
                 .firstName("Arnold")
                 .lastName("Schwarzenegger")
@@ -222,7 +229,7 @@ public class GymTestProvider {
         return AssignedTraineeDTO.builder()
                 .firstName("Arnold")
                 .lastName("Schwarzenegger")
-                .username("arnold.schwarzenegger")
+                .username("arnold.schwarzenegger1")
                 .build();
     }
 
@@ -361,6 +368,75 @@ public class GymTestProvider {
         AssignedTrainerResponse rest1 = GymTestProvider.createAssignedTrainerResponse("t1");
         AssignedTrainerResponse rest2 = GymTestProvider.createAssignedTrainerResponse("t2");
         response.setTrainers(List.of(rest1, rest2));
+
+        return response;
+    }
+
+    public static TrainerCreateRequest createTrainerCreateRequest() {
+        TrainerCreateRequest request = new TrainerCreateRequest();
+        request.setFirstName("Arnold");
+        request.setLastName("Schwarzenegger");
+        request.setSpecialization("Boxing");
+
+        return request;
+    }
+
+    public static TrainerCreateResponse createTrainerCreateResponse() {
+        TrainerCreateResponse response = new TrainerCreateResponse();
+        response.setUsername("arnold.schwarzenegger");
+        response.setPassword("password");
+
+        return response;
+    }
+
+    public static TrainerUpdateRequest createTrainerUpdateRequest() {
+        TrainerUpdateRequest request = new TrainerUpdateRequest();
+        request.setFirstName("Arnold");
+        request.setLastName("Schwarzenegger");
+        request.setIsActive(true);
+        request.setSpecialization("Crossfit");
+
+        return request;
+    }
+
+    public static TrainerUpdateResponse createTrainerUpdateResponse() {
+        TrainerUpdateResponse response = new TrainerUpdateResponse();
+        response.setFirstName("Arnold");
+        response.setLastName("Schwarzenegger");
+        response.setUsername("arnold.schwarzenegger");
+        response.setIsActive(true);
+        response.setTrainees(List.of(createAssignedTraineeResponse()));
+        response.setSpecialization("Yoga");
+
+        return response;
+    }
+
+    public static TrainerGetDTO createTrainerGetDTO() {
+        return TrainerGetDTO.builder()
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
+                .isActive(true)
+                .specialization("Crossfit")
+                .trainees(List.of(createAssignedTraineeDTO()))
+                .build();
+    }
+
+    public static TrainerGetResponse createTrainerGetResponse() {
+        TrainerGetResponse response = new TrainerGetResponse();
+        response.setFirstName("Arnold");
+        response.setLastName("Schwarzenegger");
+        response.setIsActive(true);
+        response.setSpecialization("Crossfit");
+        response.setTrainees(List.of(createAssignedTraineeResponse()));
+
+        return response;
+    }
+
+    public static AssignedTraineeResponse createAssignedTraineeResponse() {
+        AssignedTraineeResponse response = new AssignedTraineeResponse();
+        response.setFirstName("Arnold");
+        response.setLastName("Schwarzenegger");
+        response.setUsername("arnold.schwarzenegger");
 
         return response;
     }

@@ -73,7 +73,7 @@ class UsernameGeneratorTest {
     @ParameterizedTest
     @ValueSource(strings = {"John.doE", "john.doe", "John.doe", "JOHN.DOE", "JohN.doE"})
     void generate_shouldLogIfUsernameExist(String username) {
-        when(userDAO.getAllUsernames()).thenReturn(List.of("John.doE"));
+        when(userDAO.getAllUsernames()).thenReturn(List.of(username));
 
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         ((Logger) LoggerFactory.getLogger(UsernameGenerator.class)).addAppender(listAppender);
