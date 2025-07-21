@@ -99,7 +99,7 @@ public class TrainingDAOImplTest extends BaseIntegrationTest<TrainingDAOImpl> {
     static Stream<Arguments> provideTrainerTrainingCriteria() {
         return Stream.of(
                 Arguments.of("All trainings for trainer", null, null, null, 2),
-                Arguments.of("Filter by existing trainee name", null, null, "john.doe", 2),
+                Arguments.of("Filter by existing trainee name", null, null, "arnold.schwarzenegger", 2),
                 Arguments.of("Filter by non-existing trainee name", null, null, "nonexistent", 0),
                 Arguments.of("Filter by date range matching one", LocalDate.of(2025, 7, 7), LocalDate.of(2025, 7, 7), null, 1),
                 Arguments.of("Filter by date range not matching", LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 6), null, 0)

@@ -4,12 +4,12 @@ import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingTypeDAO;
 import com.gca.dao.transaction.Transactional;
-import com.gca.dto.trainer.TrainerCreateRequest;
-import com.gca.dto.trainer.TrainerDTO;
-import com.gca.dto.trainer.TrainerUpdateRequest;
-import com.gca.dto.trainer.TrainerUpdateDTO;
-import com.gca.dto.user.UserCreateRequest;
-import com.gca.dto.user.UserCreationDTO;
+import com.gca.dto.trainer.AssignedTrainerDTO;
+import com.gca.dto.trainer.TrainerCreateDTO;
+import com.gca.dto.trainer.TrainerUpdateRequestDTO;
+import com.gca.dto.trainer.TrainerUpdateResponseDTO;
+import com.gca.dto.user.UserCreateDTO;
+import com.gca.dto.user.UserCredentialsDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainerMapper;
 import com.gca.mapper.UserMapper;
@@ -84,15 +84,15 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional
     @Override
-    public UserCreationDTO createTrainer(@Valid TrainerCreateRequest request) {
+    public UserCredentialsDTO createTrainer(@Valid TrainerCreateDTO request) {
         logger.debug("Creating trainer");
 
-        UserCreateRequest userCreateRequest = UserCreateRequest.builder()
+        UserCreateDTO userCreateDTO = UserCreateDTO.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .build();
 
-        User user = userService.createUser(userCreateRequest);
+        User user = userService.createUser(userCreateDTO);
         TrainingType trainingType = trainingTypeDAO.getByName(request.getSpecialization());
 
         if (trainingType == null) {
@@ -112,7 +112,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional
     @Override
-    public TrainerUpdateDTO updateTrainer(@Valid TrainerUpdateRequest request) {
+    public TrainerUpdateResponseDTO updateTrainer(@Valid TrainerUpdateRequestDTO request) {
         logger.debug("Updating trainer");
 
         Trainer trainer = Optional.ofNullable(trainerDAO.findByUsername(request.getUsername()))
@@ -135,7 +135,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional(readOnly = true)
     @Override
-    public TrainerDTO getTrainerByUsername(String username) {
+    public AssignedTrainerDTO getTrainerByUsername(String username) {
         logger.debug("Getting trainer by username: {}", username);
 
         validator.validateUsername(username);
@@ -143,7 +143,7 @@ public class TrainerServiceImpl implements TrainerService {
         return Optional.ofNullable(trainerDAO.findByUsername(username))
                 .map(trainer -> {
                     logger.debug("Trainer found by username: {}", username);
-                    return trainerMapper.toResponse(trainer);
+                    return trainerMapper.toAssignedDto(trainer);
                 })
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("Trainer with username '%s' not found", username)
@@ -152,7 +152,7 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<TrainerDTO> getUnassignedTrainers(String traineeUsername) {
+    public List<AssignedTrainerDTO> getUnassignedTrainers(String traineeUsername) {
         logger.debug("Getting unassigned trainers for trainee username: {}", traineeUsername);
 
         validator.validateUsername(traineeUsername);
@@ -171,7 +171,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         logger.info("Found {} unassigned trainers for trainee '{}'", unassignedTrainers.size(), traineeUsername);
         return unassignedTrainers.stream()
-                .map(trainerMapper::toResponse)
+                .map(trainerMapper::toAssignedDto)
                 .collect(Collectors.toList());
     }
 }

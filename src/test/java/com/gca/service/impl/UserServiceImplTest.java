@@ -1,9 +1,9 @@
 package com.gca.service.impl;
 
-import com.gca.GymTestProvider;
+import com.gca.utils.GymTestProvider;
 import com.gca.dao.UserDAO;
 import com.gca.dto.PasswordChangeRequest;
-import com.gca.dto.user.UserCreateRequest;
+import com.gca.dto.user.UserCreateDTO;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.common.UserProfileService;
@@ -39,11 +39,11 @@ class UserServiceImplTest {
 
     @Test
     void createUser_success() {
-        UserCreateRequest request = GymTestProvider.createUserCreateRequest();
+        UserCreateDTO request = GymTestProvider.createUserCreateRequest();
         User saved = GymTestProvider.constructUser();
 
         when(profileService.generateUsername(request.getFirstName(), request.getLastName()))
-                .thenReturn("john_doe");
+                .thenReturn("arnold.schwarzenegger");
         when(profileService.generatePassword()).thenReturn("securePass123");
         when(mapper.toEntity(request)).thenReturn(saved);
 

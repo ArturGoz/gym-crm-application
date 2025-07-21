@@ -28,12 +28,12 @@ class UserProfileServiceTest {
 
     @Test
     void generateUsername_delegatesToUsernameGenerator() {
-        when(usernameGenerator.generate("John", "Doe")).thenReturn("John.Doe");
+        when(usernameGenerator.generate("Arnold", "Schwarzenegger")).thenReturn("Arnold.Schwarzenegger");
 
-        String username = service.generateUsername("John", "Doe");
+        String username = service.generateUsername("Arnold", "Schwarzenegger");
 
-        assertEquals("John.Doe", username);
-        verify(usernameGenerator).generate("John", "Doe");
+        assertEquals("Arnold.Schwarzenegger", username);
+        verify(usernameGenerator).generate("Arnold", "Schwarzenegger");
     }
 
     @Test

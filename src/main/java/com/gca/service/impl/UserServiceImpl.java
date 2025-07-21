@@ -3,7 +3,7 @@ package com.gca.service.impl;
 import com.gca.dao.UserDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.PasswordChangeRequest;
-import com.gca.dto.user.UserCreateRequest;
+import com.gca.dto.user.UserCreateDTO;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.UserService;
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(@Valid UserCreateRequest request) {
+    public User createUser(@Valid UserCreateDTO request) {
         logger.debug("Creating user for {} {}", request.getFirstName(), request.getLastName());
 
         String username = userProfileService.generateUsername(request.getFirstName(), request.getLastName());

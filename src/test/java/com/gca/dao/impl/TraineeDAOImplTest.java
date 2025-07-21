@@ -84,9 +84,9 @@ class TraineeDAOImplTest extends BaseIntegrationTest<TraineeDAOImpl> {
 
     private User buildUser() {
         return User.builder()
-                .firstName("John22")
-                .lastName("Doe22")
-                .username("John22.Doe22")
+                .firstName("Arnold22")
+                .lastName("Schwarzenegger22")
+                .username("Arnold22.Schwarzenegger22")
                 .password("password")
                 .isActive(true)
                 .build();

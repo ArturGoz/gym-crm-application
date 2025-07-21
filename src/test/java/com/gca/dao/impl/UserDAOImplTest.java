@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataSet(value = "dataset/user/user-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
 public class UserDAOImplTest extends BaseIntegrationTest<UserDAOImpl> {
     private static final Long EXISTING_ID = 1L;
-    private static final String EXISTING_USERNAME = "john.doe";
+    private static final String EXISTING_USERNAME = "arnold.schwarzenegger";
 
     @Test
     void shouldFindUserById() {
@@ -56,7 +56,7 @@ public class UserDAOImplTest extends BaseIntegrationTest<UserDAOImpl> {
         List<String> usernames = dao.getAllUsernames();
 
         assertNotNull(usernames);
-        assertTrue(usernames.contains("john.doe"));
+        assertTrue(usernames.contains("arnold.schwarzenegger"));
         assertTrue(usernames.contains("ghost.user"));
         assertEquals(2, usernames.size());
     }

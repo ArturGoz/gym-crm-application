@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 
 <dataset>
-    <users id="1" first_name="John" last_name="Doe" username="john.doe" password="test123" is_active="true"/>
+    <users id="1" first_name="Arnold" last_name="Schwarzenegger" username="arnold.schwarzenegger" password="test123" is_active="true"/>
     <users id="2" first_name="Ghost" last_name="User" username="ghost.user" password="password" is_active="true"/>
 
     <training_types id="1" training_type_name="Fitness"/>

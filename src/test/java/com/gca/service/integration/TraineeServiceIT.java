@@ -1,11 +1,11 @@
 package com.gca.service.integration;
 
-import com.gca.GymTestProvider;
+import com.gca.dto.user.UserCredentialsDTO;
+import com.gca.utils.GymTestProvider;
 import com.gca.dao.TraineeDAO;
-import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeUpdateData;
-import com.gca.dto.trainee.TraineeUpdateDTO;
-import com.gca.dto.user.UserCreationDTO;
+import com.gca.dto.trainee.TraineeCreateDTO;
+import com.gca.dto.trainee.TraineeUpdateRequestDTO;
+import com.gca.dto.trainee.TraineeUpdateResponseDTO;
 import com.gca.exception.DaoException;
 import com.gca.mapper.TraineeMapper;
 import com.gca.mapper.UserMapper;
@@ -60,9 +60,9 @@ class TraineeServiceIT extends AbstractServiceIT {
     @Test
     @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldUpdateTrainee() {
-        TraineeUpdateData expected = GymTestProvider.createTraineeUpdateRequest();
+        TraineeUpdateRequestDTO expected = GymTestProvider.createTraineeUpdateRequestDTO();
 
-        TraineeUpdateDTO actual = traineeService.updateTrainee(expected);
+        TraineeUpdateResponseDTO actual = traineeService.updateTrainee(expected);
 
         assertEquals(expected.getUsername(), actual.getUsername());
         assertEquals(expected.getAddress(), actual.getAddress());
@@ -73,9 +73,9 @@ class TraineeServiceIT extends AbstractServiceIT {
     @Test
     @DataSet(value = "dataset/trainee/trainee-creation-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldCreateTrainee() {
-        TraineeCreateRequest request = GymTestProvider.createTraineeCreateRequest();
+        TraineeCreateDTO request = GymTestProvider.createTraineeCreateDTO();
 
-        UserCreationDTO actual = traineeService.createTrainee(request);
+        UserCredentialsDTO actual = traineeService.createTrainee(request);
 
         String expected = format("%s.%s1", request.getFirstName(), request.getLastName()).toLowerCase();
 
@@ -85,7 +85,7 @@ class TraineeServiceIT extends AbstractServiceIT {
     @Test
     @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldDeleteTraineeByIdByUsername() {
-        String username = "john.doe";
+        String username = "arnold.schwarzenegger";
 
         Trainee before = traineeDAO.findByUsername(username);
         assertNotNull(before);

@@ -1,20 +1,18 @@
-package com.gca.dto.trainee;
+package com.gca.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TraineeCreateRequest {
+public class UserGetData {
     @NotBlank(message = "First name cannot be blank")
     @Size(min = 1, max = 50, message = "First name must be 1-50 characters")
     private String firstName;
@@ -23,9 +21,6 @@ public class TraineeCreateRequest {
     @Size(min = 1, max = 50, message = "Last name must be 1-50 characters")
     private String lastName;
 
-    @PastOrPresent(message = "Date of birth must be in the past or present")
-    private LocalDate dateOfBirth;
-
-    @Size(max = 255, message = "Address cannot exceed 255 characters")
-    private String address;
+    @NotNull(message = "Active status cannot be null")
+    private Boolean isActive;
 }

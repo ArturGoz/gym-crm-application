@@ -1,18 +1,17 @@
-package com.gca.dto.user;
+package com.gca.dto.trainer;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder(toBuilder = true)
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserUpdateData {
+public class TrainerCreateDTO {
     @NotBlank(message = "First name cannot be blank")
     @Size(min = 1, max = 50, message = "First name must be 1-50 characters")
     private String firstName;
@@ -21,10 +20,6 @@ public class UserUpdateData {
     @Size(min = 1, max = 50, message = "Last name must be 1-50 characters")
     private String lastName;
 
-    @NotBlank(message = "Username cannot be blank")
-    @Size(min = 1, max = 50, message = "Username must be 1-50 characters")
-    private String username;
-
-    @NotNull(message = "Active status cannot be null")
-    private Boolean isActive;
+    @NotBlank(message = "Specialization cannot be blank")
+    private String specialization;
 }

@@ -1,9 +1,10 @@
 package com.gca.mapper;
 
-import com.gca.dto.trainee.TraineeCreateRequest;
-import com.gca.dto.trainee.TraineeDTO;
-import com.gca.dto.trainee.TraineeUpdateData;
-import com.gca.dto.trainee.TraineeUpdateDTO;
+import com.gca.dto.trainee.AssignedTraineeDTO;
+import com.gca.dto.trainee.TraineeCreateDTO;
+import com.gca.dto.trainee.TraineeGetDTO;
+import com.gca.dto.trainee.TraineeUpdateRequestDTO;
+import com.gca.dto.trainee.TraineeUpdateResponseDTO;
 import com.gca.model.Trainee;
 import com.gca.model.User;
 import org.mapstruct.Mapper;
@@ -12,29 +13,33 @@ import org.mapstruct.ReportingPolicy;
 
 import static java.util.Optional.ofNullable;
 
-@Mapper(
-        componentModel = "spring",
+@Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        uses = {TrainerMapper.class}
-)
+        uses = {TrainerMapper.class})
 public interface TraineeMapper {
-    Trainee toEntity(TraineeCreateRequest request);
+    Trainee toEntity(TraineeCreateDTO request);
 
-    Trainee toEntity(TraineeUpdateData request);
+    Trainee toEntity(TraineeUpdateRequestDTO request);
+
+    @Mapping(source = "user.firstName", target = "firstName")
+    @Mapping(source = "user.lastName", target = "lastName")
+    @Mapping(source = "user.isActive", target = "isActive")
+    @Mapping(source = "trainers", target = "trainers")
+    TraineeGetDTO toGetDto(Trainee trainee);
 
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.username", target = "username")
-    TraineeDTO toResponse(Trainee trainee);
+    AssignedTraineeDTO toAssignedDto(Trainee trainee);
 
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "user.isActive", target = "isActive")
     @Mapping(source = "trainers", target = "trainers")
-    TraineeUpdateDTO toUpdateResponse(Trainee trainee);
+    TraineeUpdateResponseDTO toUpdateResponse(Trainee trainee);
 
-    default User fillUserFields(User oldUser, TraineeUpdateData request) {
+    default User fillUserFields(User oldUser, TraineeUpdateRequestDTO request) {
         return oldUser.toBuilder()
                 .username(request.getUsername())
                 .isActive(request.getIsActive())
@@ -43,13 +48,13 @@ public interface TraineeMapper {
                 .build();
     }
 
-    default Trainee fillTraineeFields(Trainee oldTrainee, User updatedUser, TraineeUpdateData request) {
+    default Trainee fillTraineeFields(Trainee oldTrainee, User updatedUser, TraineeUpdateRequestDTO request) {
         return oldTrainee.toBuilder()
                 .user(updatedUser)
                 .dateOfBirth(ofNullable(request.getDateOfBirth())
-                                .orElse(oldTrainee.getDateOfBirth()))
+                        .orElse(oldTrainee.getDateOfBirth()))
                 .address(ofNullable(request.getAddress())
-                                .orElse(oldTrainee.getAddress()))
+                        .orElse(oldTrainee.getAddress()))
                 .build();
     }
 }

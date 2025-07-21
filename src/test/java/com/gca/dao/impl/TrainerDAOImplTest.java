@@ -68,11 +68,11 @@ public class TrainerDAOImplTest extends BaseIntegrationTest<TrainerDAOImpl> {
 
     @Test
     void shouldFindTrainerByUsername() {
-        Trainer found = dao.findByUsername("john.doe");
+        Trainer found = dao.findByUsername("arnold.schwarzenegger");
 
         assertNotNull(found, "Trainer should be found by username");
-        assertEquals("john.doe", found.getUser().getUsername());
-        assertEquals("John", found.getUser().getFirstName());
+        assertEquals("arnold.schwarzenegger", found.getUser().getUsername());
+        assertEquals("Arnold", found.getUser().getFirstName());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class TrainerDAOImplTest extends BaseIntegrationTest<TrainerDAOImpl> {
 
         assertNotNull(actual, "List should not be null");
         assertEquals(1, actual.size(), "Should contain one trainer from dataset");
-        assertEquals("john.doe", actual.get(0).getUser().getUsername());
+        assertEquals("arnold.schwarzenegger", actual.get(0).getUser().getUsername());
     }
 
     private Trainer buildTrainerFromExistingUserAndSpecialization() {

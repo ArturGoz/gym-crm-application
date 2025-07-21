@@ -1,8 +1,8 @@
 package com.gca.mapper;
 
-import com.gca.dto.trainer.TrainerDTO;
-import com.gca.dto.trainer.TrainerUpdateRequest;
-import com.gca.dto.trainer.TrainerUpdateDTO;
+import com.gca.dto.trainer.AssignedTrainerDTO;
+import com.gca.dto.trainer.TrainerUpdateRequestDTO;
+import com.gca.dto.trainer.TrainerUpdateResponseDTO;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
@@ -17,7 +17,7 @@ public interface TrainerMapper {
     @Mapping(source = "user.lastName", target = "lastName")
     @Mapping(source = "user.username", target = "username")
     @Mapping(source = "specialization.name", target = "specialization")
-    TrainerDTO toResponse(Trainer trainer);
+    AssignedTrainerDTO toAssignedDto(Trainer trainer);
 
     @Mapping(source = "user.firstName", target = "firstName")
     @Mapping(source = "user.lastName", target = "lastName")
@@ -25,9 +25,9 @@ public interface TrainerMapper {
     @Mapping(source = "user.isActive", target = "isActive")
     @Mapping(source = "specialization.name", target = "specialization")
     @Mapping(source = "trainees", target = "trainees")
-    TrainerUpdateDTO toUpdateResponse(Trainer trainer);
+    TrainerUpdateResponseDTO toUpdateResponse(Trainer trainer);
 
-    default User fillUserFields(User oldUser, TrainerUpdateRequest request) {
+    default User fillUserFields(User oldUser, TrainerUpdateRequestDTO request) {
         return oldUser.toBuilder()
                 .username(request.getUsername())
                 .isActive(request.getIsActive())

@@ -1,11 +1,11 @@
 package com.gca.service;
 
 import com.gca.dto.PasswordChangeRequest;
-import com.gca.dto.user.UserCreateRequest;
+import com.gca.dto.user.UserCreateDTO;
 import com.gca.model.User;
 
 public interface UserService {
-    User createUser(UserCreateRequest request);
+    User createUser(UserCreateDTO request);
 
     boolean isUserCredentialsValid(String username, String rawPassword);
 

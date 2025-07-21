@@ -38,36 +38,36 @@ class UsernameGeneratorTest {
     void generate_shouldReturnBaseNameIfNotExists() {
         when(userDAO.getAllUsernames()).thenReturn(emptyList());
 
-        String result = sut.generate("John", "Doe");
+        String result = sut.generate("Arnold", "Schwarzenegger");
 
-        assertEquals("john.doe", result);
+        assertEquals("arnold.schwarzenegger", result);
     }
 
     @Test
     void generate_shouldReturnWithSuffixIfBaseTaken() {
-        when(userDAO.getAllUsernames()).thenReturn(List.of("John.Doe"));
+        when(userDAO.getAllUsernames()).thenReturn(List.of("Arnold.Schwarzenegger"));
 
-        String result = sut.generate("John", "Doe");
+        String result = sut.generate("Arnold", "Schwarzenegger");
 
-        assertEquals("john.doe1", result);
+        assertEquals("arnold.schwarzenegger1", result);
     }
 
     @Test
     void generate_shouldIterateSuffixes() {
-        when(userDAO.getAllUsernames()).thenReturn(Arrays.asList("John.Doe", "John.Doe1"));
+        when(userDAO.getAllUsernames()).thenReturn(Arrays.asList("Arnold.Schwarzenegger", "Arnold.Schwarzenegger1"));
 
-        String result = sut.generate("John", "Doe");
+        String result = sut.generate("Arnold", "Schwarzenegger");
 
-        assertEquals("john.doe2", result);
+        assertEquals("arnold.schwarzenegger2", result);
     }
 
     @Test
     void generate_shouldTreatCaseAsTheSame() {
-        when(userDAO.getAllUsernames()).thenReturn(Collections.singletonList("john.doe"));
+        when(userDAO.getAllUsernames()).thenReturn(Collections.singletonList("arnold.schwarzenegger"));
 
-        String result = sut.generate("John", "Doe");
+        String result = sut.generate("Arnold", "Schwarzenegger");
 
-        assertEquals("john.doe1", result);
+        assertEquals("arnold.schwarzenegger1", result);
     }
 
     @ParameterizedTest
