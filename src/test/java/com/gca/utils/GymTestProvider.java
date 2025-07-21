@@ -37,8 +37,8 @@ public class GymTestProvider {
 
     public static TraineeGetResponse createTraineeGetResponse() {
         TraineeGetResponse response = new TraineeGetResponse();
-        response.setFirstName("John");
-        response.setLastName("Doe");
+        response.setFirstName("Arnold");
+        response.setLastName("Schwarzenegger");
         response.setIsActive(true);
         response.setAddress("Kyiv, Khreschatyk 10");
         response.setDateOfBirth(LocalDate.of(1990, 1, 1));
@@ -49,7 +49,7 @@ public class GymTestProvider {
 
     public static TraineeCreateResponse createTraineeCreateResponse() {
         TraineeCreateResponse traineeCreateResponse = new TraineeCreateResponse();
-        traineeCreateResponse.setUsername("john.doe");
+        traineeCreateResponse.setUsername("arnold.schwarzenegger");
         traineeCreateResponse.setPassword("password");
 
         return traineeCreateResponse;
@@ -57,8 +57,8 @@ public class GymTestProvider {
 
     public static TraineeCreateRequest createTraineeCreateRequest() {
         TraineeCreateRequest request = new TraineeCreateRequest();
-        request.setFirstName("John");
-        request.setLastName("Doe");
+        request.setFirstName("Arnold");
+        request.setLastName("Schwarzenegger");
         request.setDateOfBirth(LocalDate.of(1990, 1, 1));
         request.setAddress("Kyiv, Shevchenka 1");
 
@@ -67,9 +67,9 @@ public class GymTestProvider {
 
     public static TrainerUpdateResponseDTO createTrainerUpdateResponse() {
         return TrainerUpdateResponseDTO.builder()
-                .firstName("FirstName")
-                .lastName("LastName")
-                .username("username")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
+                .username("arnold.schwarzenegger")
                 .isActive(true)
                 .trainees(List.of(createAssignedTraineeDTO()))
                 .specialization("Yoga")
@@ -89,9 +89,9 @@ public class GymTestProvider {
 
     public static TraineeUpdateResponseDTO createTraineeUpdateResponse() {
         return TraineeUpdateResponseDTO.builder()
-                .firstName("FirstName")
-                .lastName("LastName")
-                .username("username")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
+                .username("arnold.schwarzenegger")
                 .isActive(true)
                 .trainers(List.of(createAssignedTrainerDTO()))
                 .address("Address")
@@ -113,18 +113,18 @@ public class GymTestProvider {
 
     public static TrainerCreateDTO createTrainerCreateRequest() {
         return TrainerCreateDTO.builder()
-                .firstName("John")
-                .lastName("Doe")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
                 .specialization("Boxing")
                 .build();
     }
 
     public static TrainerUpdateRequestDTO createTrainerUpdateRequest() {
         return TrainerUpdateRequestDTO.builder()
-                .firstName("John")
-                .lastName("Doe")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
                 .isActive(true)
-                .username("john.doe")
+                .username("arnold.schwarzenegger")
                 .specialization("Crossfit")
                 .build();
     }
@@ -154,9 +154,9 @@ public class GymTestProvider {
 
     public static AssignedTrainerDTO createAssignedTrainerDTO() {
         return AssignedTrainerDTO.builder()
-                .firstName("john")
-                .lastName("doe")
-                .username("john.doe")
+                .firstName("Ronnie")
+                .lastName("Coleman")
+                .username("ronnie.coleman")
                 .specialization("Yoga")
                 .build();
     }
@@ -167,9 +167,9 @@ public class GymTestProvider {
 
     public static AssignedTrainerResponse createAssignedTrainerResponse() {
         AssignedTrainerResponse response = new AssignedTrainerResponse();
-        response.setFirstName("john");
-        response.setLastName("doe");
-        response.setUsername("john.doe");
+        response.setFirstName("Ronnie");
+        response.setLastName("Coleman");
+        response.setUsername("ronnie.coleman");
         response.setSpecialization("Yoga");
         return response;
     }
@@ -180,8 +180,8 @@ public class GymTestProvider {
 
     public static TraineeCreateDTO createTraineeCreateDTO() {
         return TraineeCreateDTO.builder()
-                .firstName("John")
-                .lastName("Doe")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
                 .address("Kyiv, Shevchenka 1")
                 .build();
@@ -189,13 +189,17 @@ public class GymTestProvider {
 
     public static TraineeUpdateRequestDTO createTraineeUpdateRequestDTO() {
         return TraineeUpdateRequestDTO.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
+                .username("arnold.schwarzenegger")
                 .isActive(true)
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
                 .address("Kyiv, Khreschatyk 10")
                 .build();
+    }
+
+    public static TraineeUpdateRequestDTO createTraineeUpdateRequestDTO(String username) {
+        return createTraineeUpdateRequestDTO().toBuilder().username(username).build();
     }
 
     public static Trainee constructTrainee() {
@@ -209,16 +213,16 @@ public class GymTestProvider {
 
     public static UserCredentialsDTO constructUserCreateDTO() {
         return UserCredentialsDTO.builder()
-                .username("john.doe")
+                .username("arnold.schwarzenegger")
                 .password("password")
                 .build();
     }
 
     public static AssignedTraineeDTO createAssignedTraineeDTO() {
         return AssignedTraineeDTO.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .username("john.doe")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
+                .username("arnold.schwarzenegger")
                 .build();
     }
 
@@ -264,17 +268,17 @@ public class GymTestProvider {
 
     public static UserCreateDTO createUserCreateRequest() {
         return UserCreateDTO.builder()
-                .firstName("John")
-                .lastName("Doe")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
                 .build();
     }
 
     public static User constructUser() {
         return User.builder()
                 .id(1L)
-                .firstName("John")
-                .lastName("Doe")
-                .username("john_doe")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
+                .username("arnold.schwarzenegger")
                 .password("securePass123")
                 .isActive(true)
                 .build();
@@ -292,7 +296,7 @@ public class GymTestProvider {
                 .traineeId(1L)
                 .fromDate(LocalDate.of(2025, 7, 1))
                 .toDate(LocalDate.of(2025, 7, 31))
-                .trainerName("trainer.one")
+                .trainerName("arnold.schwarzenegger")
                 .trainingTypeName("Yoga")
                 .build();
     }
@@ -302,14 +306,14 @@ public class GymTestProvider {
                 .trainerId(1L)
                 .fromDate(LocalDate.of(2025, 7, 1))
                 .toDate(LocalDate.of(2025, 7, 31))
-                .traineeName("john.doe")
+                .traineeName("arnold.schwarzenegger")
                 .build();
     }
 
     public static TraineeUpdateRequest createTraineeUpdateRequest() {
         TraineeUpdateRequest request = new TraineeUpdateRequest();
-        request.setFirstName("John");
-        request.setLastName("Doe");
+        request.setFirstName("Arnold");
+        request.setLastName("Schwarzenegger");
         request.setIsActive(true);
         request.setDateOfBirth(LocalDate.of(1990, 1, 1));
         request.setAddress("Kyiv, Khreschatyk 10");
@@ -319,9 +323,9 @@ public class GymTestProvider {
 
     public static TraineeUpdateResponse createTraineeUpdateRestResponse() {
         TraineeUpdateResponse response = new TraineeUpdateResponse();
-        response.setFirstName("FirstName");
-        response.setLastName("LastName");
-        response.setUsername("username");
+        response.setFirstName("Arnold");
+        response.setLastName("Schwarzenegger");
+        response.setUsername("arnold.schwarzenegger");
         response.setIsActive(true);
         response.setTrainers(List.of(createAssignedTrainerResponse()));
         response.setAddress("Address");
@@ -332,8 +336,8 @@ public class GymTestProvider {
 
     public static TraineeGetDTO createTraineeGetDTO() {
         return TraineeGetDTO.builder()
-                .firstName("John")
-                .lastName("Doe")
+                .firstName("Arnold")
+                .lastName("Schwarzenegger")
                 .isActive(true)
                 .address("Kyiv, Khreschatyk 10")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))

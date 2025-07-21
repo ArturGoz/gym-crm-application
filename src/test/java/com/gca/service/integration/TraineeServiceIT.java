@@ -85,7 +85,7 @@ class TraineeServiceIT extends AbstractServiceIT {
     @Test
     @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
     void shouldDeleteTraineeByIdByUsername() {
-        String username = "john.doe";
+        String username = "arnold.schwarzenegger";
 
         Trainee before = traineeDAO.findByUsername(username);
         assertNotNull(before);

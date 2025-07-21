@@ -124,7 +124,7 @@ class TraineeServiceImplTest {
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainee(updateRequest));
-        assertEquals("Invalid trainee username: john.doe", ex.getMessage());
+        assertEquals("Invalid trainee username: arnold.schwarzenegger", ex.getMessage());
     }
 
     @Test

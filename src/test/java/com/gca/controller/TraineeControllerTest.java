@@ -42,6 +42,7 @@ class TraineeControllerTest {
 
     private final String traineeApi = format("%s/trainees", BASE_PATH);
     private final String traineeRegisterApi = format("%s/register", traineeApi);
+    private final String username = "arnold.schwarzenegger";
 
     @Mock
     private TrainingAppFacade trainingAppFacade;
@@ -73,7 +74,6 @@ class TraineeControllerTest {
 
     @Test
     void getTraineeByUsername_returnsTrainee() throws Exception {
-        String username = "john.doe";
         TraineeGetResponse response = GymTestProvider.createTraineeGetResponse();
 
         when(trainingAppFacade.getTraineeByUsername(username)).thenReturn(response);
@@ -90,7 +90,6 @@ class TraineeControllerTest {
 
     @Test
     void updateTrainee_returnsUpdatedTrainee() throws Exception {
-        String username = "john.doe";
         TraineeUpdateRequest request = GymTestProvider.createTraineeUpdateRequest();
         TraineeUpdateResponse response = GymTestProvider.createTraineeUpdateRestResponse();
 
@@ -109,8 +108,6 @@ class TraineeControllerTest {
 
     @Test
     void deleteTrainee_returnsOk() throws Exception {
-        String username = "john.doe";
-
         mockMvc.perform(delete(traineeApi + "/" + username))
                 .andExpect(status().isOk());
 
@@ -119,7 +116,6 @@ class TraineeControllerTest {
 
     @Test
     void updateTraineeAssignedTrainers_returnsUpdatedTrainers() throws Exception {
-        String username = "john.doe";
         TraineeAssignedTrainersUpdateRequest request = GymTestProvider.createTraineeAssignedTrainersUpdateRequest();
         TraineeAssignedTrainersUpdateResponse response =
                 readJson("trainee-assigned-trainers-update-response.json", TraineeAssignedTrainersUpdateResponse.class);
@@ -138,7 +134,6 @@ class TraineeControllerTest {
 
     @Test
     void getAvailableTrainers_returnsTrainerList() throws Exception {
-        String username = "john.doe";
         List<AssignedTrainerResponse> trainers = List.of(GymTestProvider.createAssignedTrainerResponse());
 
         when(trainingAppFacade.getUnassignedTrainers(username)).thenReturn(trainers);

@@ -43,7 +43,7 @@ class UserServiceImplTest {
         User saved = GymTestProvider.constructUser();
 
         when(profileService.generateUsername(request.getFirstName(), request.getLastName()))
-                .thenReturn("john_doe");
+                .thenReturn("arnold.schwarzenegger");
         when(profileService.generatePassword()).thenReturn("securePass123");
         when(mapper.toEntity(request)).thenReturn(saved);
 

@@ -132,12 +132,12 @@ class TrainerServiceImplTest {
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainer(updateRequest));
 
-        assertEquals("Invalid trainer username: john.doe", ex.getMessage());
+        assertEquals("Invalid trainer username: arnold.schwarzenegger", ex.getMessage());
     }
 
     @Test
     void getTrainerByUsername_success() {
-        String username = "john_doe";
+        String username = "arnold.schwarzenegger";
         Trainer mockTrainer = GymTestProvider.constructTrainer();
         AssignedTrainerDTO expectedResponse = GymTestProvider.createAssignedTrainerDTO();
 
@@ -156,7 +156,7 @@ class TrainerServiceImplTest {
 
     @Test
     void getUnassignedTrainers_shouldReturnCorrectList() {
-        String traineeUsername = "john_doe";
+        String traineeUsername = "arnold.schwarzenegger";
 
         doNothing().when(validator).validateUsername(traineeUsername);
 

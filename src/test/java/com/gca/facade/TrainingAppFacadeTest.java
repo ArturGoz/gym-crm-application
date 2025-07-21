@@ -87,7 +87,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void updateTrainee_delegatesToService() {
-        String username = "john.doe";
+        String username = "alexander.usyk";
         TraineeUpdateRequest restRequest = GymTestProvider.createTraineeUpdateRequest();
         TraineeUpdateRequestDTO dto = GymTestProvider.createTraineeUpdateRequestDTO();
         TraineeUpdateResponseDTO responseDTO = GymTestProvider.createTraineeUpdateResponse();
@@ -190,7 +190,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void getTraineeByUsername_delegatesToService() {
-        String username = "john.doe";
+        String username = "arnold.schwarzenegger";
         TraineeGetDTO dto = GymTestProvider.createTraineeGetDTO();
         TraineeGetResponse expectedResponse = GymTestProvider.createTraineeGetResponse();
 
@@ -206,7 +206,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void getTrainerByUsername_delegatesToService() {
-        String username = "trainer.one";
+        String username = "ronnie.coleman";
         AssignedTrainerDTO expected = GymTestProvider.createAssignedTrainerDTO();
 
         when(trainerService.getTrainerByUsername(username)).thenReturn(expected);
@@ -219,7 +219,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void deleteTraineeByUsername_delegatesToService() {
-        String username = "john.doe";
+        String username = "ronnie.coleman";
 
         facade.deleteTraineeByUsername(username);
 
@@ -228,7 +228,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void toggleUserActiveStatus_delegatesToService() {
-        String username = "john.doe";
+        String username = "ronnie.coleman";
 
         facade.toggleUserActiveStatus(username);
 
@@ -237,7 +237,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void getUnassignedTrainers_delegatesToService() {
-        String traineeUsername = "john.doe";
+        String traineeUsername = "arnold.schwarzenegger";
         AssignedTrainerDTO dto1 = GymTestProvider.createAssignedTrainerDTO("trainer1");
         AssignedTrainerDTO dto2 = GymTestProvider.createAssignedTrainerDTO("trainer2");
 
@@ -260,7 +260,7 @@ class TrainingAppFacadeTest {
 
     @Test
     void updateTraineeTrainers_delegatesToService() {
-        String username = "john.doe";
+        String username = "arnold.schwarzenegger";
         TraineeAssignedTrainersUpdateRequest request = GymTestProvider.createTraineeAssignedTrainersUpdateRequest();
         TraineeTrainersUpdateDTO updateDTO = new TraineeTrainersUpdateDTO(username, request.getTrainerUsernames());
 
