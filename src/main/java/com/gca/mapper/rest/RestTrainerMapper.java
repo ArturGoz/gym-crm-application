@@ -21,6 +21,7 @@ import org.mapstruct.ReportingPolicy;
         uses = {RestTraineeMapper.class}
 )
 public interface RestTrainerMapper {
+
     AssignedTrainerResponse toRest(AssignedTrainerDTO dto);
 
     TrainerCreateDTO toDto(TrainerCreateRequest request);

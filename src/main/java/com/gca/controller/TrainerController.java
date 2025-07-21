@@ -22,18 +22,18 @@ import static com.gca.controller.ApiConstant.BASE_PATH;
 @RequestMapping(BASE_PATH + "/trainers")
 @RequiredArgsConstructor
 public class TrainerController {
-    private final TrainingAppFacade trainingAppFacade;
+    private final TrainingAppFacade facade;
 
     @PostMapping("/register")
     public ResponseEntity<TrainerCreateResponse> registerTrainer(@RequestBody TrainerCreateRequest trainer) {
-        TrainerCreateResponse response = trainingAppFacade.createTrainer(trainer);
+        TrainerCreateResponse response = facade.createTrainer(trainer);
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{username}")
     public ResponseEntity<TrainerGetResponse> getTrainerByUsername(@PathVariable(name = "username") String username) {
-        TrainerGetResponse response = trainingAppFacade.getTrainerByUsername(username);
+        TrainerGetResponse response = facade.getTrainerByUsername(username);
 
         return ResponseEntity.ok(response);
     }
@@ -41,7 +41,7 @@ public class TrainerController {
     @PutMapping("/{username}")
     public ResponseEntity<TrainerUpdateResponse> updateTrainer(@PathVariable(name = "username") String username,
                                                                @RequestBody TrainerUpdateRequest trainer) {
-        TrainerUpdateResponse response = trainingAppFacade.updateTrainer(username, trainer);
+        TrainerUpdateResponse response = facade.updateTrainer(username, trainer);
 
         return ResponseEntity.ok(response);
     }

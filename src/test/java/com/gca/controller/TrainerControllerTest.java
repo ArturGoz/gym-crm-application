@@ -37,13 +37,13 @@ class TrainerControllerTest {
     private final String username = "ricardo.milos";
 
     @Mock
-    private TrainingAppFacade trainingAppFacade;
+    private TrainingAppFacade facade;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        TrainerController controller = new TrainerController(trainingAppFacade);
+        TrainerController controller = new TrainerController(facade);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -52,7 +52,7 @@ class TrainerControllerTest {
         TrainerCreateRequest request = GymTestProvider.createTrainerCreateRequest();
         TrainerCreateResponse response = GymTestProvider.createTrainerCreateResponse();
 
-        when(trainingAppFacade.createTrainer(any())).thenReturn(response);
+        when(facade.createTrainer(any())).thenReturn(response);
 
         mockMvc.perform(post(trainerRegisterApi)
                         .contentType(APPLICATION_JSON)
@@ -61,14 +61,14 @@ class TrainerControllerTest {
                 .andExpect(jsonPath("$.username").value(response.getUsername()))
                 .andExpect(jsonPath("$.password").value(response.getPassword()));
 
-        verify(trainingAppFacade).createTrainer(any());
+        verify(facade).createTrainer(any());
     }
 
     @Test
     void getTrainerByUsername_returnsTrainer() throws Exception {
         TrainerGetResponse response = GymTestProvider.createTrainerGetResponse();
 
-        when(trainingAppFacade.getTrainerByUsername(username)).thenReturn(response);
+        when(facade.getTrainerByUsername(username)).thenReturn(response);
 
         mockMvc.perform(get(format("%s/%s", trainerApi, username)))
                 .andExpect(status().isOk())
@@ -77,7 +77,7 @@ class TrainerControllerTest {
                 .andExpect(jsonPath("$.specialization").value(response.getSpecialization()))
                 .andExpect(jsonPath("$.isActive").value(response.getIsActive()));
 
-        verify(trainingAppFacade).getTrainerByUsername(username);
+        verify(facade).getTrainerByUsername(username);
     }
 
     @Test
@@ -85,7 +85,7 @@ class TrainerControllerTest {
         TrainerUpdateRequest request = GymTestProvider.createTrainerUpdateRequest();
         TrainerUpdateResponse response = GymTestProvider.createTrainerUpdateResponse();
 
-        when(trainingAppFacade.updateTrainer(eq(username), any())).thenReturn(response);
+        when(facade.updateTrainer(eq(username), any())).thenReturn(response);
 
         mockMvc.perform(put(format("%s/%s", trainerApi, username))
                         .contentType(APPLICATION_JSON)
@@ -98,6 +98,6 @@ class TrainerControllerTest {
                 .andExpect(jsonPath("$.isActive").value(response.getIsActive()))
                 .andExpect(jsonPath("$.trainees.length()").value(response.getTrainees().size()));
 
-        verify(trainingAppFacade).updateTrainer(eq(username), any());
+        verify(facade).updateTrainer(eq(username), any());
     }
 }
