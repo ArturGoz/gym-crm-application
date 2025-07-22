@@ -1,20 +1,23 @@
 package com.gca.service.impl;
 
-import com.gca.utils.GymTestProvider;
 import com.gca.dao.TraineeDAO;
 import com.gca.dao.TrainerDAO;
 import com.gca.dao.TrainingDAO;
 import com.gca.dao.TrainingTypeDAO;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
-import com.gca.dto.training.TrainingCreateRequest;
+import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
 import com.gca.exception.ServiceException;
+import com.gca.mapper.TraineeMapper;
 import com.gca.mapper.TrainingMapper;
+import com.gca.mapper.rest.RestTrainingMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
+import com.gca.openapi.model.TrainingTypeResponse;
+import com.gca.utils.GymTestProvider;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -58,19 +61,19 @@ class TrainingServiceImplTest {
 
     @Test
     void createTraining_success() {
-        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
+        TrainingCreateDTO request = GymTestProvider.createTrainingCreateRequestDTO();
         Training training = GymTestProvider.constructTrainingWithoutId();
         Training created = GymTestProvider.constructTraining();
         TrainingDTO expected = GymTestProvider.constructTrainingResponse();
 
         Trainer trainer = GymTestProvider.constructTrainer();
         Trainee trainee = GymTestProvider.constructTrainee();
-        TrainingType type = GymTestProvider.constructTrainingType();
+        TrainingType type = GymTestProvider.createTrainingTypeStrength();
 
         when(mapper.toEntity(request)).thenReturn(training);
-        when(trainerDAO.getById(anyLong())).thenReturn(trainer);
-        when(traineeDAO.getById(anyLong())).thenReturn(trainee);
-        when(trainingTypeDAO.getById(anyLong())).thenReturn(type);
+        when(trainerDAO.findByUsername(request.getTrainerUsername())).thenReturn(trainer);
+        when(traineeDAO.findByUsername(request.getTraineeUsername())).thenReturn(trainee);
+        when(trainingTypeDAO.getByName(request.getTrainingName())).thenReturn(type);
 
         when(dao.create(any(Training.class))).thenReturn(created);
         when(mapper.toResponse(any(Training.class))).thenReturn(expected);
@@ -79,9 +82,9 @@ class TrainingServiceImplTest {
 
         assertEquals(expected, actual);
         verify(mapper).toEntity(request);
-        verify(trainerDAO).getById(anyLong());
-        verify(traineeDAO).getById(anyLong());
-        verify(trainingTypeDAO).getById(anyLong());
+        verify(trainerDAO).findByUsername(anyString());
+        verify(traineeDAO).findByUsername(anyString());
+        verify(trainingTypeDAO).getByName(anyString());
         verify(dao).create(any(Training.class));
         verify(mapper).toResponse(any(Training.class));
     }
@@ -123,7 +126,8 @@ class TrainingServiceImplTest {
                 .trainerId(null)
                 .build();
 
-        ServiceException ex = assertThrows(ServiceException.class, () -> service.getTrainerTrainings(filter));
+        ServiceException ex = assertThrows(ServiceException.class,
+                () -> service.getTrainerTrainings(filter));
 
         assertEquals("Trainer ID must be provided", ex.getMessage());
         verifyNoInteractions(trainerDAO);
@@ -169,7 +173,8 @@ class TrainingServiceImplTest {
                 .traineeId(null)
                 .build();
 
-        ServiceException ex = assertThrows(ServiceException.class, () -> service.getTraineeTrainings(filter));
+        ServiceException ex = assertThrows(ServiceException.class,
+                () -> service.getTraineeTrainings(filter));
 
         assertEquals("Trainee ID must be provided", ex.getMessage());
         verifyNoInteractions(traineeDAO);
@@ -178,38 +183,43 @@ class TrainingServiceImplTest {
 
     @Test
     void createTraining_shouldThrow_whenTrainerNotFound() {
-        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
+        TrainingCreateDTO request = GymTestProvider.createTrainingCreateRequestDTO();
 
-        when(trainerDAO.getById(anyLong())).thenReturn(null);
+        when(trainerDAO.findByUsername(anyString())).thenReturn(null);
 
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.createTraining(request));
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.createTraining(request));
 
-        assertTrue(ex.getMessage().contains("Trainer with ID"));
+        assertTrue(ex.getMessage().contains("Trainer with username"));
     }
 
     @Test
     void createTraining_shouldThrow_whenTrainingTypeNotFound() {
-        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
+        TrainingCreateDTO request = GymTestProvider.createTrainingCreateRequestDTO();
 
-        when(trainerDAO.getById(request.getTrainerId())).thenReturn(GymTestProvider.constructTrainer());
-        when(traineeDAO.getById(request.getTraineeId())).thenReturn(GymTestProvider.constructTrainee());
-        when(trainingTypeDAO.getById(request.getTrainingTypeId())).thenReturn(null);
+        when(trainerDAO.findByUsername(request.getTrainerUsername()))
+                .thenReturn(GymTestProvider.constructTrainer());
+        when(traineeDAO.findByUsername(request.getTraineeUsername()))
+                .thenReturn(GymTestProvider.constructTrainee());
+        when(trainingTypeDAO.getByName(request.getTrainingName())).thenReturn(null);
 
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.createTraining(request));
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.createTraining(request));
 
-        assertTrue(ex.getMessage().contains("Training type with ID"));
+        assertTrue(ex.getMessage().contains("Training type with name"));
     }
 
     @Test
     void createTraining_shouldThrow_whenTraineeNotFound() {
-        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
+        TrainingCreateDTO request = GymTestProvider.createTrainingCreateRequestDTO();
 
-        when(trainerDAO.getById(request.getTrainerId())).thenReturn(GymTestProvider.constructTrainer());
-        when(traineeDAO.getById(request.getTraineeId())).thenReturn(null);
+        when(trainerDAO.findByUsername(request.getTrainerUsername()))
+                .thenReturn(GymTestProvider.constructTrainer());
+        when(traineeDAO.findByUsername(request.getTraineeUsername())).thenReturn(null);
 
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.createTraining(request));
+        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
+                () -> service.createTraining(request));
 
-        assertTrue(ex.getMessage().contains("Trainee with ID"));
+        assertTrue(ex.getMessage().contains("Trainee with username"));
     }
-
 }

@@ -9,6 +9,8 @@ import com.gca.dto.trainer.TrainerGetDTO;
 import com.gca.dto.trainer.TrainerUpdateResponseDTO;
 import com.gca.dto.user.UserCredentialsDTO;
 import com.gca.mapper.rest.RestTrainerMapper;
+import com.gca.mapper.rest.RestTrainingMapper;
+import com.gca.model.TrainingType;
 import com.gca.openapi.model.AssignedTrainerResponse;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
@@ -20,6 +22,8 @@ import com.gca.openapi.model.TrainerCreateResponse;
 import com.gca.openapi.model.TrainerGetResponse;
 import com.gca.openapi.model.TrainerUpdateRequest;
 import com.gca.openapi.model.TrainerUpdateResponse;
+import com.gca.openapi.model.TrainingCreateRequest;
+import com.gca.openapi.model.TrainingTypeResponse;
 import com.gca.utils.GymTestProvider;
 import com.gca.dto.PasswordChangeRequest;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
@@ -27,7 +31,7 @@ import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainer.TrainerCreateDTO;
 import com.gca.dto.trainer.TrainerUpdateRequestDTO;
-import com.gca.dto.training.TrainingCreateRequest;
+import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
 import com.gca.mapper.rest.RestTraineeMapper;
 import com.gca.openapi.model.TraineeCreateRequest;
@@ -68,6 +72,9 @@ class TrainingAppFacadeTest {
 
     @Mock
     private RestTrainerMapper restTrainerMapper;
+
+    @Mock
+    private RestTrainingMapper restTrainingMapper;
 
     @InjectMocks
     private TrainingAppFacade facade;
@@ -152,17 +159,15 @@ class TrainingAppFacadeTest {
 
     @Test
     void createTraining_delegatesToService() {
-        TrainingCreateRequest request = GymTestProvider.createTrainingCreateRequest();
-        TrainingDTO expected = GymTestProvider.constructTrainingResponse();
+        TrainingCreateRequest restRequest = GymTestProvider.createTrainingCreateRequest();
+        TrainingCreateDTO dto = GymTestProvider.createTrainingCreateRequestDTO();
 
-        when(trainingService.createTraining(request)).thenReturn(expected);
+        when(restTrainingMapper.toDto(restRequest)).thenReturn(dto);
 
-        TrainingDTO actual = facade.createTraining(request);
+        facade.createTraining(restRequest);
 
-        assertEquals(expected, actual);
-        assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getDate(), actual.getDate());
-        verify(trainingService).createTraining(request);
+        verify(restTrainingMapper).toDto(restRequest);
+        verify(trainingService).createTraining(dto);
     }
 
     @Test
@@ -297,5 +302,30 @@ class TrainingAppFacadeTest {
         verify(traineeService).updateTraineeTrainers(updateDTO);
         verify(restTrainerMapper).toRest(trainer1);
         verify(restTrainerMapper).toRest(trainer2);
+    }
+
+    @Test
+    void getAllTrainingTypes_delegatesToService() {
+        TrainingType type1 = GymTestProvider.createTrainingTypeYoga();
+        TrainingType type2 = GymTestProvider.createTrainingTypeStrength();
+
+        TrainingTypeResponse response1 =
+                GymTestProvider.createTrainingTypeResponse("Yoga", 1);
+        TrainingTypeResponse response2 =
+                GymTestProvider.createTrainingTypeResponse("Strength", 2);
+
+        List<TrainingType> typeList = List.of(type1, type2);
+        List<TrainingTypeResponse> expectedResponses = List.of(response1, response2);
+
+        when(trainingService.getAllTrainingTypes()).thenReturn(typeList);
+        when(restTrainingMapper.toRest(type1)).thenReturn(response1);
+        when(restTrainingMapper.toRest(type2)).thenReturn(response2);
+
+        List<TrainingTypeResponse> actual = facade.getAllTrainingTypes();
+
+        assertEquals(expectedResponses, actual);
+        verify(trainingService).getAllTrainingTypes();
+        verify(restTrainingMapper).toRest(type1);
+        verify(restTrainingMapper).toRest(type2);
     }
 }

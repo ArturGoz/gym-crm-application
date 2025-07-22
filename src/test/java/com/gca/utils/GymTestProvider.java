@@ -12,7 +12,7 @@ import com.gca.dto.trainer.TrainerCreateDTO;
 import com.gca.dto.trainer.TrainerGetDTO;
 import com.gca.dto.trainer.TrainerUpdateRequestDTO;
 import com.gca.dto.trainer.TrainerUpdateResponseDTO;
-import com.gca.dto.training.TrainingCreateRequest;
+import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
 import com.gca.dto.user.UserCreateDTO;
 import com.gca.dto.user.UserCredentialsDTO;
@@ -35,6 +35,8 @@ import com.gca.openapi.model.TrainerCreateResponse;
 import com.gca.openapi.model.TrainerGetResponse;
 import com.gca.openapi.model.TrainerUpdateRequest;
 import com.gca.openapi.model.TrainerUpdateResponse;
+import com.gca.openapi.model.TrainingCreateRequest;
+import com.gca.openapi.model.TrainingTypeResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -233,14 +235,13 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingCreateRequest createTrainingCreateRequest() {
-        return TrainingCreateRequest.builder()
-                .trainerId(1L)
-                .traineeId(1L)
-                .trainingTypeId(1L)
-                .date(LocalDate.of(2025, 7, 4))
+    public static TrainingCreateDTO createTrainingCreateRequestDTO() {
+        return TrainingCreateDTO.builder()
+                .trainerUsername("arnold.schwarzenegger")
+                .traineeUsername("arnold.schwarzenegger1")
+                .trainingName("Strength")
+                .trainingDate(LocalDate.of(2025, 7, 4))
                 .duration(60L)
-                .name("Cardio Session")
                 .build();
     }
 
@@ -291,10 +292,17 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingType constructTrainingType() {
+    public static TrainingType createTrainingTypeStrength() {
         return TrainingType.builder()
                 .id(1L)
                 .name("Strength")
+                .build();
+    }
+
+    public static TrainingType createTrainingTypeYoga() {
+        return TrainingType.builder()
+                .id(2L)
+                .name("Yoga")
                 .build();
     }
 
@@ -437,6 +445,25 @@ public class GymTestProvider {
         response.setFirstName("Arnold");
         response.setLastName("Schwarzenegger");
         response.setUsername("arnold.schwarzenegger");
+
+        return response;
+    }
+
+    public static TrainingCreateRequest createTrainingCreateRequest() {
+        TrainingCreateRequest request = new TrainingCreateRequest();
+        request.setTrainerUsername("arnold.schwarzenegger");
+        request.setTraineeUsername("arnold.schwarzenegger1");
+        request.setTrainingName("Strength");
+        request.setTrainingDate(LocalDate.of(2025, 7, 4));
+        request.setDuration(60);
+
+        return request;
+    }
+
+    public static TrainingTypeResponse createTrainingTypeResponse(String trainingTypeName, Integer trainingTypeId) {
+        TrainingTypeResponse response = new TrainingTypeResponse();
+        response.setName(trainingTypeName);
+        response.setId(trainingTypeId);
 
         return response;
     }
