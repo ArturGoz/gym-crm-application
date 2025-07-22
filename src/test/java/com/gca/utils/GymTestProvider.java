@@ -455,12 +455,21 @@ public class GymTestProvider {
 
     public static TrainingGetResponse createTrainingGetResponse() {
         TrainingGetResponse response = new TrainingGetResponse();
-        response.setTraineeName("Arnold");
-        response.setTrainerName("Ronnie");
+        response.setTraineeName("arnold.schwarzenegger");
+        response.setTrainerName("arnold.schwarzenegger1");
         response.setTrainingName("Strength");
         response.setTrainingDate(LocalDate.of(2025, 7, 4));
         response.setTrainingDuration(60);
 
         return response;
+    }
+
+    public static TrainingTrainerCriteriaFilter createTrainingTrainerCriteriaFilter() {
+        return TrainingTrainerCriteriaFilter.builder()
+                .traineeName("arnold.schwarzenegger")
+                .trainerUsername("arnold.schwarzenegger1")
+                .fromDate(LocalDate.of(2024, 1, 1))
+                .toDate(LocalDate.of(2024, 12, 31))
+                .build();
     }
 }
