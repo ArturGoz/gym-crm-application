@@ -1,41 +1,44 @@
 package com.gca.controller;
 
+import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
+import com.gca.facade.TrainingAppFacade;
 import com.gca.openapi.model.AssignedTrainerResponse;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
+import com.gca.openapi.model.TraineeCreateRequest;
+import com.gca.openapi.model.TraineeCreateResponse;
 import com.gca.openapi.model.TraineeGetResponse;
 import com.gca.openapi.model.TraineeUpdateRequest;
 import com.gca.openapi.model.TraineeUpdateResponse;
+import com.gca.openapi.model.TrainingGetResponse;
 import com.gca.utils.GymTestProvider;
-import com.gca.facade.TrainingAppFacade;
-import com.gca.openapi.model.TraineeCreateRequest;
-import com.gca.openapi.model.TraineeCreateResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
 import static com.gca.controller.ApiConstant.BASE_PATH;
 import static com.gca.utils.JsonUtils.asJsonString;
+import static com.gca.utils.JsonUtils.assertJsonDate;
 import static com.gca.utils.JsonUtils.readJson;
 import static java.lang.String.format;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 @ExtendWith(MockitoExtension.class)
 class TraineeControllerTest {
@@ -144,5 +147,28 @@ class TraineeControllerTest {
                 .andExpect(jsonPath("$[0].username").value(trainers.get(0).getUsername()));
 
         verify(facade).getUnassignedTrainers(username);
+    }
+
+    @Test
+    void getTraineeTrainings_returnsFilteredTrainings() throws Exception {
+        TrainingTraineeCriteriaFilter filter = GymTestProvider.createTrainingTraineeCriteriaFilter();
+        List<TrainingGetResponse> responses = List.of(GymTestProvider.createTrainingGetResponse());
+
+        when(facade.findFilteredTrainings(filter)).thenReturn(responses);
+
+        ResultActions resultActions = mockMvc.perform(get(format("%s/%s/trainings", traineeApi, "arnold.schwarzenegger1"))
+                        .param("username", filter.getTraineeUsername())
+                        .param("periodFrom", filter.getFromDate().toString())
+                        .param("periodTo", filter.getToDate().toString())
+                        .param("trainerName", filter.getTrainerName())
+                        .param("trainingType", filter.getTrainingTypeName()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(responses.size()))
+                .andExpect(jsonPath("$[0].traineeName").value(responses.get(0).getTraineeName()))
+                .andExpect(jsonPath("$[0].trainerName").value(responses.get(0).getTrainerName()))
+                .andExpect(jsonPath("$[0].trainingName").value(responses.get(0).getTrainingName()))
+                .andExpect(jsonPath("$[0].trainingDuration").value(responses.get(0).getTrainingDuration()));
+
+        assertJsonDate(resultActions, "$[0].trainingDate", responses.get(0).getTrainingDate());
     }
 }

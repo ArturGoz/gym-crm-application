@@ -84,10 +84,10 @@ public class TraineeController {
     @GetMapping("/{username}/trainings")
     public ResponseEntity<List<TrainingGetResponse>> getTraineeTrainings(
             @PathVariable(name = "username") String username,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodFrom,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodTo,
-            @RequestParam(required = false) String trainerName,
-            @RequestParam(required = false) String trainingType) {
+            @RequestParam(name = "periodFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodFrom,
+            @RequestParam(name = "periodTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate periodTo,
+            @RequestParam(name = "trainerName", required = false) String trainerName,
+            @RequestParam(name = "trainingType", required = false) String trainingType) {
 
         TrainingTraineeCriteriaFilter criteria = new TrainingTraineeCriteriaFilter();
         criteria.setTraineeUsername(username);

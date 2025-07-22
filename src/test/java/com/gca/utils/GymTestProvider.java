@@ -472,4 +472,14 @@ public class GymTestProvider {
                 .toDate(LocalDate.of(2024, 12, 31))
                 .build();
     }
+
+    public static TrainingTraineeCriteriaFilter createTrainingTraineeCriteriaFilter() {
+        return TrainingTraineeCriteriaFilter.builder()
+                .trainerName("arnold.schwarzenegger")
+                .traineeUsername("arnold.schwarzenegger1")
+                .trainingTypeName("Strength")
+                .fromDate(LocalDate.of(2024, 1, 1))
+                .toDate(LocalDate.of(2024, 12, 31))
+                .build();
+    }
 }

@@ -15,12 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
 import static com.gca.controller.ApiConstant.BASE_PATH;
 import static com.gca.utils.JsonUtils.asJsonString;
+import static com.gca.utils.JsonUtils.assertJsonDate;
 import static java.lang.String.format;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -112,7 +114,7 @@ class TrainerControllerTest {
 
         when(facade.findFilteredTrainings(filter)).thenReturn(responses);
 
-        mockMvc.perform(get(format("%s/%s/trainings", trainerApi, "arnold.schwarzenegger1"))
+        ResultActions resultActions = mockMvc.perform(get(format("%s/%s/trainings", trainerApi, "arnold.schwarzenegger1"))
                         .param("username", filter.getTrainerUsername())
                         .param("periodFrom", filter.getFromDate().toString())
                         .param("periodTo", filter.getToDate().toString())
@@ -122,7 +124,8 @@ class TrainerControllerTest {
                 .andExpect(jsonPath("$[0].traineeName").value(responses.get(0).getTraineeName()))
                 .andExpect(jsonPath("$[0].trainerName").value(responses.get(0).getTrainerName()))
                 .andExpect(jsonPath("$[0].trainingName").value(responses.get(0).getTrainingName()))
-                .andExpect(jsonPath("$[0].trainingDate").value(responses.get(0).getTrainingDate().toString()))
                 .andExpect(jsonPath("$[0].trainingDuration").value(responses.get(0).getTrainingDuration()));
+
+        assertJsonDate(resultActions, "$[0].trainingDate", responses.get(0).getTrainingDate());
     }
 }
