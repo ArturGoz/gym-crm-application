@@ -6,6 +6,7 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
+import com.gca.model.User;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -42,10 +43,9 @@ class TrainingMapperTest {
         TrainingDTO actual = mapper.toResponse(training);
 
         assertNotNull(actual);
-        assertEquals(10L, actual.getId());
-        assertEquals(LocalDate.of(2025, 6, 29), actual.getDate());
-        assertEquals(120L, actual.getDuration());
-        assertEquals("Morning Yoga", actual.getName());
+        assertEquals(training.getName(), actual.getTrainingName());
+        assertEquals(training.getDate(), actual.getTrainingDate());
+        assertEquals(training.getTrainer().getUser().getUsername(), actual.getTrainerName());
     }
 
     private static TrainingCreateDTO buildTrainingCreateDTO() {
@@ -73,12 +73,14 @@ class TrainingMapperTest {
     private static Trainer buildTrainer() {
         return Trainer.builder()
                 .id(TRAINER_ID)
+                .user(buildUser(TRAINER_ID, "arnold.schwarzenegger"))
                 .build();
     }
 
     private static Trainee buildTrainee() {
         return Trainee.builder()
                 .id(TRAINEE_ID)
+                .user(buildUser(TRAINEE_ID, "ronnie.coleman"))
                 .build();
     }
 
@@ -86,6 +88,13 @@ class TrainingMapperTest {
         return TrainingType.builder()
                 .id(TYPE_ID)
                 .name(TYPE_NAME_YOGA)
+                .build();
+    }
+
+    private static User buildUser(Long id, String username) {
+        return User.builder()
+                .id(id)
+                .username(username)
                 .build();
     }
 }

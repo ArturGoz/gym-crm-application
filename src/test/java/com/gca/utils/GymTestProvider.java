@@ -259,13 +259,11 @@ public class GymTestProvider {
 
     public static TrainingDTO constructTrainingResponse() {
         return TrainingDTO.builder()
-                .id(1L)
-                .trainerId(1L)
-                .traineeId(1L)
-                .trainingTypeId(1L)
-                .date(LocalDate.of(2025, 7, 4))
-                .duration(60L)
-                .name("Cardio Session")
+                .traineeName("Arnold")
+                .trainerName("Ronnie")
+                .trainingName("Strength")
+                .trainingDate(LocalDate.of(2025, 7, 4))
+                .trainingDuration(60L)
                 .build();
     }
 
@@ -303,17 +301,17 @@ public class GymTestProvider {
 
     public static TrainingTraineeCriteriaFilter buildTraineeCriteriaFilter() {
         return TrainingTraineeCriteriaFilter.builder()
-                .traineeId(1L)
+                .traineeUsername("arnold.schwarzenegger")
                 .fromDate(LocalDate.of(2025, 7, 1))
                 .toDate(LocalDate.of(2025, 7, 31))
-                .trainerName("arnold.schwarzenegger")
+                .trainerName("ronnie.coleman")
                 .trainingTypeName("Yoga")
                 .build();
     }
 
     public static TrainingTrainerCriteriaFilter buildTrainerCriteriaFilter() {
         return TrainingTrainerCriteriaFilter.builder()
-                .trainerId(1L)
+                .trainerUsername("arnold.schwarzenegger")
                 .fromDate(LocalDate.of(2025, 7, 1))
                 .toDate(LocalDate.of(2025, 7, 31))
                 .traineeName("arnold.schwarzenegger")

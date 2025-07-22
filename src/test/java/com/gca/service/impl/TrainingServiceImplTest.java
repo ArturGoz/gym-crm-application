@@ -94,7 +94,7 @@ class TrainingServiceImplTest {
         TrainingDTO response = GymTestProvider.constructTrainingResponse();
         Trainer trainer = new Trainer();
 
-        when(trainerDAO.getById(1L)).thenReturn(trainer);
+        when(trainerDAO.findByUsername(filter.getTrainerUsername())).thenReturn(trainer);
         when(dao.getTrainerTrainings(
                 eq(trainer),
                 eq(filter.getFromDate()),
@@ -107,7 +107,7 @@ class TrainingServiceImplTest {
 
         assertEquals(1, actual.size());
         assertEquals(response, actual.get(0));
-        verify(trainerDAO).getById(1L);
+        verify(trainerDAO).findByUsername(anyString());
         verify(dao).getTrainerTrainings(
                 trainer,
                 filter.getFromDate(),
@@ -120,13 +120,13 @@ class TrainingServiceImplTest {
     @Test
     void getTrainerTrainings_shouldThrow_whenIdNull() {
         TrainingTrainerCriteriaFilter filter = TrainingTrainerCriteriaFilter.builder()
-                .trainerId(null)
+                .trainerUsername(null)
                 .build();
 
         ServiceException ex = assertThrows(ServiceException.class,
                 () -> service.getTrainerTrainings(filter));
 
-        assertEquals("Trainer ID must be provided", ex.getMessage());
+        assertEquals("Trainer username must be provided", ex.getMessage());
         verifyNoInteractions(trainerDAO);
         verifyNoInteractions(dao);
     }
@@ -139,7 +139,7 @@ class TrainingServiceImplTest {
         TrainingDTO expected = GymTestProvider.constructTrainingResponse();
         Trainee trainee = new Trainee();
 
-        when(traineeDAO.getById(1L)).thenReturn(trainee);
+        when(traineeDAO.findByUsername(filter.getTraineeUsername())).thenReturn(trainee);
         when(dao.getTraineeTrainings(
                 eq(trainee),
                 eq(filter.getFromDate()),
@@ -153,7 +153,7 @@ class TrainingServiceImplTest {
 
         assertEquals(1, actual.size());
         assertEquals(expected, actual.get(0));
-        verify(traineeDAO).getById(1L);
+        verify(traineeDAO).findByUsername(anyString());
         verify(dao).getTraineeTrainings(
                 trainee,
                 filter.getFromDate(),
@@ -167,13 +167,13 @@ class TrainingServiceImplTest {
     @Test
     void getTraineeTrainings_shouldThrow_whenIdNull() {
         TrainingTraineeCriteriaFilter filter = TrainingTraineeCriteriaFilter.builder()
-                .traineeId(null)
+                .traineeUsername(null)
                 .build();
 
         ServiceException ex = assertThrows(ServiceException.class,
                 () -> service.getTraineeTrainings(filter));
 
-        assertEquals("Trainee ID must be provided", ex.getMessage());
+        assertEquals("Trainee username must be provided", ex.getMessage());
         verifyNoInteractions(traineeDAO);
         verifyNoInteractions(dao);
     }

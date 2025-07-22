@@ -14,9 +14,11 @@ public interface TrainingMapper {
     @Mapping(source = "trainingName", target = "name")
     Training toEntity(TrainingCreateDTO request);
 
-    @Mapping(source = "trainer.id", target = "trainerId")
-    @Mapping(source = "trainee.id", target = "traineeId")
-    @Mapping(source = "type.id", target = "trainingTypeId")
+    @Mapping(source = "trainer.user.username", target = "trainerName")
+    @Mapping(source = "trainee.user.username", target = "traineeName")
+    @Mapping(source = "name", target = "trainingName")
+    @Mapping(source = "duration", target = "trainingDuration")
+    @Mapping(source = "date", target = "trainingDate")
     TrainingDTO toResponse(Training training);
 }
 

@@ -31,6 +31,7 @@ import com.gca.openapi.model.TrainerGetResponse;
 import com.gca.openapi.model.TrainerUpdateRequest;
 import com.gca.openapi.model.TrainerUpdateResponse;
 import com.gca.openapi.model.TrainingCreateRequest;
+import com.gca.openapi.model.TrainingGetResponse;
 import com.gca.openapi.model.TrainingTypeResponse;
 import com.gca.security.Authenticated;
 import com.gca.service.TraineeService;
@@ -113,17 +114,25 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public List<TrainingDTO> findFilteredTrainings(TrainingTrainerCriteriaFilter filter) {
+    public List<TrainingGetResponse> findFilteredTrainings(TrainingTrainerCriteriaFilter filter) {
         logger.info("Facade: Retrieving trainings with filter {}", filter);
 
-        return trainingService.getTrainerTrainings(filter);
+        List<TrainingDTO> dtoList = trainingService.getTrainerTrainings(filter);
+
+        return dtoList.stream()
+                .map(restTrainingMapper::toRest)
+                .toList();
     }
 
     @Authenticated
-    public List<TrainingDTO> findFilteredTrainings(TrainingTraineeCriteriaFilter filter) {
+    public List<TrainingGetResponse> findFilteredTrainings(TrainingTraineeCriteriaFilter filter) {
         logger.info("Facade: Retrieving trainees with filter {}", filter);
 
-        return trainingService.getTraineeTrainings(filter);
+        List<TrainingDTO> dtoList = trainingService.getTraineeTrainings(filter);
+
+        return dtoList.stream()
+                .map(restTrainingMapper::toRest)
+                .toList();
     }
 
     @Authenticated

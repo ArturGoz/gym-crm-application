@@ -104,9 +104,9 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDTO> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainee");
 
-        Trainee trainee = Optional.ofNullable(filter.getTraineeId())
-                .map(traineeDAO::getById)
-                .orElseThrow(() -> new ServiceException("Trainee ID must be provided"));
+        Trainee trainee = Optional.ofNullable(filter.getTraineeUsername())
+                .map(traineeDAO::findByUsername)
+                .orElseThrow(() -> new ServiceException("Trainee username must be provided"));
 
         List<Training> trainings = trainingDAO.getTraineeTrainings(
                 trainee,
@@ -126,9 +126,9 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDTO> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainer");
 
-        Trainer trainer = Optional.ofNullable(filter.getTrainerId())
-                .map(trainerDAO::getById)
-                .orElseThrow(() -> new ServiceException("Trainer ID must be provided"));
+        Trainer trainer = Optional.ofNullable(filter.getTrainerUsername())
+                .map(trainerDAO::findByUsername)
+                .orElseThrow(() -> new ServiceException("Trainer username must be provided"));
 
         List<Training> trainings = trainingDAO.getTrainerTrainings(
                 trainer,

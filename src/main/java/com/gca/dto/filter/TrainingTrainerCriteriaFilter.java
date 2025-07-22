@@ -1,7 +1,6 @@
 package com.gca.dto.filter;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,9 +15,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class TrainingTrainerCriteriaFilter {
 
-    @NotNull(message = "Trainer ID must be provided")
-    @Positive(message = "Trainer ID must be positive")
-    private Long trainerId;
+    @NotBlank(message = "Username cannot be blank")
+    @Size(max = 50, message = "Trainer username must not exceed 50 characters")
+    private String trainerUsername;
 
     private LocalDate fromDate;
     private LocalDate toDate;

@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TrainingServiceIT extends AbstractServiceIT {
     @Autowired
@@ -76,10 +75,8 @@ public class TrainingServiceIT extends AbstractServiceIT {
 
         TrainingDTO actual = trainingService.createTraining(request);
 
-        assertNotNull(actual.getId());
-        assertEquals(type.getName(), actual.getName());
-        assertEquals(trainer.getId(), actual.getTrainerId());
-        assertEquals(trainee.getId(), actual.getTraineeId());
-        assertEquals(type.getId(), actual.getTrainingTypeId());
+        assertEquals(type.getName(), actual.getTrainingName());
+        assertEquals(trainer.getUser().getUsername(), actual.getTrainerName());
+        assertEquals(trainee.getUser().getUsername(), actual.getTraineeName());
     }
 }
