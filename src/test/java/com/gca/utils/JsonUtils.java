@@ -1,15 +1,12 @@
 package com.gca.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 
 import static java.lang.String.format;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class JsonUtils {
 
@@ -35,12 +32,5 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException(format("Failed to read JSON from '%s'", path), e);
         }
-    }
-
-    public static void assertJsonDate(ResultActions resultActions, String jsonPathPrefix, LocalDate expectedDate) throws Exception {
-        resultActions
-                .andExpect(jsonPath(jsonPathPrefix + "[0]").value(expectedDate.getYear()))
-                .andExpect(jsonPath(jsonPathPrefix + "[1]").value(expectedDate.getMonthValue()))
-                .andExpect(jsonPath(jsonPathPrefix + "[2]").value(expectedDate.getDayOfMonth()));
     }
 }

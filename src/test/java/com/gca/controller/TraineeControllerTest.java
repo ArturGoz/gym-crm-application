@@ -1,5 +1,7 @@
 package com.gca.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gca.config.AppConfig;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.facade.TrainingAppFacade;
 import com.gca.openapi.model.AssignedTrainerResponse;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,7 +28,6 @@ import java.util.List;
 
 import static com.gca.controller.ApiConstant.BASE_PATH;
 import static com.gca.utils.JsonUtils.asJsonString;
-import static com.gca.utils.JsonUtils.assertJsonDate;
 import static com.gca.utils.JsonUtils.readJson;
 import static java.lang.String.format;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,7 +57,11 @@ class TraineeControllerTest {
     @BeforeEach
     void setUp() {
         TraineeController controller = new TraineeController(facade);
-        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        ObjectMapper objectMapper = new AppConfig().objectMapper();
+
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
+                .build();
     }
 
     @Test
@@ -156,7 +162,7 @@ class TraineeControllerTest {
 
         when(facade.findFilteredTrainings(filter)).thenReturn(responses);
 
-        ResultActions resultActions = mockMvc.perform(get(format("%s/%s/trainings", traineeApi, "arnold.schwarzenegger1"))
+        mockMvc.perform(get(format("%s/%s/trainings", traineeApi, "arnold.schwarzenegger1"))
                         .param("username", filter.getTraineeUsername())
                         .param("periodFrom", filter.getFromDate().toString())
                         .param("periodTo", filter.getToDate().toString())
@@ -166,9 +172,9 @@ class TraineeControllerTest {
                 .andExpect(jsonPath("$.length()").value(responses.size()))
                 .andExpect(jsonPath("$[0].traineeName").value(responses.get(0).getTraineeName()))
                 .andExpect(jsonPath("$[0].trainerName").value(responses.get(0).getTrainerName()))
+                .andExpect(jsonPath("$[0].trainingDate").value(responses.get(0).getTrainingDate().toString()))
                 .andExpect(jsonPath("$[0].trainingName").value(responses.get(0).getTrainingName()))
                 .andExpect(jsonPath("$[0].trainingDuration").value(responses.get(0).getTrainingDuration()));
 
-        assertJsonDate(resultActions, "$[0].trainingDate", responses.get(0).getTrainingDate());
     }
 }
