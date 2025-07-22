@@ -24,7 +24,6 @@ import com.gca.model.User;
 import com.gca.openapi.model.AssignedTraineeResponse;
 import com.gca.openapi.model.AssignedTrainerResponse;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
-import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
 import com.gca.openapi.model.TraineeCreateRequest;
 import com.gca.openapi.model.TraineeCreateResponse;
 import com.gca.openapi.model.TraineeGetResponse;
