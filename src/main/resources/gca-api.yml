@@ -933,28 +933,28 @@ components:
     TrainingGetResponse:
       type: object
       properties:
+        traineeName:
+          type: string
+          description: Trainee's username
+          example: "ricardo.milos"
+        trainerName:
+          type: string
+          description: Trainer username
+          example: "ronnie.coleman"
         trainingName:
           type: string
-          description: Name of the training session
-          example: "Strength Training"
+          description: Name of the training type session
+          example: "Strength"
         trainingDate:
           type: string
           format: date
           description: Date of the training session
           example: "2025-07-01"
-        trainingType:
-          type: string
-          description: Type of training
-          example: "Cardio"
         trainingDuration:
           type: integer
           description: Duration of training in minutes
           minimum: 1
           example: 60
-        trainerName:
-          type: string
-          description: Name of the trainer
-          example: "Eren"
     ErrorResponse:
       type: object
       required:
