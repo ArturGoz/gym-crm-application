@@ -460,7 +460,7 @@ public class GymTestProvider {
         return request;
     }
 
-    public static TrainingTypeResponse createTrainingTypeResponse(String trainingTypeName, Integer trainingTypeId) {
+    public static TrainingTypeResponse createTrainingTypeResponse(Integer trainingTypeId, String trainingTypeName) {
         TrainingTypeResponse response = new TrainingTypeResponse();
         response.setName(trainingTypeName);
         response.setId(trainingTypeId);

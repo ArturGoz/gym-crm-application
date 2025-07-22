@@ -310,9 +310,9 @@ class TrainingAppFacadeTest {
         TrainingType type2 = GymTestProvider.createTrainingTypeStrength();
 
         TrainingTypeResponse response1 =
-                GymTestProvider.createTrainingTypeResponse("Yoga", 1);
+                GymTestProvider.createTrainingTypeResponse(1, "Yoga");
         TrainingTypeResponse response2 =
-                GymTestProvider.createTrainingTypeResponse("Strength", 2);
+                GymTestProvider.createTrainingTypeResponse(2, "Strength");
 
         List<TrainingType> typeList = List.of(type1, type2);
         List<TrainingTypeResponse> expectedResponses = List.of(response1, response2);
