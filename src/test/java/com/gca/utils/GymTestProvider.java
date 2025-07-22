@@ -207,10 +207,6 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TraineeUpdateRequestDTO createTraineeUpdateRequestDTO(String username) {
-        return createTraineeUpdateRequestDTO().toBuilder().username(username).build();
-    }
-
     public static Trainee constructTrainee() {
         return Trainee.builder()
                 .id(1L)
@@ -369,15 +365,6 @@ public class GymTestProvider {
         request.setTrainerUsernames(List.of("trainer1", "trainer2"));
 
         return request;
-    }
-
-    public static TraineeAssignedTrainersUpdateResponse createTraineeAssignedTrainersUpdateResponse() {
-        TraineeAssignedTrainersUpdateResponse response = new TraineeAssignedTrainersUpdateResponse();
-        AssignedTrainerResponse rest1 = GymTestProvider.createAssignedTrainerResponse("t1");
-        AssignedTrainerResponse rest2 = GymTestProvider.createAssignedTrainerResponse("t2");
-        response.setTrainers(List.of(rest1, rest2));
-
-        return response;
     }
 
     public static TrainerCreateRequest createTrainerCreateRequest() {
