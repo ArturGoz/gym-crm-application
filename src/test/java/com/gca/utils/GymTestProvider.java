@@ -35,6 +35,7 @@ import com.gca.openapi.model.TrainerGetResponse;
 import com.gca.openapi.model.TrainerUpdateRequest;
 import com.gca.openapi.model.TrainerUpdateResponse;
 import com.gca.openapi.model.TrainingCreateRequest;
+import com.gca.openapi.model.TrainingGetResponse;
 import com.gca.openapi.model.TrainingTypeResponse;
 
 import java.time.LocalDate;
@@ -257,7 +258,7 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingDTO constructTrainingResponse() {
+    public static TrainingDTO createTrainingDTO() {
         return TrainingDTO.builder()
                 .traineeName("Arnold")
                 .trainerName("Ronnie")
@@ -448,6 +449,17 @@ public class GymTestProvider {
         TrainingTypeResponse response = new TrainingTypeResponse();
         response.setName(trainingTypeName);
         response.setId(trainingTypeId);
+
+        return response;
+    }
+
+    public static TrainingGetResponse createTrainingGetResponse() {
+        TrainingGetResponse response = new TrainingGetResponse();
+        response.setTraineeName("Arnold");
+        response.setTrainerName("Ronnie");
+        response.setTrainingName("Strength");
+        response.setTrainingDate(LocalDate.of(2025, 7, 4));
+        response.setTrainingDuration(60);
 
         return response;
     }

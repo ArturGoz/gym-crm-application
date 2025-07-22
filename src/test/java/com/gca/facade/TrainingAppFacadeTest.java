@@ -1,6 +1,8 @@
 package com.gca.facade;
 
 import com.gca.dto.PasswordChangeRequest;
+import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
+import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeGetDTO;
 import com.gca.dto.trainee.TraineeTrainersUpdateDTO;
@@ -12,6 +14,7 @@ import com.gca.dto.trainer.TrainerGetDTO;
 import com.gca.dto.trainer.TrainerUpdateRequestDTO;
 import com.gca.dto.trainer.TrainerUpdateResponseDTO;
 import com.gca.dto.training.TrainingCreateDTO;
+import com.gca.dto.training.TrainingDTO;
 import com.gca.dto.user.UserCredentialsDTO;
 import com.gca.mapper.rest.RestTraineeMapper;
 import com.gca.mapper.rest.RestTrainerMapper;
@@ -31,6 +34,7 @@ import com.gca.openapi.model.TrainerGetResponse;
 import com.gca.openapi.model.TrainerUpdateRequest;
 import com.gca.openapi.model.TrainerUpdateResponse;
 import com.gca.openapi.model.TrainingCreateRequest;
+import com.gca.openapi.model.TrainingGetResponse;
 import com.gca.openapi.model.TrainingTypeResponse;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
@@ -179,28 +183,40 @@ class TrainingAppFacadeTest {
 
     @Test
     void findFilteredTrainings_byTrainerCriteria_delegatesToService() {
-/*        TrainingTrainerCriteriaFilter filter = GymTestProvider.buildTrainerCriteriaFilter();
-        List<TrainingDTO> expected = List.of(GymTestProvider.constructTrainingResponse());
+        TrainingTrainerCriteriaFilter filter = GymTestProvider.buildTrainerCriteriaFilter();
 
-        when(trainingService.getTrainerTrainings(filter)).thenReturn(expected);
+        TrainingDTO trainingDTO = GymTestProvider.createTrainingDTO();
+        TrainingGetResponse expectedResponse = GymTestProvider.createTrainingGetResponse();
+        List<TrainingDTO> dtoList = List.of(trainingDTO);
+        List<TrainingGetResponse> expected = List.of(expectedResponse);
 
-        List<TrainingDTO> actual = facade.findFilteredTrainings(filter);
+        when(trainingService.getTrainerTrainings(filter)).thenReturn(dtoList);
+        when(restTrainingMapper.toRest(trainingDTO)).thenReturn(expectedResponse);
+
+        List<TrainingGetResponse> actual = facade.findFilteredTrainings(filter);
 
         assertEquals(expected, actual);
-        verify(trainingService).getTrainerTrainings(filter);*/
+        verify(trainingService).getTrainerTrainings(filter);
+        verify(restTrainingMapper).toRest(trainingDTO);
     }
 
     @Test
     void findFilteredTrainings_byTraineeCriteria_delegatesToService() {
-/*        TrainingTraineeCriteriaFilter filter = GymTestProvider.buildTraineeCriteriaFilter();
-        List<TrainingDTO> expected = List.of(GymTestProvider.constructTrainingResponse());
+        TrainingTraineeCriteriaFilter filter = GymTestProvider.buildTraineeCriteriaFilter();
 
-        when(trainingService.getTraineeTrainings(filter)).thenReturn(expected);
+        TrainingDTO trainingDTO = GymTestProvider.createTrainingDTO();
+        TrainingGetResponse expectedResponse = GymTestProvider.createTrainingGetResponse();
+        List<TrainingDTO> dtoList = List.of(trainingDTO);
+        List<TrainingGetResponse> expected = List.of(expectedResponse);
 
-        List<TrainingDTO> actual = facade.findFilteredTrainings(filter);
+        when(trainingService.getTraineeTrainings(filter)).thenReturn(dtoList);
+        when(restTrainingMapper.toRest(trainingDTO)).thenReturn(expectedResponse);
+
+        List<TrainingGetResponse> actual = facade.findFilteredTrainings(filter);
 
         assertEquals(expected, actual);
-        verify(trainingService).getTraineeTrainings(filter);*/
+        verify(trainingService).getTraineeTrainings(filter);
+        verify(restTrainingMapper).toRest(trainingDTO);
     }
 
     @Test

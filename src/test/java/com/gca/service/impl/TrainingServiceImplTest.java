@@ -61,7 +61,7 @@ class TrainingServiceImplTest {
         TrainingCreateDTO request = GymTestProvider.createTrainingCreateRequestDTO();
         Training training = GymTestProvider.constructTrainingWithoutId();
         Training created = GymTestProvider.constructTraining();
-        TrainingDTO expected = GymTestProvider.constructTrainingResponse();
+        TrainingDTO expected = GymTestProvider.createTrainingDTO();
 
         Trainer trainer = GymTestProvider.constructTrainer();
         Trainee trainee = GymTestProvider.constructTrainee();
@@ -91,7 +91,7 @@ class TrainingServiceImplTest {
         TrainingTrainerCriteriaFilter filter = GymTestProvider.buildTrainerCriteriaFilter();
         Training training = GymTestProvider.constructTraining();
         List<Training> trainings = Collections.singletonList(training);
-        TrainingDTO response = GymTestProvider.constructTrainingResponse();
+        TrainingDTO response = GymTestProvider.createTrainingDTO();
         Trainer trainer = new Trainer();
 
         when(trainerDAO.findByUsername(filter.getTrainerUsername())).thenReturn(trainer);
@@ -136,7 +136,7 @@ class TrainingServiceImplTest {
         TrainingTraineeCriteriaFilter filter = GymTestProvider.buildTraineeCriteriaFilter();
         Training training = GymTestProvider.constructTraining();
         List<Training> trainings = Collections.singletonList(training);
-        TrainingDTO expected = GymTestProvider.constructTrainingResponse();
+        TrainingDTO expected = GymTestProvider.createTrainingDTO();
         Trainee trainee = new Trainee();
 
         when(traineeDAO.findByUsername(filter.getTraineeUsername())).thenReturn(trainee);
