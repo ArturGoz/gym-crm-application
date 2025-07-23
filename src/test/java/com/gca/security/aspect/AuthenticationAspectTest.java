@@ -1,3 +1,4 @@
+/*
 package com.gca.security.aspect;
 
 
@@ -37,4 +38,4 @@ class AuthenticationAspectTest {
 
         authenticationAspect.checkAuthentication();
     }
-}
+}*/

@@ -3,6 +3,7 @@ package com.gca.controller;
 import com.gca.facade.TrainingAppFacade;
 import com.gca.openapi.model.LoginChangeRequest;
 import com.gca.openapi.model.LoginRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +20,8 @@ public class AuthController {
     private final TrainingAppFacade facade;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(LoginRequest request) {
-        facade.login(request);
+    public ResponseEntity<Void> login(LoginRequest request, HttpServletResponse response) {
+        facade.login(request, response);
 
         return ResponseEntity.ok().build();
     }

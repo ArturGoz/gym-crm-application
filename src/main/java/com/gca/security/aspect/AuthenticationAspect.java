@@ -2,14 +2,12 @@ package com.gca.security.aspect;
 
 import com.gca.exception.UserNotAuthenticatedException;
 import com.gca.model.User;
-import com.gca.security.AuthContextHolder;
+import com.gca.security.WebAuthHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Aspect
 @Component
@@ -17,14 +15,12 @@ import java.util.Optional;
 @Slf4j
 public class AuthenticationAspect {
 
-    private final AuthContextHolder authContextHolder;
+    private final WebAuthHelper webAuthHelper;
 
     @Before("@annotation(com.gca.security.Authenticated)")
     public void checkAuthentication() {
-        User currentUser = authContextHolder.getCurrentUser();
-
-        Optional.ofNullable(currentUser).orElseThrow(() ->
-                new UserNotAuthenticatedException("User not authenticated"));
+        User currentUser = webAuthHelper.getUserFromWeb()
+                .orElseThrow(() -> new UserNotAuthenticatedException("User not authenticated"));
 
         log.info("Authenticated user: {}", currentUser.getUsername());
     }

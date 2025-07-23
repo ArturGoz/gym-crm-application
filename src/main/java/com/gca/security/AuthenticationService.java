@@ -21,7 +21,6 @@ import java.util.Optional;
 public class AuthenticationService {
     private UserService userService;
     private UserDAO userDAO;
-    private AuthContextHolder authContextHolder;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -33,11 +32,6 @@ public class AuthenticationService {
         this.userDAO = userDAO;
     }
 
-    @Autowired
-    public void setAuthContextHolder(AuthContextHolder authContextHolder) {
-        this.authContextHolder = authContextHolder;
-    }
-
     public AuthenticationResponseDTO authenticate(@Valid AuthenticationRequestDTO request) {
         User user = userDAO.findByUsername(request.getUsername());
 
@@ -47,7 +41,7 @@ public class AuthenticationService {
             throw new UserNotAuthenticatedException("Wrong user credentials");
         }
 
-        authContextHolder.setCurrentUser(user);
+
 
         log.info("Authenticated user: {}", user.getUsername());
         return new AuthenticationResponseDTO("User authenticated successfully", true);

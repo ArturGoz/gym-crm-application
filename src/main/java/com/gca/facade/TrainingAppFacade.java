@@ -2,6 +2,7 @@ package com.gca.facade;
 
 import com.gca.dto.PasswordChangeDTO;
 import com.gca.dto.auth.AuthenticationRequestDTO;
+import com.gca.dto.auth.AuthenticationResponseDTO;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateDTO;
@@ -42,6 +43,8 @@ import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
 import com.gca.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,13 +67,21 @@ public class TrainingAppFacade {
     private final RestTrainerMapper restTrainerMapper;
     private final RestTrainingMapper restTrainingMapper;
 
-    public void login(LoginRequest loginRequest) {
+    public void login(LoginRequest loginRequest, HttpServletResponse response) {
         logger.info("Login request: {}", loginRequest);
 
         AuthenticationRequestDTO request =
                 new AuthenticationRequestDTO(loginRequest.getUsername(), loginRequest.getPassword());
+        AuthenticationResponseDTO responseDTO = authenticationService.authenticate(request);
 
-        authenticationService.authenticate(request);
+        if (responseDTO.isAuthenticated()) {
+            Cookie cookie = new Cookie("username", request.getUsername());
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(3600);
+            response.addCookie(cookie);
+        }
+
         logger.info("Authentication successful for user: {}", loginRequest.getUsername());
     }
 
