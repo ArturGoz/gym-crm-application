@@ -287,16 +287,17 @@ public class GymTestProvider {
     }
 
     public static TrainingType createTrainingTypeStrength() {
-        return TrainingType.builder()
-                .id(1L)
-                .name("Strength")
-                .build();
+        return createTrainingType(1L, "Strength");
     }
 
     public static TrainingType createTrainingTypeYoga() {
+        return createTrainingType(2L, "Yoga");
+    }
+
+    public static TrainingType createTrainingType(Long id, String name) {
         return TrainingType.builder()
-                .id(2L)
-                .name("Yoga")
+                .id(id)
+                .name(name)
                 .build();
     }
 

@@ -3,6 +3,7 @@ package com.gca.dao.impl;
 import com.gca.dao.BaseIntegrationTest;
 import com.gca.model.TrainingType;
 import com.github.database.rider.core.api.dataset.DataSet;
+import org.hibernate.Session;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -33,17 +34,18 @@ class TrainingTypeDAOImplTest extends BaseIntegrationTest<TrainingTypeDAOImpl> {
 
     @Test
     void shouldFindAllTrainingTypes() {
-        List<TrainingType> trainingTypes = dao.findAllTrainingTypes();
+        Session session = sessionFactory.getCurrentSession();
 
-        assertNotNull(trainingTypes, "List must not be null");
-        assertEquals(3, trainingTypes.size(), "Must return 3 training types");
+        List<TrainingType> expectedList = List.of(
+                session.find(TrainingType.class, 1L),
+                session.find(TrainingType.class, 2L),
+                session.find(TrainingType.class, 3L)
 
-        List<String> names = trainingTypes.stream()
-                .map(TrainingType::getName)
-                .toList();
+        );
+        List<TrainingType> actual = dao.findAllTrainingTypes();
 
-        assertTrue(names.contains("Yoga"), "Should contain Yoga");
-        assertTrue(names.contains("CrossFit"), "Should contain CrossFit");
-        assertTrue(names.contains("Pilates"), "Should contain Pilates");
+        assertNotNull(actual, "List must not be null");
+        assertEquals(3, actual.size(), "Must return 3 training types");
+        assertTrue(actual.containsAll(expectedList));
     }
 }

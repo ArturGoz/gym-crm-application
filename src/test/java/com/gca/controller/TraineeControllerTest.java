@@ -21,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
@@ -175,6 +174,5 @@ class TraineeControllerTest {
                 .andExpect(jsonPath("$[0].trainingDate").value(responses.get(0).getTrainingDate().toString()))
                 .andExpect(jsonPath("$[0].trainingName").value(responses.get(0).getTrainingName()))
                 .andExpect(jsonPath("$[0].trainingDuration").value(responses.get(0).getTrainingDuration()));
-
     }
 }
