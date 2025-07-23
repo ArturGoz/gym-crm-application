@@ -2,7 +2,7 @@ package com.gca.service.impl;
 
 import com.gca.dao.UserDAO;
 import com.gca.dao.transaction.Transactional;
-import com.gca.dto.PasswordChangeRequest;
+import com.gca.dto.PasswordChangeDTO;
 import com.gca.dto.user.UserCreateDTO;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
@@ -73,19 +73,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeUserPassword(@Valid PasswordChangeRequest passwordChangeRequest) {
-        Long userId = passwordChangeRequest.getUserId();
-        logger.debug("Changing password for user with ID: {}", userId);
+    public void changeUserPassword(@Valid PasswordChangeDTO passwordChangeDTO) {
+        String username = passwordChangeDTO.getUsername();
+        logger.debug("Changing password for user with username: {}", username);
 
-        User user = Optional.ofNullable(userDAO.getById(userId))
+        User user = Optional.ofNullable(userDAO.findByUsername(username))
                 .orElseThrow(() -> new EntityNotFoundException(
-                        format("User with ID %d not found", userId)
+                        format("User with username %s not found", username)
                 ));
+        if (!userProfileService.verifyPassword(passwordChangeDTO.getOldPassword(), user.getPassword())) {
+            throw new SecurityException("Old password is wrong");
+        }
 
-        user.setPassword(userProfileService.encryptPassword(passwordChangeRequest.getPassword()));
+        user.setPassword(userProfileService.encryptPassword(passwordChangeDTO.getNewPassword()));
         userDAO.update(user);
 
-        logger.info("Changed password for user with ID: {}", userId);
+        logger.info("Changed password for user with username: {}", username);
     }
 
     @Transactional

@@ -1,8 +1,8 @@
 package com.gca.security;
 
 import com.gca.dao.UserDAO;
-import com.gca.dto.auth.AuthenticationRequest;
-import com.gca.dto.auth.AuthenticationDTO;
+import com.gca.dto.auth.AuthenticationRequestDTO;
+import com.gca.dto.auth.AuthenticationResponseDTO;
 import com.gca.exception.UserNotAuthenticatedException;
 import com.gca.model.User;
 import com.gca.service.UserService;
@@ -44,14 +44,14 @@ class AuthenticationServiceTest {
 
     @Test
     void authenticate_successful() {
-        AuthenticationRequest request = new AuthenticationRequest();
+        AuthenticationRequestDTO request = new AuthenticationRequestDTO();
         request.setUsername("john");
         request.setPassword("password");
 
         when(userDAO.findByUsername("john")).thenReturn(activeUser);
         when(userService.isUserCredentialsValid("john", "password")).thenReturn(true);
 
-        AuthenticationDTO result = authenticationService.authenticate(request);
+        AuthenticationResponseDTO result = authenticationService.authenticate(request);
 
         assertEquals("User authenticated successfully", result.getMessage());
         assertTrue(result.isAuthenticated());
@@ -61,7 +61,7 @@ class AuthenticationServiceTest {
 
     @Test
     void authenticate_userNotFound_throwsException() {
-        AuthenticationRequest request = new AuthenticationRequest();
+        AuthenticationRequestDTO request = new AuthenticationRequestDTO();
         request.setUsername("john");
         request.setPassword("password");
 
@@ -74,7 +74,7 @@ class AuthenticationServiceTest {
 
     @Test
     void authenticate_invalidCredentials_throwsException() {
-        AuthenticationRequest request = new AuthenticationRequest();
+        AuthenticationRequestDTO request = new AuthenticationRequestDTO();
         request.setUsername("john");
         request.setPassword("wrongpassword");
 
@@ -88,7 +88,7 @@ class AuthenticationServiceTest {
 
     @Test
     void authenticate_inactiveUser_throwsException() {
-        AuthenticationRequest request = new AuthenticationRequest();
+        AuthenticationRequestDTO request = new AuthenticationRequestDTO();
         request.setUsername("john");
         request.setPassword("password");
 

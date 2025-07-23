@@ -1,6 +1,7 @@
 package com.gca.facade;
 
-import com.gca.dto.PasswordChangeRequest;
+import com.gca.dto.PasswordChangeDTO;
+import com.gca.dto.auth.AuthenticationRequestDTO;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateDTO;
@@ -21,6 +22,8 @@ import com.gca.mapper.rest.RestTrainerMapper;
 import com.gca.mapper.rest.RestTrainingMapper;
 import com.gca.model.TrainingType;
 import com.gca.openapi.model.AssignedTrainerResponse;
+import com.gca.openapi.model.LoginChangeRequest;
+import com.gca.openapi.model.LoginRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
 import com.gca.openapi.model.TraineeCreateRequest;
@@ -36,6 +39,7 @@ import com.gca.openapi.model.TrainerUpdateResponse;
 import com.gca.openapi.model.TrainingCreateRequest;
 import com.gca.openapi.model.TrainingGetResponse;
 import com.gca.openapi.model.TrainingTypeResponse;
+import com.gca.security.AuthenticationService;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
@@ -50,6 +54,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,6 +69,9 @@ class TrainingAppFacadeTest {
 
     @Mock
     private TrainingService trainingService;
+
+    @Mock
+    private AuthenticationService authenticationService;
 
     @Mock
     private UserService userService;
@@ -173,12 +181,12 @@ class TrainingAppFacadeTest {
 
     @Test
     void changePassword_delegatesToUserService() {
-        PasswordChangeRequest request =
-                new PasswordChangeRequest(1L, "newSecretPassword");
+        LoginChangeRequest request = new LoginChangeRequest("ronnie.coleman",
+                "oldPassword", "newPassword");
 
         facade.changePassword(request);
 
-        verify(userService).changeUserPassword(request);
+        verify(userService).changeUserPassword(any(PasswordChangeDTO.class));
     }
 
     @Test
@@ -340,5 +348,16 @@ class TrainingAppFacadeTest {
         verify(trainingService).getAllTrainingTypes();
         verify(restTrainingMapper).toRest(type1);
         verify(restTrainingMapper).toRest(type2);
+    }
+
+    @Test
+    void login_delegatesToAuthService() {
+        LoginRequest request = new LoginRequest("ronnie.coleman", "123qweQWE!@#");
+
+        facade.login(request);
+
+        verify(authenticationService).authenticate(
+                new AuthenticationRequestDTO(request.getUsername(), request.getPassword())
+        );
     }
 }
