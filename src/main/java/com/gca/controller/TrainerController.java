@@ -2,6 +2,7 @@ package com.gca.controller;
 
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.facade.TrainingAppFacade;
+import com.gca.openapi.model.ActivationStatusRequest;
 import com.gca.openapi.model.TrainerCreateRequest;
 import com.gca.openapi.model.TrainerCreateResponse;
 import com.gca.openapi.model.TrainerGetResponse;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -69,5 +71,13 @@ public class TrainerController {
         List<TrainingGetResponse> response = facade.findFilteredTrainings(criteria);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{username}/change-activation-status")
+    public ResponseEntity<Void> updateTrainerActivationStatus(
+            @PathVariable(name = "username") String username, ActivationStatusRequest request) {
+        facade.toggleUserActiveStatus(username);
+
+        return ResponseEntity.ok().build();
     }
 }
