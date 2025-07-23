@@ -12,7 +12,7 @@ import com.gca.dto.trainer.TrainerCreateDTO;
 import com.gca.dto.trainer.TrainerGetDTO;
 import com.gca.dto.trainer.TrainerUpdateRequestDTO;
 import com.gca.dto.trainer.TrainerUpdateResponseDTO;
-import com.gca.dto.training.TrainingCreateRequest;
+import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
 import com.gca.dto.user.UserCreateDTO;
 import com.gca.dto.user.UserCredentialsDTO;
@@ -24,7 +24,6 @@ import com.gca.model.User;
 import com.gca.openapi.model.AssignedTraineeResponse;
 import com.gca.openapi.model.AssignedTrainerResponse;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
-import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
 import com.gca.openapi.model.TraineeCreateRequest;
 import com.gca.openapi.model.TraineeCreateResponse;
 import com.gca.openapi.model.TraineeGetResponse;
@@ -35,6 +34,9 @@ import com.gca.openapi.model.TrainerCreateResponse;
 import com.gca.openapi.model.TrainerGetResponse;
 import com.gca.openapi.model.TrainerUpdateRequest;
 import com.gca.openapi.model.TrainerUpdateResponse;
+import com.gca.openapi.model.TrainingCreateRequest;
+import com.gca.openapi.model.TrainingGetResponse;
+import com.gca.openapi.model.TrainingTypeResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -205,10 +207,6 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TraineeUpdateRequestDTO createTraineeUpdateRequestDTO(String username) {
-        return createTraineeUpdateRequestDTO().toBuilder().username(username).build();
-    }
-
     public static Trainee constructTrainee() {
         return Trainee.builder()
                 .id(1L)
@@ -233,14 +231,13 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingCreateRequest createTrainingCreateRequest() {
-        return TrainingCreateRequest.builder()
-                .trainerId(1L)
-                .traineeId(1L)
-                .trainingTypeId(1L)
-                .date(LocalDate.of(2025, 7, 4))
+    public static TrainingCreateDTO createTrainingCreateRequestDTO() {
+        return TrainingCreateDTO.builder()
+                .trainerUsername("arnold.schwarzenegger")
+                .traineeUsername("arnold.schwarzenegger1")
+                .trainingName("Strength")
+                .trainingDate(LocalDate.of(2025, 7, 4))
                 .duration(60L)
-                .name("Cardio Session")
                 .build();
     }
 
@@ -261,15 +258,13 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingDTO constructTrainingResponse() {
+    public static TrainingDTO createTrainingDTO() {
         return TrainingDTO.builder()
-                .id(1L)
-                .trainerId(1L)
-                .traineeId(1L)
-                .trainingTypeId(1L)
-                .date(LocalDate.of(2025, 7, 4))
-                .duration(60L)
-                .name("Cardio Session")
+                .traineeName("Arnold")
+                .trainerName("Ronnie")
+                .trainingName("Strength")
+                .trainingDate(LocalDate.of(2025, 7, 4))
+                .trainingDuration(60L)
                 .build();
     }
 
@@ -291,26 +286,34 @@ public class GymTestProvider {
                 .build();
     }
 
-    public static TrainingType constructTrainingType() {
+    public static TrainingType createTrainingTypeStrength() {
+        return createTrainingType(1L, "Strength");
+    }
+
+    public static TrainingType createTrainingTypeYoga() {
+        return createTrainingType(2L, "Yoga");
+    }
+
+    public static TrainingType createTrainingType(Long id, String name) {
         return TrainingType.builder()
-                .id(1L)
-                .name("Strength")
+                .id(id)
+                .name(name)
                 .build();
     }
 
     public static TrainingTraineeCriteriaFilter buildTraineeCriteriaFilter() {
         return TrainingTraineeCriteriaFilter.builder()
-                .traineeId(1L)
+                .traineeUsername("arnold.schwarzenegger")
                 .fromDate(LocalDate.of(2025, 7, 1))
                 .toDate(LocalDate.of(2025, 7, 31))
-                .trainerName("arnold.schwarzenegger")
+                .trainerName("ronnie.coleman")
                 .trainingTypeName("Yoga")
                 .build();
     }
 
     public static TrainingTrainerCriteriaFilter buildTrainerCriteriaFilter() {
         return TrainingTrainerCriteriaFilter.builder()
-                .trainerId(1L)
+                .trainerUsername("arnold.schwarzenegger")
                 .fromDate(LocalDate.of(2025, 7, 1))
                 .toDate(LocalDate.of(2025, 7, 31))
                 .traineeName("arnold.schwarzenegger")
@@ -361,15 +364,6 @@ public class GymTestProvider {
         request.setTrainerUsernames(List.of("trainer1", "trainer2"));
 
         return request;
-    }
-
-    public static TraineeAssignedTrainersUpdateResponse createTraineeAssignedTrainersUpdateResponse() {
-        TraineeAssignedTrainersUpdateResponse response = new TraineeAssignedTrainersUpdateResponse();
-        AssignedTrainerResponse rest1 = GymTestProvider.createAssignedTrainerResponse("t1");
-        AssignedTrainerResponse rest2 = GymTestProvider.createAssignedTrainerResponse("t2");
-        response.setTrainers(List.of(rest1, rest2));
-
-        return response;
     }
 
     public static TrainerCreateRequest createTrainerCreateRequest() {
@@ -439,5 +433,54 @@ public class GymTestProvider {
         response.setUsername("arnold.schwarzenegger");
 
         return response;
+    }
+
+    public static TrainingCreateRequest createTrainingCreateRequest() {
+        TrainingCreateRequest request = new TrainingCreateRequest();
+        request.setTrainerUsername("arnold.schwarzenegger");
+        request.setTraineeUsername("arnold.schwarzenegger1");
+        request.setTrainingName("Strength");
+        request.setTrainingDate(LocalDate.of(2025, 7, 4));
+        request.setDuration(60);
+
+        return request;
+    }
+
+    public static TrainingTypeResponse createTrainingTypeResponse(Integer trainingTypeId, String trainingTypeName) {
+        TrainingTypeResponse response = new TrainingTypeResponse();
+        response.setName(trainingTypeName);
+        response.setId(trainingTypeId);
+
+        return response;
+    }
+
+    public static TrainingGetResponse createTrainingGetResponse() {
+        TrainingGetResponse response = new TrainingGetResponse();
+        response.setTraineeName("arnold.schwarzenegger");
+        response.setTrainerName("arnold.schwarzenegger1");
+        response.setTrainingName("Strength");
+        response.setTrainingDate(LocalDate.of(2025, 7, 4));
+        response.setTrainingDuration(60);
+
+        return response;
+    }
+
+    public static TrainingTrainerCriteriaFilter createTrainingTrainerCriteriaFilter() {
+        return TrainingTrainerCriteriaFilter.builder()
+                .traineeName("arnold.schwarzenegger")
+                .trainerUsername("arnold.schwarzenegger1")
+                .fromDate(LocalDate.of(2024, 1, 1))
+                .toDate(LocalDate.of(2024, 12, 31))
+                .build();
+    }
+
+    public static TrainingTraineeCriteriaFilter createTrainingTraineeCriteriaFilter() {
+        return TrainingTraineeCriteriaFilter.builder()
+                .trainerName("arnold.schwarzenegger")
+                .traineeUsername("arnold.schwarzenegger1")
+                .trainingTypeName("Strength")
+                .fromDate(LocalDate.of(2024, 1, 1))
+                .toDate(LocalDate.of(2024, 12, 31))
+                .build();
     }
 }

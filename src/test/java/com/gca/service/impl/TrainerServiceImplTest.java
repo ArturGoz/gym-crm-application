@@ -91,7 +91,7 @@ class TrainerServiceImplTest {
         Trainer existing = GymTestProvider.constructInactiveTrainer();
 
         User filledUser = GymTestProvider.constructUser();
-        TrainingType filledTrainingType = GymTestProvider.constructTrainingType();
+        TrainingType filledTrainingType = GymTestProvider.createTrainingTypeStrength();
 
         Trainer filledTrainer = existing.toBuilder()
                 .specialization(filledTrainingType)

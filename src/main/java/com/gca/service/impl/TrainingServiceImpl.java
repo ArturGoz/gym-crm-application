@@ -7,7 +7,7 @@ import com.gca.dao.TrainingTypeDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
-import com.gca.dto.training.TrainingCreateRequest;
+import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
 import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainingMapper;
@@ -68,24 +68,24 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Transactional
     @Override
-    public TrainingDTO createTraining(@Valid TrainingCreateRequest request) {
-        logger.debug("Creating training '{}'", request.getName());
+    public TrainingDTO createTraining(@Valid TrainingCreateDTO request) {
+        logger.debug("Creating training '{}'", request.getTrainingName());
 
         Training training = trainingMapper.toEntity(request);
 
-        Trainer trainer = Optional.ofNullable(trainerDAO.getById(request.getTrainerId()))
+        Trainer trainer = Optional.ofNullable(trainerDAO.findByUsername(request.getTrainerUsername()))
                 .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainer with ID %d not found", request.getTrainerId())
+                        format("Trainer with username %s not found", request.getTrainerUsername())
                 ));
 
-        Trainee trainee = Optional.ofNullable(traineeDAO.getById(request.getTraineeId()))
+        Trainee trainee = Optional.ofNullable(traineeDAO.findByUsername(request.getTraineeUsername()))
                 .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainee with ID %d not found", request.getTraineeId())
+                        format("Trainee with username %s not found", request.getTraineeUsername())
                 ));
 
-        TrainingType trainingType = Optional.ofNullable(trainingTypeDAO.getById(request.getTrainingTypeId()))
+        TrainingType trainingType = Optional.ofNullable(trainingTypeDAO.getByName(request.getTrainingName()))
                 .orElseThrow(() -> new EntityNotFoundException(
-                        format("Training type with ID %d not found", request.getTrainingTypeId())
+                        format("Training type with name %s not found", request.getTrainingName())
                 ));
 
         training.setTrainer(trainer);
@@ -104,9 +104,9 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDTO> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainee");
 
-        Trainee trainee = Optional.ofNullable(filter.getTraineeId())
-                .map(traineeDAO::getById)
-                .orElseThrow(() -> new ServiceException("Trainee ID must be provided"));
+        Trainee trainee = Optional.ofNullable(filter.getTraineeUsername())
+                .map(traineeDAO::findByUsername)
+                .orElseThrow(() -> new ServiceException("Trainee username must be provided"));
 
         List<Training> trainings = trainingDAO.getTraineeTrainings(
                 trainee,
@@ -126,9 +126,9 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDTO> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainer");
 
-        Trainer trainer = Optional.ofNullable(filter.getTrainerId())
-                .map(trainerDAO::getById)
-                .orElseThrow(() -> new ServiceException("Trainer ID must be provided"));
+        Trainer trainer = Optional.ofNullable(filter.getTrainerUsername())
+                .map(trainerDAO::findByUsername)
+                .orElseThrow(() -> new ServiceException("Trainer username must be provided"));
 
         List<Training> trainings = trainingDAO.getTrainerTrainings(
                 trainer,
@@ -140,5 +140,10 @@ public class TrainingServiceImpl implements TrainingService {
         return trainings.stream()
                 .map(trainingMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    public List<TrainingType> getAllTrainingTypes() {
+        return trainingTypeDAO.findAllTrainingTypes();
     }
 }

@@ -12,13 +12,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainingDTO {
-    private Long id;
-    private Long trainerId;
-    private Long traineeId;
-    private Long trainingTypeId;
-    private LocalDate date;
-    private Long duration;
-    private String name;
+    private String trainingName;
+    private String trainerName;
+    private String traineeName;
+    private LocalDate trainingDate;
+    private Long trainingDuration;
 }
 
 

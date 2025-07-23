@@ -286,7 +286,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TraineeTrainingGetResponse'
+                  $ref: '#/components/schemas/TrainingGetResponse'
         '401':
           description: Unauthorized access
           content:
@@ -493,7 +493,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TrainingDataResponse'
+                  $ref: '#/components/schemas/TrainingGetResponse'
         '401':
           description: Unauthorized access
           content:
@@ -930,37 +930,31 @@ components:
               type: string
               description: Trainer's specialization (training type)
               example: "Yoga"
-    TraineeTrainingGetResponse:
+    TrainingGetResponse:
       type: object
-      required:
-        - trainingName
-        - trainingDate
-        - trainingType
-        - trainingDuration
-        - trainerName
       properties:
+        traineeName:
+          type: string
+          description: Trainee's username
+          example: "ricardo.milos"
+        trainerName:
+          type: string
+          description: Trainer username
+          example: "ronnie.coleman"
         trainingName:
           type: string
-          description: Name of the training session
-          example: "Strength Training"
+          description: Name of the training type session
+          example: "Strength"
         trainingDate:
           type: string
           format: date
           description: Date of the training session
           example: "2025-07-01"
-        trainingType:
-          type: string
-          description: Type of training
-          example: "Cardio"
         trainingDuration:
           type: integer
           description: Duration of training in minutes
           minimum: 1
           example: 60
-        trainerName:
-          type: string
-          description: Name of the trainer
-          example: "Eren"
     ErrorResponse:
       type: object
       required:
@@ -1078,28 +1072,6 @@ components:
           - username: "billy.herrington"
             firstName: "Billy"
             lastName: "Herrington"
-    TrainingDataResponse:
-      type: object
-      properties:
-        trainingName:
-          type: string
-          description: Name of the training
-          example: "Morning Cardio"
-        trainingDate:
-          type: string
-          format: date
-          description: Date of the training
-          example: "2025-07-20"
-        trainingType:
-          $ref: '#/components/schemas/TrainingTypeResponse'
-        duration:
-          type: string
-          description: 1 number is 1 minute
-          example: "60"
-        traineeName:
-          type: string
-          description: First name of the trainee
-          example: "Billy"
     TrainingCreateRequest:
       type: object
       required:

@@ -26,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -163,7 +164,7 @@ class TraineeServiceImplTest {
         TraineeTrainersUpdateDTO updateDTO = new TraineeTrainersUpdateDTO(username, request.getTrainerUsernames());
 
         Trainee updatedTrainee = GymTestProvider.constructTrainee();
-        List<Trainer> trainers = updatedTrainee.getTrainers().stream().toList();
+        List<Trainer> trainers = new ArrayList<>(updatedTrainee.getTrainers());
 
         AssignedTrainerDTO trainer1 = GymTestProvider.createAssignedTrainerDTO("trainer1");
         AssignedTrainerDTO trainer2 = GymTestProvider.createAssignedTrainerDTO("trainer2");

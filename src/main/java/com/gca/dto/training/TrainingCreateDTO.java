@@ -16,25 +16,24 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrainingCreateRequest {
-    @NotNull(message = "Trainer ID cannot be null")
-    private Long trainerId;
+public class TrainingCreateDTO {
+    @NotBlank(message = "Trainer username cannot be blank")
+    @Size(min = 1, max = 100, message = "Name must be 1-100 characters")
+    private String trainerUsername;
 
-    @NotNull(message = "Trainee ID cannot be null")
-    private Long traineeId;
+    @NotBlank(message = "Trainee username cannot be blank")
+    @Size(min = 1, max = 100, message = "Name must be 1-100 characters")
+    private String traineeUsername;
 
-    @NotNull(message = "Training type ID cannot be null")
-    private Long trainingTypeId;
+    @NotBlank(message = "Training name cannot be blank")
+    @Size(min = 1, max = 100, message = "Name must be 1-100 characters")
+    private String trainingName;
 
     @NotNull(message = "Date cannot be null")
     @FutureOrPresent(message = "Training date must be in future or present")
-    private LocalDate date;
+    private LocalDate trainingDate;
 
     @NotNull(message = "Duration cannot be null")
     @Positive(message = "Duration must be positive")
     private Long duration;
-
-    @NotBlank(message = "Name cannot be blank")
-    @Size(min = 1, max = 100, message = "Name must be 1-100 characters")
-    private String name;
 }

@@ -10,11 +10,13 @@ import com.gca.dto.trainee.TraineeUpdateResponseDTO;
 import com.gca.dto.trainer.TrainerCreateDTO;
 import com.gca.dto.trainer.TrainerUpdateRequestDTO;
 import com.gca.dto.trainer.TrainerUpdateResponseDTO;
-import com.gca.dto.training.TrainingCreateRequest;
+import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
 import com.gca.dto.user.UserCredentialsDTO;
 import com.gca.mapper.rest.RestTraineeMapper;
 import com.gca.mapper.rest.RestTrainerMapper;
+import com.gca.mapper.rest.RestTrainingMapper;
+import com.gca.model.TrainingType;
 import com.gca.openapi.model.AssignedTrainerResponse;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
@@ -28,6 +30,9 @@ import com.gca.openapi.model.TrainerCreateResponse;
 import com.gca.openapi.model.TrainerGetResponse;
 import com.gca.openapi.model.TrainerUpdateRequest;
 import com.gca.openapi.model.TrainerUpdateResponse;
+import com.gca.openapi.model.TrainingCreateRequest;
+import com.gca.openapi.model.TrainingGetResponse;
+import com.gca.openapi.model.TrainingTypeResponse;
 import com.gca.security.Authenticated;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
@@ -52,6 +57,7 @@ public class TrainingAppFacade {
 
     private final RestTraineeMapper restTraineeMapper;
     private final RestTrainerMapper restTrainerMapper;
+    private final RestTrainingMapper restTrainingMapper;
 
     public TraineeCreateResponse createTrainee(TraineeCreateRequest request) {
         logger.info("Facade: Creating trainee {} ", request.getFirstName());
@@ -92,10 +98,12 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public TrainingDTO createTraining(TrainingCreateRequest request) {
-        logger.info("Facade: Creating training with trainerId={}, traineeId={}",
-                request.getTrainerId(), request.getTraineeId());
-        return trainingService.createTraining(request);
+    public void createTraining(TrainingCreateRequest request) {
+        logger.info("Facade: Creating training with trainerId={}, traineeId={} and training name={}",
+                request.getTrainerUsername(), request.getTraineeUsername(), request.getTrainingName());
+
+        TrainingCreateDTO dto = restTrainingMapper.toDto(request);
+        trainingService.createTraining(dto);
     }
 
     @Authenticated
@@ -106,17 +114,25 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public List<TrainingDTO> findFilteredTrainings(TrainingTrainerCriteriaFilter filter) {
+    public List<TrainingGetResponse> findFilteredTrainings(TrainingTrainerCriteriaFilter filter) {
         logger.info("Facade: Retrieving trainings with filter {}", filter);
 
-        return trainingService.getTrainerTrainings(filter);
+        List<TrainingDTO> dtoList = trainingService.getTrainerTrainings(filter);
+
+        return dtoList.stream()
+                .map(restTrainingMapper::toRest)
+                .toList();
     }
 
     @Authenticated
-    public List<TrainingDTO> findFilteredTrainings(TrainingTraineeCriteriaFilter filter) {
+    public List<TrainingGetResponse> findFilteredTrainings(TrainingTraineeCriteriaFilter filter) {
         logger.info("Facade: Retrieving trainees with filter {}", filter);
 
-        return trainingService.getTraineeTrainings(filter);
+        List<TrainingDTO> dtoList = trainingService.getTraineeTrainings(filter);
+
+        return dtoList.stream()
+                .map(restTrainingMapper::toRest)
+                .toList();
     }
 
     @Authenticated
@@ -173,6 +189,17 @@ public class TrainingAppFacade {
         response.setTrainers(trainerList);
 
         return response;
+    }
+
+    @Authenticated
+    public List<TrainingTypeResponse> getAllTrainingTypes() {
+        logger.info("Facade: Retrieving all training types");
+
+        List<TrainingType> typeList = trainingService.getAllTrainingTypes();
+
+        return typeList.stream()
+                .map(restTrainingMapper::toRest)
+                .toList();
     }
 }
 
