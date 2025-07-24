@@ -6,6 +6,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Optional;
 
@@ -13,9 +15,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WebAuthHelper {
     private final UserDAO userDAO;
-    private final HttpServletRequest request;
 
     public Optional<User> getUserFromWeb() {
+        ServletRequestAttributes attributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        if (attributes == null) return Optional.empty();
+        HttpServletRequest request = attributes.getRequest();
+
         Cookie[] cookies = request.getCookies();
         User user = null;
         if (cookies != null) {
