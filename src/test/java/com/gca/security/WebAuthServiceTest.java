@@ -35,14 +35,12 @@ class WebAuthServiceTest {
     @Test
     void shouldReturnUserIfCookiePresentAndUserFound() {
         String username = "ronnie.coleman";
-
         User user = User.builder()
                 .username(username)
                 .build();
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         Cookie[] cookies = {new Cookie("username", username)};
-
         RequestContextHolder.setRequestAttributes(
                 new ServletRequestAttributes(mockRequest)
         );

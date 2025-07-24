@@ -35,7 +35,9 @@ public class WebAuthService {
     }
 
     private Optional<String> getUsernameFromCookies(HttpServletRequest request) {
-        if (request.getCookies() == null) return Optional.empty();
+        if (request.getCookies() == null) {
+            return Optional.empty();
+        }
 
         return Arrays.stream(request.getCookies())
                 .filter(cookie -> COOKIE_NAME.equals(cookie.getName()))

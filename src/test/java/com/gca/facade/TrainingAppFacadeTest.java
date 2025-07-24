@@ -2,7 +2,6 @@ package com.gca.facade;
 
 import com.gca.dto.PasswordChangeDTO;
 import com.gca.dto.auth.AuthenticationRequestDTO;
-import com.gca.dto.auth.AuthenticationResponseDTO;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateDTO;
@@ -361,11 +360,6 @@ class TrainingAppFacadeTest {
         LoginRequest request = new LoginRequest("ronnie.coleman", "123qweQWE!@#");
         AuthenticationRequestDTO authRequest =
                 new AuthenticationRequestDTO("ronnie.coleman", "123qweQWE!@#");
-
-        AuthenticationResponseDTO authResponse =
-                new AuthenticationResponseDTO("User is authenticated", true);
-
-        when(authenticationService.authenticate(authRequest)).thenReturn(authResponse);
 
         facade.login(request, httpServletResponse);
 
