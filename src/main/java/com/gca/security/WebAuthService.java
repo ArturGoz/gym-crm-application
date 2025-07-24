@@ -1,6 +1,7 @@
 package com.gca.security;
 
 import com.gca.dao.UserDAO;
+import com.gca.dao.transaction.Transactional;
 import com.gca.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,9 +14,10 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class WebAuthHelper {
+public class WebAuthService {
     private final UserDAO userDAO;
 
+    @Transactional(readOnly = true)
     public Optional<User> getUserFromWeb() {
         ServletRequestAttributes attributes =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

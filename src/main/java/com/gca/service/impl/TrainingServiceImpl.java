@@ -142,6 +142,7 @@ public class TrainingServiceImpl implements TrainingService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<TrainingType> getAllTrainingTypes() {
         return trainingTypeDAO.findAllTrainingTypes();

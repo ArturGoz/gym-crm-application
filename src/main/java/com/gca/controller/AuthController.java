@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,14 +21,14 @@ public class AuthController {
     private final TrainingAppFacade facade;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(LoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<Void> login(@RequestBody LoginRequest request, HttpServletResponse response) {
         facade.login(request, response);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/login")
-    public ResponseEntity<Void> changeLogin(LoginChangeRequest request) {
+    public ResponseEntity<Void> changeLogin(@RequestBody LoginChangeRequest request) {
         facade.changePassword(request);
 
         return ResponseEntity.ok().build();

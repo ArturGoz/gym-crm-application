@@ -1,6 +1,7 @@
 package com.gca.security;
 
 import com.gca.dao.UserDAO;
+import com.gca.dao.transaction.Transactional;
 import com.gca.dto.auth.AuthenticationRequestDTO;
 import com.gca.dto.auth.AuthenticationResponseDTO;
 import com.gca.exception.UserNotAuthenticatedException;
@@ -32,6 +33,7 @@ public class AuthenticationService {
         this.userDAO = userDAO;
     }
 
+    @Transactional(readOnly = true)
     public AuthenticationResponseDTO authenticate(@Valid AuthenticationRequestDTO request) {
         User user = userDAO.findByUsername(request.getUsername());
 
@@ -40,8 +42,6 @@ public class AuthenticationService {
         if (isNotAuthenticated(user, request.getPassword())) {
             throw new UserNotAuthenticatedException("Wrong user credentials");
         }
-
-
 
         log.info("Authenticated user: {}", user.getUsername());
         return new AuthenticationResponseDTO("User authenticated successfully", true);

@@ -72,6 +72,7 @@ public class TrainingAppFacade {
 
         AuthenticationRequestDTO request =
                 new AuthenticationRequestDTO(loginRequest.getUsername(), loginRequest.getPassword());
+
         AuthenticationResponseDTO responseDTO = authenticationService.authenticate(request);
 
         if (responseDTO.isAuthenticated()) {

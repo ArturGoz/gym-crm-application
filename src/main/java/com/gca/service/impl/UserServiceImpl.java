@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
 
         String username = userProfileService.generateUsername(request.getFirstName(), request.getLastName());
         String password = userProfileService.generatePassword();
-
         User user = userMapper.toEntity(request).toBuilder()
                 .username(username)
                 .password(password)
