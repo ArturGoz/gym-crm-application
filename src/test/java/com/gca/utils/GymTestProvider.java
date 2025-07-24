@@ -23,6 +23,8 @@ import com.gca.model.TrainingType;
 import com.gca.model.User;
 import com.gca.openapi.model.AssignedTraineeResponse;
 import com.gca.openapi.model.AssignedTrainerResponse;
+import com.gca.openapi.model.LoginChangeRequest;
+import com.gca.openapi.model.LoginRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
 import com.gca.openapi.model.TraineeCreateRequest;
 import com.gca.openapi.model.TraineeCreateResponse;
@@ -482,5 +484,22 @@ public class GymTestProvider {
                 .fromDate(LocalDate.of(2024, 1, 1))
                 .toDate(LocalDate.of(2024, 12, 31))
                 .build();
+    }
+
+    public static LoginRequest createLoginRequest() {
+        LoginRequest request = new LoginRequest();
+        request.setUsername("arnold.schwarzenegger");
+        request.setPassword("************");
+
+        return request;
+    }
+
+    public static LoginChangeRequest createLoginChangeRequest() {
+        LoginChangeRequest request = new LoginChangeRequest();
+        request.setUsername("arnold.schwarzenegger");
+        request.setOldPassword("*******");
+        request.setNewPassword("******************");
+
+        return request;
     }
 }
