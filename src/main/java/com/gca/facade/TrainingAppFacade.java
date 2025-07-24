@@ -42,6 +42,8 @@ import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
 import com.gca.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,13 +66,15 @@ public class TrainingAppFacade {
     private final RestTrainerMapper restTrainerMapper;
     private final RestTrainingMapper restTrainingMapper;
 
-    public void login(LoginRequest loginRequest) {
+    public void login(LoginRequest loginRequest, HttpServletResponse response) {
         logger.info("Login request: {}", loginRequest);
 
         AuthenticationRequestDTO request =
                 new AuthenticationRequestDTO(loginRequest.getUsername(), loginRequest.getPassword());
 
         authenticationService.authenticate(request);
+        setWebCookie(response, request.getUsername());
+
         logger.info("Authentication successful for user: {}", loginRequest.getUsername());
     }
 
@@ -219,6 +223,14 @@ public class TrainingAppFacade {
         return typeList.stream()
                 .map(restTrainingMapper::toRest)
                 .toList();
+    }
+
+    private void setWebCookie(HttpServletResponse response, String username) {
+        Cookie cookie = new Cookie("username", username);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(3600);
+        response.addCookie(cookie);
     }
 }
 

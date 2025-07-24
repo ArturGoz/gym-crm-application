@@ -15,7 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
         "com.gca.service",
         "com.gca.facade",
         "com.gca.mapper",
-        "com.gca.security"
+        "com.gca.security",
+        "com.gca.exception"
 })
 @EnableAspectJAutoProxy
 public class AppConfig {
@@ -23,6 +24,7 @@ public class AppConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();

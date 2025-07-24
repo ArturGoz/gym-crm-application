@@ -1,5 +1,7 @@
 package com.gca.web;
 
+import com.gca.config.AppConfig;
+import com.gca.config.PersistenceConfig;
 import com.gca.config.WebConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -7,7 +9,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return null;
+        return new Class<?>[]{AppConfig.class, PersistenceConfig.class};
     }
 
     @Override

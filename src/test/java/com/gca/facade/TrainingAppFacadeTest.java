@@ -45,6 +45,7 @@ import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
 import com.gca.service.UserService;
 import com.gca.utils.GymTestProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -55,6 +56,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -84,6 +86,9 @@ class TrainingAppFacadeTest {
 
     @Mock
     private RestTrainingMapper restTrainingMapper;
+
+    @Mock
+    private HttpServletResponse httpServletResponse;
 
     @InjectMocks
     private TrainingAppFacade facade;
@@ -353,11 +358,18 @@ class TrainingAppFacadeTest {
     @Test
     void login_delegatesToAuthService() {
         LoginRequest request = new LoginRequest("ronnie.coleman", "123qweQWE!@#");
+        AuthenticationRequestDTO authRequest =
+                new AuthenticationRequestDTO("ronnie.coleman", "123qweQWE!@#");
 
-        facade.login(request);
+        facade.login(request, httpServletResponse);
 
-        verify(authenticationService).authenticate(
-                new AuthenticationRequestDTO(request.getUsername(), request.getPassword())
-        );
+        verify(authenticationService).authenticate(authRequest);
+        verify(httpServletResponse).addCookie(argThat(cookie ->
+                cookie.getName().equals("username") &&
+                        cookie.getValue().equals("ronnie.coleman") &&
+                        cookie.getMaxAge() == 3600 &&
+                        cookie.isHttpOnly() &&
+                        cookie.getPath().equals("/")
+        ));
     }
 }
