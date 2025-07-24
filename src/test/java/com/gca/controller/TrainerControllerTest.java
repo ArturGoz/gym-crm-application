@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gca.config.AppConfig;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.facade.TrainingAppFacade;
+import com.gca.openapi.model.ActivationStatusRequest;
 import com.gca.openapi.model.TrainerCreateRequest;
 import com.gca.openapi.model.TrainerCreateResponse;
 import com.gca.openapi.model.TrainerGetResponse;
@@ -18,7 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
@@ -34,6 +34,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -132,5 +133,17 @@ class TrainerControllerTest {
                 .andExpect(jsonPath("$[0].trainingName").value(responses.get(0).getTrainingName()))
                 .andExpect(jsonPath("$[0].trainingDate").value(responses.get(0).getTrainingDate().toString()))
                 .andExpect(jsonPath("$[0].trainingDuration").value(responses.get(0).getTrainingDuration()));
+    }
+
+    @Test
+    void updateTrainerActivationStatus_shouldReturnOk() throws Exception {
+        ActivationStatusRequest request = new ActivationStatusRequest(true);
+
+        mockMvc.perform(patch(format("%s/%s/change-activation-status", trainerApi, username))
+                        .contentType(APPLICATION_JSON)
+                        .content(asJsonString(request)))
+                .andExpect(status().isOk());
+
+        verify(facade).toggleUserActiveStatus(username);
     }
 }

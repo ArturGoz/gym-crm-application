@@ -1,8 +1,8 @@
 package com.gca.security;
 
 import com.gca.dao.UserDAO;
-import com.gca.dto.auth.AuthenticationRequest;
-import com.gca.dto.auth.AuthenticationDTO;
+import com.gca.dto.auth.AuthenticationRequestDTO;
+import com.gca.dto.auth.AuthenticationResponseDTO;
 import com.gca.exception.UserNotAuthenticatedException;
 import com.gca.model.User;
 import com.gca.service.UserService;
@@ -11,11 +11,13 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 
 @Component
 @Slf4j
+@Validated
 public class AuthenticationService {
     private UserService userService;
     private UserDAO userDAO;
@@ -36,7 +38,7 @@ public class AuthenticationService {
         this.authContextHolder = authContextHolder;
     }
 
-    public AuthenticationDTO authenticate(@Valid AuthenticationRequest request) {
+    public AuthenticationResponseDTO authenticate(@Valid AuthenticationRequestDTO request) {
         User user = userDAO.findByUsername(request.getUsername());
 
         Optional.ofNullable(user).orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -48,7 +50,7 @@ public class AuthenticationService {
         authContextHolder.setCurrentUser(user);
 
         log.info("Authenticated user: {}", user.getUsername());
-        return new AuthenticationDTO("User authenticated successfully", true);
+        return new AuthenticationResponseDTO("User authenticated successfully", true);
     }
 
     private boolean isNotAuthenticated(User user, String rawPassword) {

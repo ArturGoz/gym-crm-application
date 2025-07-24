@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gca.config.AppConfig;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.facade.TrainingAppFacade;
+import com.gca.openapi.model.ActivationStatusRequest;
 import com.gca.openapi.model.AssignedTrainerResponse;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -174,5 +176,17 @@ class TraineeControllerTest {
                 .andExpect(jsonPath("$[0].trainingDate").value(responses.get(0).getTrainingDate().toString()))
                 .andExpect(jsonPath("$[0].trainingName").value(responses.get(0).getTrainingName()))
                 .andExpect(jsonPath("$[0].trainingDuration").value(responses.get(0).getTrainingDuration()));
+    }
+
+    @Test
+    void updateTraineeActivationStatus_shouldReturnOk() throws Exception {
+        ActivationStatusRequest request = new ActivationStatusRequest(true);
+
+        mockMvc.perform(patch(format("%s/%s/change-activation-status", traineeApi, username))
+                        .contentType(APPLICATION_JSON)
+                        .content(asJsonString(request)))
+                .andExpect(status().isOk());
+
+        verify(facade).toggleUserActiveStatus(username);
     }
 }

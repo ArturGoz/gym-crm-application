@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationDTO {
+public class AuthenticationResponseDTO {
     private String message;
     private boolean isAuthenticated;
 }

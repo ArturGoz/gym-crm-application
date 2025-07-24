@@ -2,7 +2,7 @@ package com.gca.service.impl;
 
 import com.gca.utils.GymTestProvider;
 import com.gca.dao.UserDAO;
-import com.gca.dto.PasswordChangeRequest;
+import com.gca.dto.PasswordChangeDTO;
 import com.gca.dto.user.UserCreateDTO;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
@@ -103,33 +103,37 @@ class UserServiceImplTest {
 
     @Test
     void changeUserPassword_success() {
-        User actual = GymTestProvider.constructUser();
-        PasswordChangeRequest request
-                = new PasswordChangeRequest(actual.getId(), "newPassword");
+        User actual = buildUser();
+        PasswordChangeDTO request = buildUserPasswordChange();
 
-        when(dao.getById(actual.getId())).thenReturn(actual);
-        when(profileService.encryptPassword(any(String.class))).thenReturn(request.getPassword());
+        when(dao.findByUsername(actual.getUsername())).thenReturn(actual);
+        when(profileService.verifyPassword(request.getOldPassword(), actual.getPassword())).thenReturn(true);
+        when(profileService.encryptPassword(request.getNewPassword())).thenReturn("encryptedNewPass");
 
         service.changeUserPassword(request);
 
-        assertEquals(request.getPassword(), actual.getPassword());
-        verify(dao).getById(actual.getId());
+        assertEquals("encryptedNewPass", actual.getPassword());
+        verify(dao).findByUsername(request.getUsername());
+        verify(profileService).encryptPassword(request.getNewPassword());
         verify(dao).update(actual);
     }
 
     @Test
     void changeUserPassword_userNotFound_throwsException() {
-        PasswordChangeRequest request
-                = new PasswordChangeRequest(1L, "newPass");
+        String username = "nonexistent.user";
+        PasswordChangeDTO request = new PasswordChangeDTO(username,
+                "anyOldPass", "newPass");
 
-        when(dao.getById(1L)).thenReturn(null);
+        when(dao.findByUsername(username)).thenReturn(null);
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () ->
-                service.changeUserPassword(request));
+                service.changeUserPassword(request)
+        );
 
-        assertEquals("User with ID 1 not found", ex.getMessage());
-        verify(dao).getById(1L);
+        assertEquals("User with username nonexistent.user not found", ex.getMessage());
+        verify(dao).findByUsername(username);
     }
+
 
     @Test
     void toggleActiveStatus_success() {
@@ -142,5 +146,17 @@ class UserServiceImplTest {
         service.toggleActiveStatus(expected.getUsername());
 
         verify(dao).update(any(User.class));
+    }
+
+    private User buildUser() {
+        return User.builder()
+                .username("ronnie.coleman")
+                .password("encryptedOldPass")
+                .build();
+    }
+
+    private PasswordChangeDTO buildUserPasswordChange() {
+        return new PasswordChangeDTO("ronnie.coleman",
+                "123qweQWE!@#", "321ewqEWQ#@!");
     }
 }

@@ -1,6 +1,7 @@
 package com.gca.facade;
 
-import com.gca.dto.PasswordChangeRequest;
+import com.gca.dto.PasswordChangeDTO;
+import com.gca.dto.auth.AuthenticationRequestDTO;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.trainee.TraineeCreateDTO;
@@ -18,6 +19,8 @@ import com.gca.mapper.rest.RestTrainerMapper;
 import com.gca.mapper.rest.RestTrainingMapper;
 import com.gca.model.TrainingType;
 import com.gca.openapi.model.AssignedTrainerResponse;
+import com.gca.openapi.model.LoginChangeRequest;
+import com.gca.openapi.model.LoginRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateResponse;
 import com.gca.openapi.model.TraineeCreateRequest;
@@ -34,6 +37,7 @@ import com.gca.openapi.model.TrainingCreateRequest;
 import com.gca.openapi.model.TrainingGetResponse;
 import com.gca.openapi.model.TrainingTypeResponse;
 import com.gca.security.Authenticated;
+import com.gca.security.AuthenticationService;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
@@ -54,10 +58,21 @@ public class TrainingAppFacade {
     private final TrainerService trainerService;
     private final TrainingService trainingService;
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     private final RestTraineeMapper restTraineeMapper;
     private final RestTrainerMapper restTrainerMapper;
     private final RestTrainingMapper restTrainingMapper;
+
+    public void login(LoginRequest loginRequest) {
+        logger.info("Login request: {}", loginRequest);
+
+        AuthenticationRequestDTO request =
+                new AuthenticationRequestDTO(loginRequest.getUsername(), loginRequest.getPassword());
+
+        authenticationService.authenticate(request);
+        logger.info("Authentication successful for user: {}", loginRequest.getUsername());
+    }
 
     public TraineeCreateResponse createTrainee(TraineeCreateRequest request) {
         logger.info("Facade: Creating trainee {} ", request.getFirstName());
@@ -107,10 +122,14 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public void changePassword(PasswordChangeRequest request) {
-        logger.info("Changing password for userId: {}", request.getUserId());
+    public void changePassword(LoginChangeRequest request) {
+        logger.info("Changing password for username: {}", request.getUsername());
 
-        userService.changeUserPassword(request);
+        PasswordChangeDTO dto = new PasswordChangeDTO(request.getUsername(),
+                request.getOldPassword(), request.getNewPassword());
+
+        userService.changeUserPassword(dto);
+        logger.info("Password changed successfully for username: {}", request.getUsername());
     }
 
     @Authenticated
