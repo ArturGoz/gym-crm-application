@@ -1,5 +1,6 @@
 package com.gca.exception;
 
+import com.gca.openapi.model.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,12 @@ import static com.gca.exception.ApiError.VALIDATION_ERROR;
 @Slf4j
 public class ErrorHandler {
     private static final Set<String> BAD_REQUEST_PREFIXES = Set.of(
-            "Invalid trainee username"
+            "Invalid trainee username",
+            "Invalid training type",
+            "Invalid trainer username",
+            "Trainee username must be provided",
+            "Trainer username must be provided",
+            "Username must not be null"
     );
 
     @ExceptionHandler(ServiceException.class)
@@ -75,10 +81,9 @@ public class ErrorHandler {
     private ResponseEntity<ErrorResponse> buildErrorResponse(ApiError apiError, String message) {
         message = StringUtils.isBlank(message) ? "" : message;
 
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .errorCode(String.valueOf(apiError.getCode()))
-                .errorMessage(apiError.getMessage() + message)
-                .build();
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorCode(apiError.getCode());
+        errorResponse.setErrorMessage(apiError.getMessage() + message);
 
         return new ResponseEntity<>(errorResponse, apiError.getHttpStatus());
     }

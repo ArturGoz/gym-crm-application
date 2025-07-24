@@ -1,5 +1,6 @@
 package com.gca.exception;
 
+import com.gca.openapi.model.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,7 @@ class ErrorHandlerTest {
 
         assertNotNull(actual.getBody());
         assertEquals(BAD_REQUEST, actual.getStatusCode());
-        assertEquals(String.valueOf(INVALID_REQUEST_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(INVALID_REQUEST_ERROR.getCode(), actual.getBody().getErrorCode());
         assertTrue(actual.getBody().getErrorMessage().contains(INVALID_REQUEST_ERROR.getMessage()));
     }
 
@@ -51,7 +52,7 @@ class ErrorHandlerTest {
 
         assertNotNull(actual.getBody());
         assertEquals(INTERNAL_SERVER_ERROR, actual.getStatusCode());
-        assertEquals(String.valueOf(SERVER_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(SERVER_ERROR.getCode(), actual.getBody().getErrorCode());
         assertEquals(SERVER_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
 
@@ -63,7 +64,7 @@ class ErrorHandlerTest {
 
         assertNotNull(actual.getBody());
         assertEquals(INTERNAL_SERVER_ERROR, actual.getStatusCode());
-        assertEquals(String.valueOf(DATABASE_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(DATABASE_ERROR.getCode(), actual.getBody().getErrorCode());
         assertEquals(DATABASE_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
 
@@ -76,7 +77,7 @@ class ErrorHandlerTest {
 
         assertNotNull(actual.getBody());
         assertEquals(NOT_FOUND, actual.getStatusCode());
-        assertEquals(String.valueOf(NOT_FOUND_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(NOT_FOUND_ERROR.getCode(), actual.getBody().getErrorCode());
         assertTrue(actual.getBody().getErrorMessage().contains(NOT_FOUND_ERROR.getMessage()));
         assertTrue(actual.getBody().getErrorMessage().contains(message));
     }
@@ -90,7 +91,7 @@ class ErrorHandlerTest {
 
         assertNotNull(actual.getBody());
         assertEquals(BAD_REQUEST, actual.getStatusCode());
-        assertEquals(String.valueOf(VALIDATION_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(VALIDATION_ERROR.getCode(), actual.getBody().getErrorCode());
         assertTrue(actual.getBody().getErrorMessage().contains(VALIDATION_ERROR.getMessage()));
         assertTrue(actual.getBody().getErrorMessage().contains(message));
     }
@@ -103,7 +104,7 @@ class ErrorHandlerTest {
 
         assertNotNull(actual.getBody());
         assertEquals(UNAUTHORIZED, actual.getStatusCode());
-        assertEquals(String.valueOf(AUTHENTICATION_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(AUTHENTICATION_ERROR.getCode(), actual.getBody().getErrorCode());
         assertEquals(AUTHENTICATION_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
 
@@ -115,7 +116,7 @@ class ErrorHandlerTest {
 
         assertNotNull(actual.getBody());
         assertEquals(INTERNAL_SERVER_ERROR, actual.getStatusCode());
-        assertEquals(String.valueOf(SERVER_ERROR.getCode()), actual.getBody().getErrorCode());
+        assertEquals(SERVER_ERROR.getCode(), actual.getBody().getErrorCode());
         assertEquals(SERVER_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
 }
