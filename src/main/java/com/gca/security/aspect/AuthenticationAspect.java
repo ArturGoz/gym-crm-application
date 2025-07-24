@@ -19,7 +19,7 @@ public class AuthenticationAspect {
 
     @Before("@annotation(com.gca.security.Authenticated)")
     public void checkAuthentication() {
-        User currentUser = webAuthService.getUserFromWeb()
+        User currentUser = webAuthService.getUserFromRequestContext()
                 .orElseThrow(() -> new UserNotAuthenticatedException("User not authenticated"));
 
         log.info("Authenticated user: {}", currentUser.getUsername());

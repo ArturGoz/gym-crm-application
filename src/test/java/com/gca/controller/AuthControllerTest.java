@@ -6,6 +6,7 @@ import com.gca.facade.TrainingAppFacade;
 import com.gca.openapi.model.LoginChangeRequest;
 import com.gca.openapi.model.LoginRequest;
 import com.gca.utils.GymTestProvider;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +55,7 @@ class AuthControllerTest {
                         .content(asJsonString(request)))
                 .andExpect(status().isOk());
 
-        verify(facade).login(any(LoginRequest.class));
+        verify(facade).login(any(LoginRequest.class), any(HttpServletResponse.class));
     }
 
     @Test
