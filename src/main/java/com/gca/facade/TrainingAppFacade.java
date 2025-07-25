@@ -67,7 +67,7 @@ public class TrainingAppFacade {
     private final RestTrainingMapper restTrainingMapper;
 
     public void login(LoginRequest loginRequest, HttpServletResponse response) {
-        logger.info("Login request: {}", loginRequest);
+        logger.info("Facade: login request from : {}", loginRequest.getUsername());
 
         AuthenticationRequestDTO request =
                 new AuthenticationRequestDTO(loginRequest.getUsername(), loginRequest.getPassword());
@@ -75,7 +75,7 @@ public class TrainingAppFacade {
         authenticationService.authenticate(request);
         setWebCookie(response, request.getUsername());
 
-        logger.info("Authentication successful for user: {}", loginRequest.getUsername());
+        logger.info("Facade: Authentication successful for user: {}", loginRequest.getUsername());
     }
 
     public TraineeCreateResponse createTrainee(TraineeCreateRequest request) {
@@ -123,6 +123,8 @@ public class TrainingAppFacade {
 
         TrainingCreateDTO dto = restTrainingMapper.toDto(request);
         trainingService.createTraining(dto);
+
+        logger.info("Facade: Training created");
     }
 
     @Authenticated
@@ -198,7 +200,7 @@ public class TrainingAppFacade {
     @Authenticated
     public TraineeAssignedTrainersUpdateResponse updateTraineeTrainers(String username,
                                                                        TraineeAssignedTrainersUpdateRequest request) {
-        logger.info("Updating trainee list of trainers");
+        logger.info("Facade: Updating trainee list of trainers");
 
         TraineeTrainersUpdateDTO traineeTrainersRequest
                 = new TraineeTrainersUpdateDTO(username, request.getTrainerUsernames());
