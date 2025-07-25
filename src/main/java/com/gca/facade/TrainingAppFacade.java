@@ -45,8 +45,6 @@ import com.gca.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,8 +52,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TrainingAppFacade {
-    private static final Logger logger = LoggerFactory.getLogger(TrainingAppFacade.class);
-
     private final TraineeService traineeService;
     private final TrainerService trainerService;
     private final TrainingService trainingService;
@@ -67,20 +63,14 @@ public class TrainingAppFacade {
     private final RestTrainingMapper restTrainingMapper;
 
     public void login(LoginRequest loginRequest, HttpServletResponse response) {
-        logger.info("Facade: login request from : {}", loginRequest.getUsername());
-
         AuthenticationRequestDTO request =
                 new AuthenticationRequestDTO(loginRequest.getUsername(), loginRequest.getPassword());
 
         authenticationService.authenticate(request);
         setWebCookie(response, request.getUsername());
-
-        logger.info("Facade: Authentication successful for user: {}", loginRequest.getUsername());
     }
 
     public TraineeCreateResponse createTrainee(TraineeCreateRequest request) {
-        logger.info("Facade: Creating trainee {} ", request.getFirstName());
-
         TraineeCreateDTO traineeCreateDTO = restTraineeMapper.toDto(request);
         UserCredentialsDTO userCredentialsDTO = traineeService.createTrainee(traineeCreateDTO);
 
@@ -89,8 +79,6 @@ public class TrainingAppFacade {
 
     @Authenticated
     public TraineeUpdateResponse updateTrainee(String username, TraineeUpdateRequest request) {
-        logger.info("Facade: Updating trainee with request {}", request);
-
         TraineeUpdateRequestDTO requestDTO = restTraineeMapper.toDto(username, request);
         TraineeUpdateResponseDTO responseDTO = traineeService.updateTrainee(requestDTO);
 
@@ -98,8 +86,6 @@ public class TrainingAppFacade {
     }
 
     public TrainerCreateResponse createTrainer(TrainerCreateRequest request) {
-        logger.info("Facade: Creating trainer {}", request.getFirstName());
-
         TrainerCreateDTO createDTO = restTrainerMapper.toDto(request);
         UserCredentialsDTO credentialsDTO = trainerService.createTrainer(createDTO);
 
@@ -108,8 +94,6 @@ public class TrainingAppFacade {
 
     @Authenticated
     public TrainerUpdateResponse updateTrainer(String username, TrainerUpdateRequest trainer) {
-        logger.info("Facade: Updating trainer with username {}", username);
-
         TrainerUpdateRequestDTO requestDTO = restTrainerMapper.toDto(username, trainer);
         TrainerUpdateResponseDTO responseDTO = trainerService.updateTrainer(requestDTO);
 
@@ -118,30 +102,20 @@ public class TrainingAppFacade {
 
     @Authenticated
     public void createTraining(TrainingCreateRequest request) {
-        logger.info("Facade: Creating training with trainerId={}, traineeId={} and training name={}",
-                request.getTrainerUsername(), request.getTraineeUsername(), request.getTrainingName());
-
         TrainingCreateDTO dto = restTrainingMapper.toDto(request);
         trainingService.createTraining(dto);
-
-        logger.info("Facade: Training created");
     }
 
     @Authenticated
     public void changePassword(LoginChangeRequest request) {
-        logger.info("Changing password for username: {}", request.getUsername());
-
         PasswordChangeDTO dto = new PasswordChangeDTO(request.getUsername(),
                 request.getOldPassword(), request.getNewPassword());
 
         userService.changeUserPassword(dto);
-        logger.info("Password changed successfully for username: {}", request.getUsername());
     }
 
     @Authenticated
     public List<TrainingGetResponse> findFilteredTrainings(TrainingTrainerCriteriaFilter filter) {
-        logger.info("Facade: Retrieving trainings with filter {}", filter);
-
         List<TrainingDTO> dtoList = trainingService.getTrainerTrainings(filter);
 
         return dtoList.stream()
@@ -151,8 +125,6 @@ public class TrainingAppFacade {
 
     @Authenticated
     public List<TrainingGetResponse> findFilteredTrainings(TrainingTraineeCriteriaFilter filter) {
-        logger.info("Facade: Retrieving trainees with filter {}", filter);
-
         List<TrainingDTO> dtoList = trainingService.getTraineeTrainings(filter);
 
         return dtoList.stream()
@@ -162,36 +134,26 @@ public class TrainingAppFacade {
 
     @Authenticated
     public TraineeGetResponse getTraineeByUsername(String username) {
-        logger.info("Facade: Retrieving traine by name {}", username);
-
         return restTraineeMapper.toRest(traineeService.getTraineeByUsername(username));
     }
 
     @Authenticated
     public TrainerGetResponse getTrainerByUsername(String username) {
-        logger.info("Facade: Retrieving trainer by name {}", username);
-
         return restTrainerMapper.toRest(trainerService.getTrainerByUsername(username));
     }
 
     @Authenticated
     public void deleteTraineeByUsername(String username) {
-        logger.info("Facade: Deleting traine by name {}", username);
-
         traineeService.deleteTraineeByUsername(username);
     }
 
     @Authenticated
     public void toggleUserActiveStatus(String username) {
-        logger.info("Facade: Toggle user active status for user {}", username);
-
         userService.toggleActiveStatus(username);
     }
 
     @Authenticated
     public List<AssignedTrainerResponse> getUnassignedTrainers(String traineeUsername) {
-        logger.info("Facade: Retrieving unassigned trainers");
-
         return trainerService.getUnassignedTrainers(traineeUsername).stream()
                 .map(restTrainerMapper::toRest)
                 .toList();
@@ -200,8 +162,6 @@ public class TrainingAppFacade {
     @Authenticated
     public TraineeAssignedTrainersUpdateResponse updateTraineeTrainers(String username,
                                                                        TraineeAssignedTrainersUpdateRequest request) {
-        logger.info("Facade: Updating trainee list of trainers");
-
         TraineeTrainersUpdateDTO traineeTrainersRequest
                 = new TraineeTrainersUpdateDTO(username, request.getTrainerUsernames());
 
@@ -218,8 +178,6 @@ public class TrainingAppFacade {
 
     @Authenticated
     public List<TrainingTypeResponse> getAllTrainingTypes() {
-        logger.info("Facade: Retrieving all training types");
-
         List<TrainingType> typeList = trainingService.getAllTrainingTypes();
 
         return typeList.stream()
