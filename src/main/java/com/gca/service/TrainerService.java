@@ -6,13 +6,14 @@ import com.gca.dto.trainer.TrainerGetDTO;
 import com.gca.dto.trainer.TrainerUpdateRequestDTO;
 import com.gca.dto.trainer.TrainerUpdateResponseDTO;
 import com.gca.dto.user.UserCredentialsDTO;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
 public interface TrainerService {
-    UserCredentialsDTO createTrainer(TrainerCreateDTO request);
+    UserCredentialsDTO createTrainer(@Valid TrainerCreateDTO request);
 
-    TrainerUpdateResponseDTO updateTrainer(TrainerUpdateRequestDTO request);
+    TrainerUpdateResponseDTO updateTrainer(@Valid TrainerUpdateRequestDTO request);
 
     TrainerGetDTO getTrainerByUsername(String username);
 
