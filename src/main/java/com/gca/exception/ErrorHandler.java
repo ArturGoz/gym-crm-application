@@ -2,6 +2,7 @@ package com.gca.exception;
 
 import com.gca.openapi.model.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.gca.exception.ApiError.AUTHENTICATION_ERROR;
 import static com.gca.exception.ApiError.DATABASE_ERROR;
@@ -53,10 +55,10 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(Exception ex) {
-        log.error("Authentication Exception: {}", ex.getMessage(), ex);
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(ConstraintViolationException ex) {
+        log.error("Validation Exception: {}", ex.getMessage(), ex);
 
-        return buildErrorResponse(VALIDATION_ERROR, ex.getMessage());
+        return buildErrorResponse(VALIDATION_ERROR, extractValidationMessage(ex));
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -75,7 +77,12 @@ public class ErrorHandler {
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(ApiError apiError) {
         return buildErrorResponse(apiError, null);
+    }
 
+    private String extractValidationMessage(ConstraintViolationException ex) {
+        return ex.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.joining("; "));
     }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(ApiError apiError, String message) {
