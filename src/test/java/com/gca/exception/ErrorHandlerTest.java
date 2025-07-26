@@ -2,10 +2,14 @@ package com.gca.exception;
 
 import com.gca.openapi.model.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Collections;
+import java.util.Set;
 
 import static com.gca.exception.ApiError.AUTHENTICATION_ERROR;
 import static com.gca.exception.ApiError.DATABASE_ERROR;
@@ -16,6 +20,8 @@ import static com.gca.exception.ApiError.VALIDATION_ERROR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -84,8 +90,12 @@ class ErrorHandlerTest {
 
     @Test
     void handleValidationExceptions_shouldReturnValidationErrorWithMessage() {
-        String message = "Field must not be blank";
-        ConstraintViolationException ex = new ConstraintViolationException(message, null);
+        String violationMessage = "Field must not be blank";
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
+        ConstraintViolationException ex = new ConstraintViolationException("Validation failed", violations);
+
+        when(violation.getMessage()).thenReturn(violationMessage);
 
         ResponseEntity<ErrorResponse> actual = errorHandler.handleValidationExceptions(ex);
 
@@ -93,7 +103,7 @@ class ErrorHandlerTest {
         assertEquals(BAD_REQUEST, actual.getStatusCode());
         assertEquals(VALIDATION_ERROR.getCode(), actual.getBody().getErrorCode());
         assertTrue(actual.getBody().getErrorMessage().contains(VALIDATION_ERROR.getMessage()));
-        assertTrue(actual.getBody().getErrorMessage().contains(message));
+        assertTrue(actual.getBody().getErrorMessage().contains(violationMessage));
     }
 
     @Test
