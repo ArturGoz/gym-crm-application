@@ -92,11 +92,10 @@ class ErrorHandlerTest {
     void handleValidationExceptions_shouldReturnValidationErrorWithMessage() {
         String violationMessage = "Field must not be blank";
         ConstraintViolation<?> violation = mock(ConstraintViolation.class);
-
-        when(violation.getMessage()).thenReturn(violationMessage);
-
         Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
         ConstraintViolationException ex = new ConstraintViolationException("Validation failed", violations);
+
+        when(violation.getMessage()).thenReturn(violationMessage);
 
         ResponseEntity<ErrorResponse> actual = errorHandler.handleValidationExceptions(ex);
 
