@@ -1,0 +1,60 @@
+{
+	"info": {
+		"_postman_id": "26a95f6e-c75e-4943-9dc6-12a9d6ad93be",
+		"name": "Training API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38565541"
+	},
+	"item": [
+		{
+			"name": "Create Training",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"traineeUsername\": \"alice.smith\",\n  \"trainerUsername\": \"john.doe\",\n  \"trainingName\": \"Morning Yoga Session\",\n  \"trainingDate\": \"2024-08-15\",\n  \"duration\": 60\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/trainings",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"trainings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Training Types",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/trainings/types",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"trainings",
+						"types"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api"
+		}
+	]
+}
