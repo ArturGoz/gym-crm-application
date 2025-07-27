@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
                 .orElse(false);
     }
 
+    @Transactional
     @Override
     public void changeUserPassword(@Valid PasswordChangeDTO passwordChangeDTO) {
         String username = passwordChangeDTO.getUsername();
@@ -104,16 +105,6 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userDAO.update(user);
 
         logger.info("Toggled active status for user with username: {} to {}", username, updatedUser.getIsActive());
-    }
-
-    @Override
-    public User getUserById(Long id) {
-        logger.debug("Retrieving user with ID: {}", id);
-
-        return Optional.ofNullable(userDAO.getById(id))
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("User with ID %d not found", id)
-                ));
     }
 }
 

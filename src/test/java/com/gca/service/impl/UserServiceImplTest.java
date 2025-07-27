@@ -55,28 +55,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getUserById_success() {
-        User user = GymTestProvider.constructUser();
-
-        when(dao.getById(1L)).thenReturn(user);
-
-        User actual = service.getUserById(1L);
-
-        assertEquals(user, actual);
-        verify(dao).getById(1L);
-    }
-
-    @Test
-    void getUserById_notFound_throwsException() {
-        when(dao.getById(1L)).thenReturn(null);
-
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.getUserById(1L));
-
-        assertEquals("User with ID 1 not found", ex.getMessage());
-        verify(dao).getById(1L);
-    }
-
-    @Test
     void isUserCredentialsValid_validCredentials_returnsTrue() {
         User user = GymTestProvider.constructUser();
 

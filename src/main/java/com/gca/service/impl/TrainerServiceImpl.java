@@ -59,6 +59,11 @@ public class TrainerServiceImpl implements TrainerService {
     }
 
     @Autowired
+    public void setTrainingTypeDAO(TrainingTypeDAO trainingTypeDAO) {
+        this.trainingTypeDAO = trainingTypeDAO;
+    }
+
+    @Autowired
     public void setUserDAO(UserService userService) {
         this.userService = userService;
     }
