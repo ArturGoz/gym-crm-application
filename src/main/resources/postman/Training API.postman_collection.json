@@ -18,12 +18,12 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"traineeUsername\": \"alice.smith\",\n  \"trainerUsername\": \"john.doe\",\n  \"trainingName\": \"Morning Yoga Session\",\n  \"trainingDate\": \"2024-08-15\",\n  \"duration\": 60\n}"
+          "raw": "{\n  \"traineeUsername\": \"janesmith\",\n  \"trainerUsername\": \"johndoe\",\n  \"trainingName\": \"Boxing\",\n  \"trainingDate\": \"2025-08-15\",\n  \"duration\": 60\n}"
         },
         "url": {
-          "raw": "{{base_url}}/trainings",
+          "raw": "{{baseURL}}/trainings",
           "host": [
-            "{{base_url}}"
+            "{{baseURL}}"
           ],
           "path": [
             "trainings"
@@ -34,13 +34,25 @@
     },
     {
       "name": "Get Training Types",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
       "request": {
         "method": "GET",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "{{base_url}}/trainings/types",
+          "raw": "{{baseURL}}/trainings/types",
           "host": [
-            "{{base_url}}"
+            "{{baseURL}}"
           ],
           "path": [
             "trainings",

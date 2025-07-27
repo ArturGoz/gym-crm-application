@@ -22,7 +22,7 @@
           "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"2000-01-15\",\n  \"address\": \"123 Main Street\"\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/trainees/register",
+          "raw": "http://localhost:8080/api/v1/trainees/register",
           "protocol": "http",
           "host": [
             "localhost"
@@ -30,6 +30,7 @@
           "port": "8080",
           "path": [
             "api",
+            "v1",
             "trainees",
             "register"
           ]
@@ -39,11 +40,23 @@
     },
     {
       "name": "Get Trainee by Username",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
       "request": {
         "method": "GET",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "http://localhost:8080/api/trainees/john.doe",
+          "raw": "http://localhost:8080/api/v1/trainees/john.doe3",
           "protocol": "http",
           "host": [
             "localhost"
@@ -51,8 +64,9 @@
           "port": "8080",
           "path": [
             "api",
+            "v1",
             "trainees",
-            "john.doe"
+            "john.doe3"
           ]
         }
       },
@@ -73,7 +87,7 @@
           "raw": "{\n  \"firstName\": \"Johnny\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"2000-01-15\",\n  \"address\": \"456 New Address\",\n  \"isActive\": true\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/trainees/john.doe",
+          "raw": "http://localhost:8080/api/v1/trainees/john.doe3",
           "protocol": "http",
           "host": [
             "localhost"
@@ -81,8 +95,9 @@
           "port": "8080",
           "path": [
             "api",
+            "v1",
             "trainees",
-            "john.doe"
+            "john.doe3"
           ]
         }
       },
@@ -94,7 +109,7 @@
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/api/trainees/john.doe",
+          "raw": "http://localhost:8080/api/v1/trainees/john.doe2",
           "protocol": "http",
           "host": [
             "localhost"
@@ -102,8 +117,9 @@
           "port": "8080",
           "path": [
             "api",
+            "v1",
             "trainees",
-            "john.doe"
+            "john.doe2"
           ]
         }
       },
@@ -121,10 +137,10 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"trainerUsernames\": [\"mike.smith1\", \"anna.jones2\"]\n}"
+          "raw": "{\n  \"trainerUsernames\": [\"johndoe\"]\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/trainees/john.doe/trainers",
+          "raw": "http://localhost:8080/api/v1/trainees/john.doe3/trainers",
           "protocol": "http",
           "host": [
             "localhost"
@@ -132,8 +148,9 @@
           "port": "8080",
           "path": [
             "api",
+            "v1",
             "trainees",
-            "john.doe",
+            "john.doe3",
             "trainers"
           ]
         }
@@ -142,11 +159,23 @@
     },
     {
       "name": "Get Available Trainers",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
       "request": {
         "method": "GET",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "http://localhost:8080/api/trainees/john.doe/available-trainers",
+          "raw": "http://localhost:8080/api/v1/trainees/janesmith/available-trainers",
           "protocol": "http",
           "host": [
             "localhost"
@@ -154,8 +183,9 @@
           "port": "8080",
           "path": [
             "api",
+            "v1",
             "trainees",
-            "john.doe",
+            "janesmith",
             "available-trainers"
           ]
         }
@@ -164,11 +194,23 @@
     },
     {
       "name": "Get Trainee Trainings with Filters",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
       "request": {
         "method": "GET",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "http://localhost:8080/api/trainees/john.doe/trainings?periodFrom=2025-01-01&periodTo=2025-12-31&trainerName=Mike Smith&trainingType=Cardio",
+          "raw": "http://localhost:8080/api/v1/trainees/janesmith/trainings?periodFrom=2025-01-01&periodTo=2025-12-31&trainerName=johndoe&trainingType=Yoga",
           "protocol": "http",
           "host": [
             "localhost"
@@ -176,8 +218,9 @@
           "port": "8080",
           "path": [
             "api",
+            "v1",
             "trainees",
-            "john.doe",
+            "janesmith",
             "trainings"
           ],
           "query": [
@@ -191,11 +234,11 @@
             },
             {
               "key": "trainerName",
-              "value": "Mike Smith"
+              "value": "johndoe"
             },
             {
               "key": "trainingType",
-              "value": "Cardio"
+              "value": "Yoga"
             }
           ]
         }
@@ -214,10 +257,10 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"isActive\": false\n}"
+          "raw": "{\n  \"isActive\": true\n}"
         },
         "url": {
-          "raw": "http://localhost:8080/api/trainees/john.doe/change-activation-status",
+          "raw": "http://localhost:8080/api/v1/trainees/john.doe3/change-activation-status",
           "protocol": "http",
           "host": [
             "localhost"
@@ -225,8 +268,9 @@
           "port": "8080",
           "path": [
             "api",
+            "v1",
             "trainees",
-            "john.doe",
+            "john.doe3",
             "change-activation-status"
           ]
         }

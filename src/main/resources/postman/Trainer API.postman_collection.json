@@ -18,12 +18,12 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"specialization\": \"fitness\"\n}"
+          "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"specialization\": \"Boxing\"\n}"
         },
         "url": {
-          "raw": "{{base_url}}/trainers/register",
+          "raw": "{{baseURL}}/trainers/register",
           "host": [
-            "{{base_url}}"
+            "{{baseURL}}"
           ],
           "path": [
             "trainers",
@@ -35,17 +35,29 @@
     },
     {
       "name": "Get Trainer by Username",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
       "request": {
         "method": "GET",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "{{base_url}}/trainers/john.doe",
+          "raw": "{{baseURL}}/trainers/johndoe",
           "host": [
-            "{{base_url}}"
+            "{{baseURL}}"
           ],
           "path": [
             "trainers",
-            "john.doe"
+            "johndoe"
           ]
         }
       },
@@ -63,16 +75,16 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Smith\",\n  \"specialization\": \"yoga\",\n  \"isActive\": true\n}"
+          "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Smith\",\n  \"specialization\": \"Yoga\",\n  \"isActive\": true\n}"
         },
         "url": {
-          "raw": "{{base_url}}/trainers/john.doe",
+          "raw": "{{baseURL}}/trainers/john.doe1",
           "host": [
-            "{{base_url}}"
+            "{{baseURL}}"
           ],
           "path": [
             "trainers",
-            "john.doe"
+            "john.doe1"
           ]
         }
       },
@@ -80,31 +92,43 @@
     },
     {
       "name": "Get Trainer Trainings",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
       "request": {
         "method": "GET",
         "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
         "url": {
-          "raw": "{{base_url}}/trainers/john.doe/trainings?periodFrom=2024-01-01&periodTo=2024-12-31&traineeName=Alice",
+          "raw": "{{baseURL}}/trainers/johndoe/trainings?periodFrom=2025-01-01&periodTo=2025-12-31&traineeName=janesmith",
           "host": [
-            "{{base_url}}"
+            "{{baseURL}}"
           ],
           "path": [
             "trainers",
-            "john.doe",
+            "johndoe",
             "trainings"
           ],
           "query": [
             {
               "key": "periodFrom",
-              "value": "2024-01-01"
+              "value": "2025-01-01"
             },
             {
               "key": "periodTo",
-              "value": "2024-12-31"
+              "value": "2025-12-31"
             },
             {
               "key": "traineeName",
-              "value": "Alice"
+              "value": "janesmith"
             }
           ]
         }
@@ -123,12 +147,12 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"isActive\": false\n}"
+          "raw": "{\n  \"isActive\": true\n}"
         },
         "url": {
-          "raw": "{{base_url}}/trainers/john.doe/change-activation-status",
+          "raw": "{{baseURL}}/trainers/john.doe/change-activation-status",
           "host": [
-            "{{base_url}}"
+            "{{baseURL}}"
           ],
           "path": [
             "trainers",
