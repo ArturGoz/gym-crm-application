@@ -18,6 +18,7 @@ import com.gca.model.TrainingType;
 import com.gca.model.User;
 import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
+import com.gca.service.common.UserProfileService;
 import com.gca.utils.GymTestProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,6 +62,9 @@ class TrainerServiceImplTest {
     @Mock
     private UserMapper userMapper;
 
+    @Mock
+    private UserProfileService userProfileService;
+
     @InjectMocks
     private TrainerServiceImpl service;
 
@@ -72,6 +76,7 @@ class TrainerServiceImplTest {
         UserCredentialsDTO expected = GymTestProvider.constructUserCreateDTO();
 
         when(userService.createUser(any(UserCreateDTO.class))).thenReturn(trainer.getUser());
+        when(userProfileService.encryptPassword(trainer.getUser().getPassword())).thenReturn(expected.getPassword());
         when(trainingTypeDAO.getByName(any(String.class))).thenReturn(TrainingType.builder().name("Yoga").build());
         when(dao.create(any(Trainer.class))).thenReturn(trainerWithCreds);
         when(userMapper.toResponse(any(User.class))).thenReturn(expected);

@@ -21,8 +21,7 @@ public class UserProfileService {
     }
 
     public String generatePassword() {
-        String rawPassword = randomPasswordGenerator.generatePassword();
-        return encryptPassword(rawPassword);
+        return randomPasswordGenerator.generatePassword();
     }
 
     public boolean verifyPassword(String rawPassword, String encodedPassword) {
