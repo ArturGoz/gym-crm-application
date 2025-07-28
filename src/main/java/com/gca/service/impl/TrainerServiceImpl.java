@@ -21,6 +21,7 @@ import com.gca.model.User;
 import com.gca.service.TrainerService;
 import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
+import com.gca.service.common.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -51,7 +52,13 @@ public class TrainerServiceImpl implements TrainerService {
     private UserMapper userMapper;
     private TrainerMapper trainerMapper;
 
+    private UserProfileService userProfileService;
     private CoreValidator validator;
+
+    @Autowired
+    public void setUserProfileService(UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
+    }
 
     @Autowired
     public void setTrainerDAO(TrainerDAO trainerDAO) {
@@ -99,6 +106,10 @@ public class TrainerServiceImpl implements TrainerService {
                 .build();
 
         User user = userService.createUser(userCreateDTO);
+
+        String rawPass = user.getPassword();
+        user.setPassword(userProfileService.encryptPassword(rawPass));
+
         TrainingType trainingType = trainingTypeDAO.getByName(request.getSpecialization());
 
         if (trainingType == null) {
@@ -113,7 +124,8 @@ public class TrainerServiceImpl implements TrainerService {
         Trainer created = trainerDAO.create(trainer);
 
         logger.info("Trainer created: {}", created);
-        return userMapper.toResponse(user);
+
+        return userMapper.toResponse(user.toBuilder().password(rawPass).build());
     }
 
     @Transactional

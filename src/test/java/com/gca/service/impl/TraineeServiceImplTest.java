@@ -18,6 +18,7 @@ import com.gca.model.User;
 import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
 import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
+import com.gca.service.common.UserProfileService;
 import com.gca.utils.GymTestProvider;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -57,6 +58,9 @@ class TraineeServiceImplTest {
     @Mock
     private TrainerMapper trainerMapper;
 
+    @Mock
+    private UserProfileService userProfileService;
+
     @InjectMocks
     private TraineeServiceImpl service;
 
@@ -68,6 +72,7 @@ class TraineeServiceImplTest {
         UserCredentialsDTO expected = GymTestProvider.constructUserCreateDTO();
 
         when(userService.createUser(any(UserCreateDTO.class))).thenReturn(trainee.getUser());
+        when(userProfileService.encryptPassword(trainee.getUser().getPassword())).thenReturn(expected.getPassword());
         when(mapper.toEntity(request)).thenReturn(trainee);
         when(dao.create(any(Trainee.class))).thenReturn(traineeWithCreds);
         when(userMapper.toResponse(any(User.class))).thenReturn(expected);

@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +26,7 @@ class UserProfileServiceTest {
     private UserProfileService service;
 
     @Test
-    void generateUsername_delegatesToUsernameGenerator() {
+    void generateUsername() {
         when(usernameGenerator.generate("Arnold", "Schwarzenegger")).thenReturn("Arnold.Schwarzenegger");
 
         String username = service.generateUsername("Arnold", "Schwarzenegger");
@@ -37,9 +36,8 @@ class UserProfileServiceTest {
     }
 
     @Test
-    void generatePassword_delegatesToRandomPasswordGenerator() {
+    void generateRandomPassword() {
         when(randomPasswordGenerator.generatePassword()).thenReturn("aB12cD34eF");
-        when(bCryptPasswordEncoder.encode(any(String.class))).thenReturn("aB12cD34eF");
 
         String password = service.generatePassword();
 
@@ -48,13 +46,14 @@ class UserProfileServiceTest {
     }
 
     @Test
-    void generatePassword_encryptRandomPasswordGenerator() {
-        when(randomPasswordGenerator.generatePassword()).thenReturn("aB12cD34eF");
-        when(bCryptPasswordEncoder.encode(any(String.class))).thenReturn("*****");
+    void encodePassword() {
+        String password = "randomPassword";
 
-        String password = service.generatePassword();
+        when(bCryptPasswordEncoder.encode(password)).thenReturn("***");
 
-        assertEquals("*****", password);
-        verify(randomPasswordGenerator).generatePassword();
+        String actual = service.encryptPassword(password);
+
+        assertEquals("***", actual);
+        verify(bCryptPasswordEncoder).encode(password);
     }
 }

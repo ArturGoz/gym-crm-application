@@ -19,6 +19,7 @@ import com.gca.model.User;
 import com.gca.service.TraineeService;
 import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
+import com.gca.service.common.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -45,8 +46,14 @@ public class TraineeServiceImpl implements TraineeService {
     private TraineeMapper traineeMapper;
     private TrainerMapper trainerMapper;
     private UserMapper userMapper;
+    private UserProfileService userProfileService;
 
     private CoreValidator validator;
+
+    @Autowired
+    public void setUserProfileService(UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
+    }
 
     @Autowired
     public void setTraineeDAO(TraineeDAO traineeDAO) {
@@ -90,6 +97,9 @@ public class TraineeServiceImpl implements TraineeService {
 
         User user = userService.createUser(userCreateDTO);
 
+        String rawPass = user.getPassword();
+        user.setPassword(userProfileService.encryptPassword(rawPass));
+
         Trainee trainee = traineeMapper.toEntity(request).toBuilder()
                 .user(user)
                 .build();
@@ -97,7 +107,8 @@ public class TraineeServiceImpl implements TraineeService {
         Trainee created = traineeDAO.create(trainee);
 
         logger.info("Created trainee: {}", created);
-        return userMapper.toResponse(user);
+
+        return userMapper.toResponse(user.toBuilder().password(rawPass).build());
     }
 
     @Transactional

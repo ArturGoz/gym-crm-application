@@ -1,6 +1,7 @@
 package com.gca.service.integration;
 
 import com.gca.dto.user.UserCredentialsDTO;
+import com.gca.service.common.UserProfileService;
 import com.gca.utils.GymTestProvider;
 import com.gca.dao.TraineeDAO;
 import com.gca.dto.trainee.TraineeCreateDTO;
@@ -36,6 +37,9 @@ class TraineeServiceIT extends AbstractServiceIT {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserProfileService userProfileService;
+
     @BeforeEach
     void setUp() {
         transaction = sessionFactory.getCurrentSession().beginTransaction();
@@ -48,6 +52,7 @@ class TraineeServiceIT extends AbstractServiceIT {
         traineeService.setValidator(validator);
         traineeService.setUserService(userService);
         traineeService.setUserMapper(userMapper);
+        traineeService.setUserProfileService(userProfileService);
     }
 
     @AfterEach

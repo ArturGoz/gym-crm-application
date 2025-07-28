@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
                 .isActive(true)
                 .build();
 
-        logger.info("Created user: {}", user);
+        logger.info("User: {}", user);
         return user;
     }
 
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
                         format("User with username %s not found", username)
                 ));
         if (!userProfileService.verifyPassword(passwordChangeDTO.getOldPassword(), user.getPassword())) {
-            throw new SecurityException("Old password is wrong");
+            throw new ServiceException("Old password is wrong");
         }
 
         user.setPassword(userProfileService.encryptPassword(passwordChangeDTO.getNewPassword()));
