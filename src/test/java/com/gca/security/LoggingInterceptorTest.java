@@ -3,9 +3,11 @@ package com.gca.security;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
@@ -80,5 +82,41 @@ public class LoggingInterceptorTest {
                 .as("Log message should mask password")
                 .contains("\"password\":\"***\"")
                 .doesNotContain("superSecret123");
+    }
+
+    @Test
+    void shouldMaskPasswordInRegisterResponseLog() throws Exception {
+        Logger logger = (Logger) LoggerFactory.getLogger(LoggingInterceptor.class);
+        ListAppender<ILoggingEvent> appender = new ListAppender<>();
+        appender.start();
+        logger.addAppender(appender);
+        LoggingInterceptor interceptor = new LoggingInterceptor();
+
+        String responseBody = """
+                {
+                    "username": "john.doe6",
+                    "password": "RawPassword123"
+                }
+                """;
+
+        ContentCachingResponseWrapper response = mock(ContentCachingResponseWrapper.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(response.getContentAsByteArray()).thenReturn(responseBody.getBytes());
+        when(response.getCharacterEncoding()).thenReturn("UTF-8");
+        when(response.getContentType()).thenReturn("application/json");
+        when(response.getStatus()).thenReturn(200);
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getRequestURI()).thenReturn("/api/v1/trainees/register");
+
+        interceptor.afterCompletion(request, response, null, null);
+
+        ILoggingEvent logEvent = appender.list.iterator().next();
+        String message = logEvent.getFormattedMessage();
+
+        assertThat(message)
+                .as("Log message should mask password in response")
+                .contains("\"password\":\"***\"")
+                .doesNotContain("RawPassword123");
     }
 }

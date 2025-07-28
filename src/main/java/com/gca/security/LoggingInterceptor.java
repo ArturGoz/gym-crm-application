@@ -26,15 +26,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
         if (request instanceof CachingRequestWrapper) {
             body = ((CachingRequestWrapper) request).getBody();
-
-            try {
-                ObjectNode jsonNode = (ObjectNode) objectMapper.readTree(body);
-
-                hideSensitiveData(jsonNode);
-                body = jsonNode.toString();
-            } catch (Exception e) {
-                logger.warn("Failed to parse JSON body: {}", e.getMessage());
-            }
+            body = readBody(body);
         }
 
         logger.info("Incoming Request: [{}] {} Body: {}", request.getMethod(), request.getRequestURI(), body);
@@ -51,6 +43,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
         if (response instanceof ContentCachingResponseWrapper wrappedResponse) {
             body = getResponseBody(wrappedResponse);
+            body = readBody(body);
         }
 
         if (ex != null) {
@@ -60,6 +53,18 @@ public class LoggingInterceptor implements HandlerInterceptor {
             logger.info("Response for [{} {}] returned status {}. Body: {}",
                     request.getMethod(), request.getRequestURI(), status, body);
         }
+    }
+
+    private String readBody(String body) {
+        try {
+            ObjectNode jsonNode = (ObjectNode) objectMapper.readTree(body);
+
+            hideSensitiveData(jsonNode);
+            body = jsonNode.toString();
+        } catch (Exception e) {
+            logger.warn("Failed to parse JSON body: {}", e.getMessage());
+        }
+        return body;
     }
 
     private void hideSensitiveData(ObjectNode node) {
