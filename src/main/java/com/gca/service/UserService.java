@@ -12,5 +12,5 @@ public interface UserService {
 
     void changeUserPassword(@Valid PasswordChangeDTO passwordChangeDTO);
 
-    void toggleActiveStatus(String username);
+    void toggleActiveStatus(String username, boolean isActive);
 }

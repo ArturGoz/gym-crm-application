@@ -1,5 +1,6 @@
 package com.gca.service.impl;
 
+import com.gca.exception.ServiceException;
 import com.gca.utils.GymTestProvider;
 import com.gca.dao.UserDAO;
 import com.gca.dto.PasswordChangeDTO;
@@ -10,10 +11,13 @@ import com.gca.service.common.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -113,17 +117,39 @@ class UserServiceImplTest {
     }
 
 
-    @Test
-    void toggleActiveStatus_success() {
-        User expected = GymTestProvider.constructUser();
-        User updated = expected.toBuilder().isActive(!expected.getIsActive()).build();
+    @ParameterizedTest
+    @CsvSource({
+            "true, false",
+            "false, true"
+    })
+    void toggleActiveStatus_success(boolean currentStatus, boolean newStatus) {
+        User user = GymTestProvider.constructUser().toBuilder().isActive(currentStatus).build();
+        User updatedUser = user.toBuilder().isActive(newStatus).build();
 
-        when(dao.findByUsername(expected.getUsername())).thenReturn(expected);
-        when(dao.update(any(User.class))).thenReturn(updated);
+        when(dao.findByUsername(user.getUsername())).thenReturn(user);
+        when(dao.update(any(User.class))).thenReturn(updatedUser);
 
-        service.toggleActiveStatus(expected.getUsername());
+        service.toggleActiveStatus(user.getUsername(), newStatus);
 
         verify(dao).update(any(User.class));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "true, true",
+            "false, false"
+    })
+    void toggleActiveStatus_alreadyInStatus_throwsException(boolean currentStatus, boolean newStatus) {
+        User user = GymTestProvider.constructUser().toBuilder().isActive(currentStatus).build();
+        String expectedAction = newStatus ? "activate" : "deactivate";
+
+        when(dao.findByUsername(user.getUsername())).thenReturn(user);
+
+        ServiceException ex = assertThrows(ServiceException.class, () ->
+                service.toggleActiveStatus(user.getUsername(), newStatus)
+        );
+
+        assertTrue(ex.getMessage().contains(format("Could not %s user", expectedAction)));
     }
 
     private User buildUser() {

@@ -148,8 +148,8 @@ public class TrainingAppFacade {
     }
 
     @Authenticated
-    public void toggleUserActiveStatus(String username) {
-        userService.toggleActiveStatus(username);
+    public void toggleUserActiveStatus(String username, boolean isActive) {
+        userService.toggleActiveStatus(username, isActive);
     }
 
     @Authenticated

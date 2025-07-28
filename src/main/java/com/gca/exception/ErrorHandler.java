@@ -29,7 +29,9 @@ public class ErrorHandler {
             "Invalid trainer username",
             "Trainee username must be provided",
             "Trainer username must be provided",
-            "Username must not be null"
+            "Username must not be null",
+            "Old password is wrong",
+            "Active status is wrong"
     );
 
     @ExceptionHandler(ServiceException.class)

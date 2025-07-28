@@ -276,10 +276,11 @@ class TrainingAppFacadeTest {
     @Test
     void toggleUserActiveStatus_delegatesToService() {
         String username = "ronnie.coleman";
+        boolean isActive = false;
 
-        facade.toggleUserActiveStatus(username);
+        facade.toggleUserActiveStatus(username, isActive);
 
-        verify(userService).toggleActiveStatus(username);
+        verify(userService).toggleActiveStatus(username, isActive);
     }
 
     @Test
