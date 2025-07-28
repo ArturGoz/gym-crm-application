@@ -68,11 +68,9 @@ public class LoggingInterceptor implements HandlerInterceptor {
     }
 
     private void hideSensitiveData(ObjectNode node) {
-        for (String sensitiveField : SENSITIVE_FIELDS) {
-            if (node.has(sensitiveField)) {
-                node.put(sensitiveField, "***");
-            }
-        }
+        SENSITIVE_FIELDS.stream()
+                .filter(node::has)
+                .forEach(field -> node.put(field, "***"));
     }
 
     private String getResponseBody(ContentCachingResponseWrapper response) {
