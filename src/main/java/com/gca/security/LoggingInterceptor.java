@@ -26,15 +26,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
         if (request instanceof CachingRequestWrapper) {
             body = ((CachingRequestWrapper) request).getBody();
-
-            try {
-                ObjectNode jsonNode = (ObjectNode) objectMapper.readTree(body);
-
-                hideSensitiveData(jsonNode);
-                body = jsonNode.toString();
-            } catch (Exception e) {
-                logger.warn("Failed to parse JSON body: {}", e.getMessage());
-            }
+            body = readBody(body);
         }
 
         logger.info("Incoming Request: [{}] {} Body: {}", request.getMethod(), request.getRequestURI(), body);
@@ -51,6 +43,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
         if (response instanceof ContentCachingResponseWrapper wrappedResponse) {
             body = getResponseBody(wrappedResponse);
+            body = readBody(body);
         }
 
         if (ex != null) {
@@ -62,12 +55,22 @@ public class LoggingInterceptor implements HandlerInterceptor {
         }
     }
 
-    private void hideSensitiveData(ObjectNode node) {
-        for (String sensitiveField : SENSITIVE_FIELDS) {
-            if (node.has(sensitiveField)) {
-                node.put(sensitiveField, "***");
-            }
+    private String readBody(String body) {
+        try {
+            ObjectNode jsonNode = (ObjectNode) objectMapper.readTree(body);
+
+            hideSensitiveData(jsonNode);
+            body = jsonNode.toString();
+        } catch (Exception e) {
+            logger.warn("Failed to parse JSON body: {}", e.getMessage());
         }
+        return body;
+    }
+
+    private void hideSensitiveData(ObjectNode node) {
+        SENSITIVE_FIELDS.stream()
+                .filter(node::has)
+                .forEach(field -> node.put(field, "***"));
     }
 
     private String getResponseBody(ContentCachingResponseWrapper response) {
