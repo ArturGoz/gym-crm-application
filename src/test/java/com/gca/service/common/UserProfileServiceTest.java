@@ -46,7 +46,7 @@ class UserProfileServiceTest {
     }
 
     @Test
-    void generateBCryptPassword() {
+    void encodePassword() {
         String password = "randomPassword";
 
         when(bCryptPasswordEncoder.encode(password)).thenReturn("***");
