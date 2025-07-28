@@ -13,6 +13,4 @@ public interface UserService {
     void changeUserPassword(@Valid PasswordChangeDTO passwordChangeDTO);
 
     void toggleActiveStatus(String username);
-
-    User getUserById(Long id);
 }
