@@ -102,14 +102,18 @@ public class UserServiceImpl implements UserService {
                         String.format("User with username %s not found", username)
                 ));
 
-        if (isActive == user.getIsActive()) {
-            throw new ServiceException("Active status is wrong");
-        }
-
+        validateActiveStatus(user, isActive);
         user.setIsActive(isActive);
-        User updatedUser = userDAO.update(user);
 
+        User updatedUser = userDAO.update(user);
         logger.info("Toggled active status for user with username: {} to {}", username, updatedUser.getIsActive());
+    }
+
+    private void validateActiveStatus(User user, boolean isActive) {
+        if (isActive == user.getIsActive()) {
+            String status = isActive ? "activate" : "deactivate";
+            throw new ServiceException(format("Could not %s user: user is already %sed", status, status));
+        }
     }
 }
 
