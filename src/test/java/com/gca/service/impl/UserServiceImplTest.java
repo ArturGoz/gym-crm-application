@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -148,7 +149,7 @@ class UserServiceImplTest {
                 service.toggleActiveStatus(user.getUsername(), newStatus)
         );
 
-        assertTrue(ex.getMessage().contains("Could not " + expectedAction + " user"));
+        assertTrue(ex.getMessage().contains(format("Could not %s user", expectedAction)));
     }
 
     private User buildUser() {
