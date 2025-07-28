@@ -115,13 +115,14 @@ class UserServiceImplTest {
 
     @Test
     void toggleActiveStatus_success() {
+        boolean isActive = false;
         User expected = GymTestProvider.constructUser();
-        User updated = expected.toBuilder().isActive(!expected.getIsActive()).build();
+        User updated = expected.toBuilder().isActive(isActive).build();
 
         when(dao.findByUsername(expected.getUsername())).thenReturn(expected);
         when(dao.update(any(User.class))).thenReturn(updated);
 
-        service.toggleActiveStatus(expected.getUsername());
+        service.toggleActiveStatus(expected.getUsername(), isActive);
 
         verify(dao).update(any(User.class));
     }

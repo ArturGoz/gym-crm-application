@@ -144,6 +144,6 @@ class TrainerControllerTest {
                         .content(asJsonString(request)))
                 .andExpect(status().isOk());
 
-        verify(facade).toggleUserActiveStatus(username);
+        verify(facade).toggleUserActiveStatus(username, request.getIsActive());
     }
 }

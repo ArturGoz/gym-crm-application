@@ -76,7 +76,7 @@ public class TrainerController {
     @PatchMapping("/{username}/change-activation-status")
     public ResponseEntity<Void> updateTrainerActivationStatus(
             @PathVariable(name = "username") String username, @RequestBody ActivationStatusRequest request) {
-        facade.toggleUserActiveStatus(username);
+        facade.toggleUserActiveStatus(username, request.getIsActive());
 
         return ResponseEntity.ok().build();
     }

@@ -4,6 +4,7 @@ import com.gca.dao.UserDAO;
 import com.gca.dao.transaction.Transactional;
 import com.gca.dto.PasswordChangeDTO;
 import com.gca.dto.user.UserCreateDTO;
+import com.gca.exception.ServiceException;
 import com.gca.mapper.UserMapper;
 import com.gca.model.User;
 import com.gca.service.UserService;
@@ -93,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void toggleActiveStatus(String username) {
+    public void toggleActiveStatus(String username, boolean isActive) {
         logger.debug("Toggling active status for user with username: {}", username);
 
         User user = Optional.ofNullable(userDAO.findByUsername(username))
@@ -101,7 +102,11 @@ public class UserServiceImpl implements UserService {
                         String.format("User with username %s not found", username)
                 ));
 
-        user.setIsActive(!user.getIsActive());
+        if (isActive == user.getIsActive()) {
+            throw new ServiceException("Active status is wrong");
+        }
+
+        user.setIsActive(isActive);
         User updatedUser = userDAO.update(user);
 
         logger.info("Toggled active status for user with username: {} to {}", username, updatedUser.getIsActive());
