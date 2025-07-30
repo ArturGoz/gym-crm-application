@@ -46,7 +46,7 @@ import java.util.Set;
 
 public class GymTestProvider {
 
-    public static TraineeGetResponse createTraineeGetResponse() {
+/*    public static TraineeGetResponse createTraineeGetResponse() {
         TraineeGetResponse response = new TraineeGetResponse();
         response.setFirstName("Arnold");
         response.setLastName("Schwarzenegger");
@@ -56,15 +56,15 @@ public class GymTestProvider {
         response.setTrainers(List.of(createAssignedTrainerResponse()));
 
         return response;
-    }
+    }*/
 
-    public static TraineeCreateResponse createTraineeCreateResponse() {
+/*    public static TraineeCreateResponse createTraineeCreateResponse() {
         TraineeCreateResponse traineeCreateResponse = new TraineeCreateResponse();
         traineeCreateResponse.setUsername("arnold.schwarzenegger");
         traineeCreateResponse.setPassword("password");
 
         return traineeCreateResponse;
-    }
+    }*/
 
     public static TraineeCreateRequest createTraineeCreateRequest() {
         TraineeCreateRequest request = new TraineeCreateRequest();
