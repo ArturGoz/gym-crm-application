@@ -19,6 +19,9 @@
         <snakeyaml.version>2.4</snakeyaml.version>
         <database-rider.version>1.41.0</database-rider.version>
         <jackson.version>2.18.2</jackson.version>
+        <sonar.projectKey>ArturGoz_gym-crm-application</sonar.projectKey>
+        <sonar.organization>arturgoz</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
@@ -293,6 +296,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.11.0.3922</version>
             </plugin>
             <plugin>
                 <groupId>org.openapitools</groupId>
