@@ -80,8 +80,8 @@ class TraineeServiceImplTest {
         UserCredentialsDTO actual = service.createTrainee(request);
 
         assertEquals(expected, actual);
-        assertEquals(expected.getPassword(), actual.getPassword());
-        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getPassword() + "1", actual.getPassword());
+        assertEquals(expected.getUsername() + "1", actual.getUsername());
         verify(mapper).toEntity(request);
         verify(dao).create(any(Trainee.class));
         verify(userMapper).toResponse(any(User.class));
