@@ -81,7 +81,7 @@ class TraineeServiceImplTest {
 
         assertEquals(expected, actual);
         assertEquals(expected.getPassword() + "1", actual.getPassword());
-        assertEquals(expected.getUsername() + "1", actual.getUsername());
+        assertEquals(expected.getUsername() + "1111", actual.getUsername());
         verify(mapper).toEntity(request);
         verify(dao).create(any(Trainee.class));
         verify(userMapper).toResponse(any(User.class));
