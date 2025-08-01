@@ -1,27 +1,24 @@
 package com.gca.service.common;
 
-import com.gca.dao.UserDAO;
+import com.gca.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class UsernameGenerator {
     private static final Logger logger = LoggerFactory.getLogger(UsernameGenerator.class);
 
-    private UserDAO userDAO;
-
-    @Autowired
-    public void setUserDAO(UserDAO userDAO) {
-        this.userDAO = userDAO;
-    }
+    private final UserRepository userRepository;
 
     public String generate(String firstName, String lastName) {
         logger.debug("Generating username");
+
         String base = (firstName + "." + lastName).toLowerCase();
         Set<String> allUsernames = retrieveAllExistUsernames();
 
@@ -40,7 +37,7 @@ public class UsernameGenerator {
     }
 
     private Set<String> retrieveAllExistUsernames() {
-        return userDAO.getAllUsernames().stream()
+        return userRepository.getAllUsernames().stream()
                 .map(String::toLowerCase)
                 .collect(Collectors.toSet());
     }

@@ -155,6 +155,12 @@ public class GymTestProvider {
                 .build();
     }
 
+    public static Trainer constructTrainer(Long id, String username) {
+        return constructTrainer(id).toBuilder()
+                .user(User.builder().username(username).build())
+                .build();
+    }
+
     public static Trainer constructInactiveTrainer() {
         return Trainer.builder()
                 .id(2L)

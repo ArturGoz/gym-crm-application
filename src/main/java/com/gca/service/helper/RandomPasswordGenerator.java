@@ -1,10 +1,10 @@
 package com.gca.service.helper;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
-@Component
+@Service
 public class RandomPasswordGenerator {
     private final String ALPHA_NUMERIC = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 

@@ -1,10 +1,10 @@
 package com.gca.security;
 
-import com.gca.dao.UserDAO;
 import com.gca.dto.auth.AuthenticationRequestDTO;
 import com.gca.dto.auth.AuthenticationResponseDTO;
 import com.gca.exception.UserNotAuthenticatedException;
 import com.gca.model.User;
+import com.gca.repository.UserRepository;
 import com.gca.service.UserService;
 import com.gca.utils.GymTestProvider;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,6 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -30,13 +33,13 @@ class AuthenticationServiceTest {
     private UserService userService;
 
     @Mock
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     @InjectMocks
     private AuthenticationService authenticationService;
 
     private User activeUser;
-    private AuthenticationRequestDTO request = new AuthenticationRequestDTO(
+    private final AuthenticationRequestDTO request = new AuthenticationRequestDTO(
             "arnold.schwarzenegger", "securePass123");
 
     @BeforeEach
@@ -46,7 +49,7 @@ class AuthenticationServiceTest {
 
     @Test
     void authenticate_successful() {
-        when(userDAO.findByUsername(request.getUsername())).thenReturn(activeUser);
+        when(userRepository.findByUsername(request.getUsername())).thenReturn(ofNullable(activeUser));
         when(userService.isUserCredentialsValid(request.getUsername(), request.getPassword()))
                 .thenReturn(true);
 
@@ -58,7 +61,7 @@ class AuthenticationServiceTest {
 
     @Test
     void authenticate_userNotFound_throwsException() {
-        when(userDAO.findByUsername(request.getUsername())).thenReturn(null);
+        when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> authenticationService.authenticate(request));
         verify(userService, never()).isUserCredentialsValid(anyString(), anyString());
@@ -66,7 +69,7 @@ class AuthenticationServiceTest {
 
     @Test
     void authenticate_wrongPassword_throwsException() {
-        when(userDAO.findByUsername(request.getUsername())).thenReturn(activeUser);
+        when(userRepository.findByUsername(request.getUsername())).thenReturn(ofNullable(activeUser));
         when(userService.isUserCredentialsValid(request.getUsername(), request.getPassword()))
                 .thenReturn(false);
 
@@ -77,7 +80,7 @@ class AuthenticationServiceTest {
     void authenticate_inactiveUser_throwsException() {
         activeUser.setIsActive(false);
 
-        when(userDAO.findByUsername(request.getUsername())).thenReturn(activeUser);
+        when(userRepository.findByUsername(request.getUsername())).thenReturn(ofNullable(activeUser));
         when(userService.isUserCredentialsValid(request.getUsername(), request.getPassword())).thenReturn(true);
 
         assertThrows(UserNotAuthenticatedException.class, () -> authenticationService.authenticate(request));

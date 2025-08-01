@@ -4,12 +4,14 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import com.gca.dao.UserDAO;
-import com.gca.dao.impl.UserDAOImpl;
-import org.junit.jupiter.api.BeforeEach;
+import com.gca.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
@@ -19,61 +21,49 @@ import java.util.List;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class UsernameGeneratorTest {
 
-    private UserDAO userDAO;
-    private UsernameGenerator sut;
+    @Mock
+    private UserRepository userRepository;
 
-    @BeforeEach
-    void setUp() {
-        userDAO = mock(UserDAOImpl.class);
-        sut = new UsernameGenerator();
-        sut.setUserDAO(userDAO);
-    }
+    @InjectMocks
+    private UsernameGenerator sut;
 
     @Test
     void generate_shouldReturnBaseNameIfNotExists() {
-        when(userDAO.getAllUsernames()).thenReturn(emptyList());
-
+        when(userRepository.getAllUsernames()).thenReturn(emptyList());
         String result = sut.generate("Arnold", "Schwarzenegger");
-
         assertEquals("arnold.schwarzenegger", result);
     }
 
     @Test
     void generate_shouldReturnWithSuffixIfBaseTaken() {
-        when(userDAO.getAllUsernames()).thenReturn(List.of("Arnold.Schwarzenegger"));
-
+        when(userRepository.getAllUsernames()).thenReturn(List.of("Arnold.Schwarzenegger"));
         String result = sut.generate("Arnold", "Schwarzenegger");
-
         assertEquals("arnold.schwarzenegger1", result);
     }
 
     @Test
     void generate_shouldIterateSuffixes() {
-        when(userDAO.getAllUsernames()).thenReturn(Arrays.asList("Arnold.Schwarzenegger", "Arnold.Schwarzenegger1"));
-
+        when(userRepository.getAllUsernames()).thenReturn(Arrays.asList("Arnold.Schwarzenegger", "Arnold.Schwarzenegger1"));
         String result = sut.generate("Arnold", "Schwarzenegger");
-
         assertEquals("arnold.schwarzenegger2", result);
     }
 
     @Test
     void generate_shouldTreatCaseAsTheSame() {
-        when(userDAO.getAllUsernames()).thenReturn(Collections.singletonList("arnold.schwarzenegger"));
-
+        when(userRepository.getAllUsernames()).thenReturn(Collections.singletonList("arnold.schwarzenegger"));
         String result = sut.generate("Arnold", "Schwarzenegger");
-
         assertEquals("arnold.schwarzenegger1", result);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"John.doE", "john.doe", "John.doe", "JOHN.DOE", "JohN.doE"})
     void generate_shouldLogIfUsernameExist(String username) {
-        when(userDAO.getAllUsernames()).thenReturn(List.of(username));
+        when(userRepository.getAllUsernames()).thenReturn(List.of(username));
 
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         ((Logger) LoggerFactory.getLogger(UsernameGenerator.class)).addAppender(listAppender);
@@ -83,9 +73,8 @@ class UsernameGeneratorTest {
 
         assertEquals(2, listAppender.list.size());
 
-        ILoggingEvent secondLog = listAppender.list.get(1);
-        assertEquals(Level.WARN, secondLog.getLevel());
-        String msg = secondLog.getFormattedMessage();
-        assertTrue(msg.equalsIgnoreCase("User with username john.doe already exists, generated alternative username: john.doe1"));
+        assertEquals(Level.WARN, listAppender.list.get(1).getLevel());
+        assertTrue(listAppender.list.get(1).getFormattedMessage().equalsIgnoreCase(
+                "User with username john.doe already exists, generated alternative username: john.doe1"));
     }
 }
