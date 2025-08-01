@@ -7,11 +7,14 @@ import com.gca.dto.trainer.TrainerUpdateResponseDTO;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
+@Mapper(componentModel = "springlazy",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        injectionStrategy = InjectionStrategy.SETTER,
         uses = {TraineeMapper.class})
 public interface TrainerMapper {
     @Mapping(source = "user.firstName", target = "firstName")

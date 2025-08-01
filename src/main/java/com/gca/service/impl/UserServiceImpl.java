@@ -1,7 +1,6 @@
 package com.gca.service.impl;
 
-import com.gca.dao.UserDAO;
-import com.gca.dao.transaction.Transactional;
+import com.gca.repository.UserRepository;
 import com.gca.dto.PasswordChangeDTO;
 import com.gca.dto.user.UserCreateDTO;
 import com.gca.exception.ServiceException;
@@ -11,34 +10,25 @@ import com.gca.service.UserService;
 import com.gca.service.common.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.Optional;
 
 import static java.lang.String.format;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    private UserDAO userDAO;
-    private UserProfileService userProfileService;
-    private UserMapper userMapper;
-
-    @Autowired
-    public void setUserDAO(UserDAO userDAO) {
-        this.userDAO = userDAO;
-    }
-
-    @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+    private final UserRepository userRepository;
+    private final UserProfileService userProfileService;
+    private final UserMapper userMapper;
 
     @Override
     public User createUser(@Valid UserCreateDTO request) {
@@ -56,18 +46,15 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Autowired
-    public void setUserProfileService(UserProfileService userProfileService) {
-        this.userProfileService = userProfileService;
-    }
-
     @Override
     public boolean isUserCredentialsValid(String username, String rawPassword) {
+        logger.debug("Checking if user credentials are valid");
+
         if (username == null || rawPassword == null) {
             return false;
         }
 
-        return Optional.ofNullable(userDAO.findByUsername(username))
+        return userRepository.findByUsername(username)
                 .map(user -> userProfileService.verifyPassword(rawPassword, user.getPassword()))
                 .orElse(false);
     }
@@ -78,7 +65,7 @@ public class UserServiceImpl implements UserService {
         String username = passwordChangeDTO.getUsername();
         logger.debug("Changing password for user with username: {}", username);
 
-        User user = Optional.ofNullable(userDAO.findByUsername(username))
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(
                         format("User with username %s not found", username)
                 ));
@@ -87,7 +74,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setPassword(userProfileService.encryptPassword(passwordChangeDTO.getNewPassword()));
-        userDAO.update(user);
+        userRepository.save(user);
 
         logger.info("Changed password for user with username: {}", username);
     }
@@ -97,7 +84,7 @@ public class UserServiceImpl implements UserService {
     public void toggleActiveStatus(String username, boolean isActive) {
         logger.debug("Toggling active status for user with username: {}", username);
 
-        User user = Optional.ofNullable(userDAO.findByUsername(username))
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("User with username %s not found", username)
                 ));
@@ -105,7 +92,7 @@ public class UserServiceImpl implements UserService {
         validateActiveStatus(user, isActive);
         user.setIsActive(isActive);
 
-        User updatedUser = userDAO.update(user);
+        User updatedUser = userRepository.save(user);
         logger.info("Toggled active status for user with username: {} to {}", username, updatedUser.getIsActive());
     }
 

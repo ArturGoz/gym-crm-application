@@ -7,14 +7,16 @@ import com.gca.dto.trainee.TraineeUpdateRequestDTO;
 import com.gca.dto.trainee.TraineeUpdateResponseDTO;
 import com.gca.model.Trainee;
 import com.gca.model.User;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import static java.util.Optional.ofNullable;
 
-@Mapper(componentModel = "spring",
+@Mapper(componentModel = "springlazy",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        injectionStrategy = InjectionStrategy.SETTER,
         uses = {TrainerMapper.class})
 public interface TraineeMapper {
     Trainee toEntity(TraineeCreateDTO request);

@@ -1,6 +1,5 @@
 package com.gca.service.impl;
 
-import com.gca.dao.TraineeDAO;
 import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeGetDTO;
 import com.gca.dto.trainee.TraineeTrainersUpdateDTO;
@@ -15,7 +14,8 @@ import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.User;
-import com.gca.openapi.model.TraineeAssignedTrainersUpdateRequest;
+import com.gca.repository.TraineeRepository;
+import com.gca.repository.TrainerRepository;
 import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
 import com.gca.service.common.UserProfileService;
@@ -27,9 +27,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
+import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,7 +43,10 @@ import static org.mockito.Mockito.when;
 class TraineeServiceImplTest {
 
     @Mock
-    private TraineeDAO dao;
+    private TraineeRepository repository;
+
+    @Mock
+    private TrainerRepository trainerRepository;
 
     @Mock
     private TraineeMapper mapper;
@@ -74,7 +79,7 @@ class TraineeServiceImplTest {
         when(userService.createUser(any(UserCreateDTO.class))).thenReturn(trainee.getUser());
         when(userProfileService.encryptPassword(trainee.getUser().getPassword())).thenReturn(expected.getPassword());
         when(mapper.toEntity(request)).thenReturn(trainee);
-        when(dao.create(any(Trainee.class))).thenReturn(traineeWithCreds);
+        when(repository.save(any(Trainee.class))).thenReturn(traineeWithCreds);
         when(userMapper.toResponse(any(User.class))).thenReturn(expected);
 
         UserCredentialsDTO actual = service.createTrainee(request);
@@ -83,7 +88,7 @@ class TraineeServiceImplTest {
         assertEquals(expected.getPassword(), actual.getPassword());
         assertEquals(expected.getUsername(), actual.getUsername());
         verify(mapper).toEntity(request);
-        verify(dao).create(any(Trainee.class));
+        verify(repository).save(any(Trainee.class));
         verify(userMapper).toResponse(any(User.class));
     }
 
@@ -104,10 +109,10 @@ class TraineeServiceImplTest {
         TraineeUpdateResponseDTO expected =
                 GymTestProvider.createTraineeUpdateResponse(updated);
 
-        when(dao.findByUsername(updateRequest.getUsername())).thenReturn(existing);
+        when(repository.findByUsername(updateRequest.getUsername())).thenReturn(Optional.of(existing));
         when(mapper.fillUserFields(existing.getUser(), updateRequest)).thenReturn(filledUser);
         when(mapper.fillTraineeFields(existing, filledUser, updateRequest)).thenReturn(filledExistingTrainee);
-        when(dao.update(filledExistingTrainee)).thenReturn(updated);
+        when(repository.save(filledExistingTrainee)).thenReturn(updated);
         when(mapper.toUpdateResponse(updated)).thenReturn(expected);
 
         TraineeUpdateResponseDTO actual = service.updateTrainee(updateRequest);
@@ -118,7 +123,7 @@ class TraineeServiceImplTest {
         assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
         assertEquals(expected.getIsActive(), actual.getIsActive());
 
-        verify(dao).update(existing);
+        verify(repository).save(existing);
         verify(mapper).toUpdateResponse(updated);
     }
 
@@ -126,7 +131,7 @@ class TraineeServiceImplTest {
     void updateTrainee_notFound_throwsException() {
         TraineeUpdateRequestDTO updateRequest = GymTestProvider.createTraineeUpdateRequestDTO();
 
-        when(dao.findByUsername(updateRequest.getUsername())).thenReturn(null);
+        when(repository.findByUsername(updateRequest.getUsername())).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainee(updateRequest));
@@ -139,14 +144,14 @@ class TraineeServiceImplTest {
         Trainee mockTrainee = GymTestProvider.constructTrainee();
         TraineeGetDTO expectedResponse = GymTestProvider.createTraineeGetDTO();
 
-        when(dao.findByUsername(username)).thenReturn(mockTrainee);
+        when(repository.findByUsername(username)).thenReturn(ofNullable(mockTrainee));
         when(mapper.toGetDto(mockTrainee)).thenReturn(expectedResponse);
 
         TraineeGetDTO actualResponse = service.getTraineeByUsername(username);
 
         assertEquals(expectedResponse, actualResponse);
         verify(validator).validateUsername(username);
-        verify(dao).findByUsername(username);
+        verify(repository).findByUsername(username);
         verify(mapper).toGetDto(mockTrainee);
     }
 
@@ -154,38 +159,47 @@ class TraineeServiceImplTest {
     void deleteTraineeByUsername_shouldThrow_whenNotFound() {
         String username = "ghost";
 
-        when(dao.findByUsername(username)).thenReturn(null);
+        when(repository.findByUsername(username)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.deleteTraineeByUsername(username));
 
         assertEquals(("Trainee with username 'ghost' not found"), ex.getMessage());
-        verify(dao).findByUsername(username);
+        verify(repository).findByUsername(username);
     }
 
     @Test
     void updateTraineeTrainers_shouldUpdateAndReturnResponse() {
         String username = "john.doe";
-        TraineeAssignedTrainersUpdateRequest request = GymTestProvider.createTraineeAssignedTrainersUpdateRequest();
-        TraineeTrainersUpdateDTO updateDTO = new TraineeTrainersUpdateDTO(username, request.getTrainerUsernames());
+        List<String> trainerUsernames = List.of("trainer1", "trainer2");
+        TraineeTrainersUpdateDTO request = new TraineeTrainersUpdateDTO(username, trainerUsernames);
 
-        Trainee updatedTrainee = GymTestProvider.constructTrainee();
-        List<Trainer> trainers = new ArrayList<>(updatedTrainee.getTrainers());
+        Trainee trainee = GymTestProvider.constructTrainee();
+        Trainer trainer1 = GymTestProvider.constructTrainer(1L, "trainer1");
+        Trainer trainer2 = GymTestProvider.constructTrainer(2L, "trainer2");
+        trainee.setTrainers(Set.of(trainer1, trainer2));
+        AssignedTrainerDTO dto1 = GymTestProvider.createAssignedTrainerDTO("trainer1");
+        AssignedTrainerDTO dto2 = GymTestProvider.createAssignedTrainerDTO("trainer2");
 
-        AssignedTrainerDTO trainer1 = GymTestProvider.createAssignedTrainerDTO("trainer1");
-        AssignedTrainerDTO trainer2 = GymTestProvider.createAssignedTrainerDTO("trainer2");
 
-        when(dao.updateTraineeTrainers(updateDTO.getTraineeUsername(), updateDTO.getTrainerNames()))
-                .thenReturn(updatedTrainee);
-        when(trainerMapper.toAssignedDto(trainers.get(0))).thenReturn(trainer1);
-        when(trainerMapper.toAssignedDto(trainers.get(1))).thenReturn(trainer2);
+        when(repository.findByUsername(username)).thenReturn(Optional.of(trainee));
+        when(trainerRepository.findByUsername("trainer1")).thenReturn(Optional.of(trainer1));
+        when(trainerRepository.findByUsername("trainer2")).thenReturn(Optional.of(trainer2));
 
-        List<AssignedTrainerDTO> actual = service.updateTraineeTrainers(updateDTO);
+        when(repository.save(any(Trainee.class))).thenReturn(trainee);
+
+        when(trainerMapper.toAssignedDto(trainer1)).thenReturn(dto1);
+        when(trainerMapper.toAssignedDto(trainer2)).thenReturn(dto2);
+
+        List<AssignedTrainerDTO> actual = service.updateTraineeTrainers(request);
 
         assertEquals(2, actual.size());
-        assertTrue(actual.contains(trainer1));
-        assertTrue(actual.contains(trainer2));
-        verify(dao).updateTraineeTrainers(updateDTO.getTraineeUsername(), updateDTO.getTrainerNames());
-        verify(trainerMapper).toAssignedDto(trainers.get(0));
-        verify(trainerMapper).toAssignedDto(trainers.get(1));
+        assertTrue(actual.containsAll(List.of(dto1, dto2)));
+
+        verify(repository).findByUsername(username);
+        verify(trainerRepository).findByUsername("trainer1");
+        verify(trainerRepository).findByUsername("trainer2");
+        verify(repository).save(any(Trainee.class));
+        verify(trainerMapper).toAssignedDto(trainer1);
+        verify(trainerMapper).toAssignedDto(trainer2);
     }
 }

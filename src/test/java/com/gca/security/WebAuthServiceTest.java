@@ -1,7 +1,7 @@
 package com.gca.security;
 
-import com.gca.dao.UserDAO;
 import com.gca.model.User;
+import com.gca.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +14,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -23,13 +24,13 @@ import static org.mockito.Mockito.when;
 class WebAuthServiceTest {
 
     @Mock
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     private WebAuthService webAuthService;
 
     @BeforeEach
     void setUp() {
-        webAuthService = new WebAuthService(userDAO);
+        webAuthService = new WebAuthService(userRepository);
     }
 
     @Test
@@ -46,7 +47,7 @@ class WebAuthServiceTest {
         );
 
         when(mockRequest.getCookies()).thenReturn(cookies);
-        when(userDAO.findByUsername(username)).thenReturn(user);
+        when(userRepository.findByUsername(username)).thenReturn(ofNullable(user));
 
         Optional<User> actual = webAuthService.getUserFromRequestContext();
 

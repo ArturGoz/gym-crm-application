@@ -1,9 +1,9 @@
 package com.gca.service.common;
 
 import com.gca.exception.ServiceException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class CoreValidator {
 
     public void validateUsername(String username) {

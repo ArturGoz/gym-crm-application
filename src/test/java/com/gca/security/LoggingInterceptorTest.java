@@ -17,13 +17,12 @@ import static org.mockito.Mockito.when;
 public class LoggingInterceptorTest {
 
     private LoggingInterceptor interceptor;
-    private Logger logger;
     private ListAppender<ILoggingEvent> appender;
 
     @BeforeEach
     public void setUp() {
         interceptor = new LoggingInterceptor();
-        logger = (Logger) LoggerFactory.getLogger(LoggingInterceptor.class);
+        Logger logger = (Logger) LoggerFactory.getLogger(LoggingInterceptor.class);
 
         appender = new ListAppender<>();
         appender.start();
@@ -62,7 +61,7 @@ public class LoggingInterceptorTest {
     }
 
     @Test
-    void shouldMaskPasswordInLoginRequestLog() throws Exception {
+    void shouldMaskPasswordInLoginRequestLog() {
         String requestBody = """
                 {
                     "username": "user1",
@@ -88,7 +87,7 @@ public class LoggingInterceptorTest {
     }
 
     @Test
-    void shouldMaskPasswordInRegisterResponseLog() throws Exception {
+    void shouldMaskPasswordInRegisterResponseLog() {
         String responseBody = """
                 {
                     "username": "ronnie.coleman",
@@ -117,7 +116,7 @@ public class LoggingInterceptorTest {
     }
 
     @Test
-    void shouldLogHttpMethodAndEndpointAndStatusCodeInResponseLog() throws Exception {
+    void shouldLogHttpMethodAndEndpointAndStatusCodeInResponseLog() {
         String responseBody = """
                 {
                     "someField": "someValue"
@@ -147,7 +146,7 @@ public class LoggingInterceptorTest {
     }
 
     @Test
-    void shouldLogHttpMethodAndEndpointAndStatusCodeForGetRequest() throws Exception {
+    void shouldLogHttpMethodAndEndpointAndStatusCodeForGetRequest() {
         String responseBody = """
                 {
                     "username": "ronnie.coleman"
@@ -177,7 +176,7 @@ public class LoggingInterceptorTest {
     }
 
     @Test
-    void shouldLogHttpMethodAndEndpointAndStatusCodeForPutRequest() throws Exception {
+    void shouldLogHttpMethodAndEndpointAndStatusCodeForPutRequest() {
         String responseBody = """
                 {
                     "result": "success"

@@ -1,7 +1,6 @@
 package com.gca.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gca.config.AppConfig;
 import com.gca.facade.TrainingAppFacade;
 import com.gca.openapi.model.LoginChangeRequest;
 import com.gca.openapi.model.LoginRequest;
@@ -39,7 +38,7 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         AuthController controller = new AuthController(facade);
-        ObjectMapper objectMapper = new AppConfig().objectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper))
