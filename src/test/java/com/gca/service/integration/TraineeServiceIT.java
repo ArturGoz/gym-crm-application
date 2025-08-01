@@ -92,7 +92,7 @@ class TraineeServiceIT extends AbstractServiceIT {
     void shouldDeleteTraineeByUsername() {
         String username = "arnold.schwarzenegger";
 
-        Trainee before = traineeRepository.findByUsername(username).orElseThrow();
+        traineeRepository.findByUsername(username).orElseThrow();
         traineeService.deleteTraineeByUsername(username);
         Optional<Trainee> trainee = traineeRepository.findByUsername(username);
 

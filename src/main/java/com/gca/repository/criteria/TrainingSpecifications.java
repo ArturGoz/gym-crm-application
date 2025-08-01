@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TrainingSpecifications {
+    private TrainingSpecifications(){
+
+    }
 
     public static Specification<Training> traineeTrainings(Trainee trainee,
                                                            LocalDate fromDate,

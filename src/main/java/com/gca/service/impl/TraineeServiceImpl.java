@@ -42,6 +42,7 @@ import static java.lang.String.format;
 public class TraineeServiceImpl implements TraineeService {
 
     private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
+    private static final String TRAINEE_NOT_FOUND_MSG = "Trainee with username '%s' not found";
 
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
@@ -110,7 +111,7 @@ public class TraineeServiceImpl implements TraineeService {
                     return traineeMapper.toGetDto(trainee);
                 })
                 .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainee with username '%s' not found", username)
+                        format(TRAINEE_NOT_FOUND_MSG, username)
                 ));
     }
 
@@ -122,7 +123,7 @@ public class TraineeServiceImpl implements TraineeService {
 
         Trainee trainee = traineeRepository.findByUsername(request.getTraineeUsername())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainee with username '%s' not found", request.getTraineeUsername())
+                        format(TRAINEE_NOT_FOUND_MSG, request.getTraineeUsername())
                 ));
 
         List<Trainer> trainers = request.getTrainerNames().stream()
@@ -146,13 +147,12 @@ public class TraineeServiceImpl implements TraineeService {
 
         validator.validateUsername(username);
 
-        Trainee trainee = traineeRepository.findByUsername(username)
+        traineeRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainee with username '%s' not found", username)
+                        format(TRAINEE_NOT_FOUND_MSG, username)
                 ));
 
         traineeRepository.deleteByUsername(username);
-        logger.info("Deleted trainee by username: {}", username);
     }
 }
 
