@@ -8,6 +8,7 @@ import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
 import com.gca.repository.TraineeRepository;
 import com.gca.repository.TrainerRepository;
+import com.gca.repository.TrainingQueryRepository;
 import com.gca.repository.TrainingRepository;
 import com.gca.repository.TrainingTypeRepository;
 import com.gca.service.impl.TrainingServiceImpl;
@@ -36,6 +37,9 @@ public class TrainingServiceIT extends AbstractServiceIT {
     @Autowired
     private TrainingMapper trainingMapper;
 
+    @Autowired
+    private TrainingQueryRepository queryRepository;
+
     private TrainingServiceImpl trainingService;
 
     @BeforeEach
@@ -45,6 +49,7 @@ public class TrainingServiceIT extends AbstractServiceIT {
                 trainerRepository,
                 traineeRepository,
                 trainingTypeRepository,
+                queryRepository,
                 trainingMapper
         );
     }

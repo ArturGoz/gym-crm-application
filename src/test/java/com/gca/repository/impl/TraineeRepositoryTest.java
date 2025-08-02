@@ -23,7 +23,6 @@ class TraineeRepositoryTest extends BaseIntegrationTest<TraineeRepository> {
         Trainee actual = repository.save(expected);
 
         assertNotNull(actual.getId(), "Created expected should have ID");
-
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getUser(), actual.getUser());
         assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());

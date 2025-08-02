@@ -1,19 +1,19 @@
 package com.gca.service.impl;
 
-import com.gca.repository.TraineeRepository;
-import com.gca.repository.TrainerRepository;
-import com.gca.repository.TrainingRepository;
-import com.gca.repository.TrainingTypeRepository;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
-import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainingMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
+import com.gca.repository.TraineeRepository;
+import com.gca.repository.TrainerRepository;
+import com.gca.repository.TrainingQueryRepository;
+import com.gca.repository.TrainingRepository;
+import com.gca.repository.TrainingTypeRepository;
 import com.gca.service.TrainingService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -39,6 +39,7 @@ public class TrainingServiceImpl implements TrainingService {
     private final TrainerRepository trainerRepository;
     private final TraineeRepository traineeRepository;
     private final TrainingTypeRepository trainingTypeRepository;
+    private final TrainingQueryRepository trainingQueryRepository;
 
     private final TrainingMapper trainingMapper;
 
@@ -49,24 +50,9 @@ public class TrainingServiceImpl implements TrainingService {
 
         Training training = trainingMapper.toEntity(request);
 
-        Trainer trainer = trainerRepository.findByUsername(request.getTrainerUsername())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainer with username %s not found", request.getTrainerUsername())
-                ));
-
-        Trainee trainee = traineeRepository.findByUsername(request.getTraineeUsername())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainee with username %s not found", request.getTraineeUsername())
-                ));
-
-        TrainingType trainingType = trainingTypeRepository.findByName(request.getTrainingName())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Training type with name %s not found", request.getTrainingName())
-                ));
-
-        training.setTrainer(trainer);
-        training.setTrainee(trainee);
-        training.setType(trainingType);
+        training.setTrainer(getTrainer(request.getTrainerUsername()));
+        training.setTrainee(getTrainee(request.getTraineeUsername()));
+        training.setType(getTrainingType(request.getTrainingName()));
 
         Training created = trainingRepository.save(training);
 
@@ -79,16 +65,7 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDTO> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainee");
 
-        Trainee trainee = traineeRepository.findByUsername(filter.getTraineeUsername())
-                .orElseThrow(() -> new ServiceException("Trainee username must be provided"));
-
-        List<Training> trainings = trainingRepository.getTraineeTrainings(
-                trainee,
-                filter.getFromDate(),
-                filter.getToDate(),
-                filter.getTrainerName(),
-                filter.getTrainingTypeName()
-        );
+        List<Training> trainings = trainingQueryRepository.findTrainingsForTrainee(filter);
 
         return trainings.stream()
                 .map(trainingMapper::toResponse)
@@ -100,15 +77,7 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDTO> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainer");
 
-        Trainer trainer = trainerRepository.findByUsername(filter.getTrainerUsername())
-                .orElseThrow(() -> new ServiceException("Trainer username must be provided"));
-
-        List<Training> trainings = trainingRepository.getTrainerTrainings(
-                trainer,
-                filter.getFromDate(),
-                filter.getToDate(),
-                filter.getTraineeName()
-        );
+        List<Training> trainings = trainingQueryRepository.findTrainingsForTrainer(filter);
 
         return trainings.stream()
                 .map(trainingMapper::toResponse)
@@ -120,5 +89,26 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingType> getAllTrainingTypes() {
         logger.debug("Getting all training types");
         return trainingTypeRepository.findAll();
+    }
+
+    private Trainer getTrainer(String username) {
+        return trainerRepository.findByUserUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Trainer with username %s not found", username)
+                ));
+    }
+
+    private Trainee getTrainee(String username) {
+        return traineeRepository.findByUserUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Trainee with username %s not found", username)
+                ));
+    }
+
+    private TrainingType getTrainingType(String username) {
+        return trainingTypeRepository.findByName(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Training type with name %s not found", username)
+                ));
     }
 }

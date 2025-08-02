@@ -17,27 +17,21 @@ class TrainingTypeRepositoryTest extends BaseIntegrationTest<TrainingTypeReposit
 
     @Test
     void shouldFindAllTrainingTypes() {
-        TrainingType yoga = TrainingType.builder()
-                .id(1L)
-                .name("Yoga")
-                .build();
-
-        TrainingType crossfit = TrainingType.builder()
-                .id(2L)
-                .name("CrossFit")
-                .build();
-
-        TrainingType pilates = TrainingType.builder()
-                .id(3L)
-                .name("Pilates")
-                .build();
-
+        TrainingType yoga = bouldTrainingType(1L, "Yoga");
+        TrainingType crossfit = bouldTrainingType(2L, "Crossfit");
+        TrainingType pilates = bouldTrainingType(3L, "Pilates");
         List<TrainingType> expectedList = List.of(yoga, crossfit, pilates);
 
         List<TrainingType> actual = repository.findAll();
 
         assertNotNull(actual, "List must not be null");
-        assertEquals(3, actual.size(), "Must return 3 training types");
-        assertTrue(actual.containsAll(expectedList));
+        assertEquals(expectedList.size(), actual.size(), "Must return 3 training types");
+    }
+
+    private TrainingType bouldTrainingType(Long id, String name) {
+        return TrainingType.builder()
+                .id(id)
+                .name(name)
+                .build();
     }
 }

@@ -109,7 +109,7 @@ class TraineeServiceImplTest {
         TraineeUpdateResponseDTO expected =
                 GymTestProvider.createTraineeUpdateResponse(updated);
 
-        when(repository.findByUsername(updateRequest.getUsername())).thenReturn(Optional.of(existing));
+        when(repository.findByUserUsername(updateRequest.getUsername())).thenReturn(Optional.of(existing));
         when(mapper.fillUserFields(existing.getUser(), updateRequest)).thenReturn(filledUser);
         when(mapper.fillTraineeFields(existing, filledUser, updateRequest)).thenReturn(filledExistingTrainee);
         when(repository.save(filledExistingTrainee)).thenReturn(updated);
@@ -131,7 +131,7 @@ class TraineeServiceImplTest {
     void updateTrainee_notFound_throwsException() {
         TraineeUpdateRequestDTO updateRequest = GymTestProvider.createTraineeUpdateRequestDTO();
 
-        when(repository.findByUsername(updateRequest.getUsername())).thenReturn(Optional.empty());
+        when(repository.findByUserUsername(updateRequest.getUsername())).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainee(updateRequest));
@@ -144,14 +144,14 @@ class TraineeServiceImplTest {
         Trainee mockTrainee = GymTestProvider.constructTrainee();
         TraineeGetDTO expectedResponse = GymTestProvider.createTraineeGetDTO();
 
-        when(repository.findByUsername(username)).thenReturn(ofNullable(mockTrainee));
+        when(repository.findByUserUsername(username)).thenReturn(ofNullable(mockTrainee));
         when(mapper.toGetDto(mockTrainee)).thenReturn(expectedResponse);
 
         TraineeGetDTO actualResponse = service.getTraineeByUsername(username);
 
         assertEquals(expectedResponse, actualResponse);
         verify(validator).validateUsername(username);
-        verify(repository).findByUsername(username);
+        verify(repository).findByUserUsername(username);
         verify(mapper).toGetDto(mockTrainee);
     }
 
@@ -159,12 +159,12 @@ class TraineeServiceImplTest {
     void deleteTraineeByUsername_shouldThrow_whenNotFound() {
         String username = "ghost";
 
-        when(repository.findByUsername(username)).thenReturn(Optional.empty());
+        when(repository.findByUserUsername(username)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> service.deleteTraineeByUsername(username));
 
         assertEquals(("Trainee with username 'ghost' not found"), ex.getMessage());
-        verify(repository).findByUsername(username);
+        verify(repository).findByUserUsername(username);
     }
 
     @Test
@@ -181,9 +181,9 @@ class TraineeServiceImplTest {
         AssignedTrainerDTO dto2 = GymTestProvider.createAssignedTrainerDTO("trainer2");
 
 
-        when(repository.findByUsername(username)).thenReturn(Optional.of(trainee));
-        when(trainerRepository.findByUsername("trainer1")).thenReturn(Optional.of(trainer1));
-        when(trainerRepository.findByUsername("trainer2")).thenReturn(Optional.of(trainer2));
+        when(repository.findByUserUsername(username)).thenReturn(Optional.of(trainee));
+        when(trainerRepository.findByUserUsername("trainer1")).thenReturn(Optional.of(trainer1));
+        when(trainerRepository.findByUserUsername("trainer2")).thenReturn(Optional.of(trainer2));
 
         when(repository.save(any(Trainee.class))).thenReturn(trainee);
 
@@ -194,10 +194,9 @@ class TraineeServiceImplTest {
 
         assertEquals(2, actual.size());
         assertTrue(actual.containsAll(List.of(dto1, dto2)));
-
-        verify(repository).findByUsername(username);
-        verify(trainerRepository).findByUsername("trainer1");
-        verify(trainerRepository).findByUsername("trainer2");
+        verify(repository).findByUserUsername(username);
+        verify(trainerRepository).findByUserUsername("trainer1");
+        verify(trainerRepository).findByUserUsername("trainer2");
         verify(repository).save(any(Trainee.class));
         verify(trainerMapper).toAssignedDto(trainer1);
         verify(trainerMapper).toAssignedDto(trainer2);

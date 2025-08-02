@@ -87,7 +87,7 @@ public class TrainerServiceImpl implements TrainerService {
     public TrainerUpdateResponseDTO updateTrainer(@Valid TrainerUpdateRequestDTO request) {
         logger.debug("Updating trainer");
 
-        Trainer trainer = trainerRepository.findByUsername(request.getUsername())
+        Trainer trainer = trainerRepository.findByUserUsername(request.getUsername())
                 .orElseThrow(() -> new ServiceException(
                         format("Invalid trainer username: %s", request.getUsername())
                 ));
@@ -111,7 +111,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         validator.validateUsername(username);
 
-        return trainerRepository.findByUsername(username)
+        return trainerRepository.findByUserUsername(username)
                 .map(trainer -> {
                     logger.debug("Trainer found by username: {}", username);
                     return trainerMapper.toGetDto(trainer);
@@ -128,7 +128,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         validator.validateUsername(traineeUsername);
 
-        Trainee trainee = traineeRepository.findByUsername(traineeUsername)
+        Trainee trainee = traineeRepository.findByUserUsername(traineeUsername)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Trainee with username '%s' not found", traineeUsername)
                 ));

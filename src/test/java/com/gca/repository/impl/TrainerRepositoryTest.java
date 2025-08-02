@@ -22,7 +22,6 @@ public class TrainerRepositoryTest extends BaseIntegrationTest<TrainerRepository
         Trainer actual = repository.save(expected);
 
         assertNotNull(actual.getId(), "Created trainer should have ID");
-
         assertEquals(expected.getUser().getUsername(), actual.getUser().getUsername());
         assertEquals(expected.getSpecialization().getId(), actual.getSpecialization().getId());
         assertEquals(expected.getUser().getFirstName(), actual.getUser().getFirstName());

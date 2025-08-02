@@ -112,7 +112,7 @@ class TrainerServiceImplTest {
         TrainerUpdateResponseDTO expected =
                 GymTestProvider.createTrainerUpdateResponseDTO(updated);
 
-        when(dao.findByUsername(updateRequest.getUsername())).thenReturn(Optional.of(existing));
+        when(dao.findByUserUsername(updateRequest.getUsername())).thenReturn(Optional.of(existing));
         when(mapper.fillUserFields(existing.getUser(), updateRequest)).thenReturn(filledUser);
         when(trainingTypeRepository.findByName(updateRequest.getSpecialization()))
                 .thenReturn(ofNullable(filledTrainingType));
@@ -128,8 +128,7 @@ class TrainerServiceImplTest {
         assertEquals(expected.getFirstName(), actual.getFirstName());
         assertEquals(expected.getSpecialization(), actual.getSpecialization());
         assertEquals(expected.getTrainees().size(), actual.getTrainees().size());
-
-        verify(dao).findByUsername(updateRequest.getUsername());
+        verify(dao).findByUserUsername(updateRequest.getUsername());
         verify(dao).save(existing);
         verify(mapper).toUpdateResponse(updated);
     }
@@ -138,7 +137,7 @@ class TrainerServiceImplTest {
     void updateTrainer_notFound_throwsException() {
         TrainerUpdateRequestDTO updateRequest = GymTestProvider.createTrainerUpdateRequestDTO();
 
-        when(dao.findByUsername(updateRequest.getUsername())).thenReturn(Optional.empty());
+        when(dao.findByUserUsername(updateRequest.getUsername())).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class,
                 () -> service.updateTrainer(updateRequest));
@@ -152,7 +151,7 @@ class TrainerServiceImplTest {
         Trainer mockTrainer = GymTestProvider.constructTrainer();
         TrainerGetDTO expectedResponse = GymTestProvider.createTrainerGetDTO();
 
-        when(dao.findByUsername(username)).thenReturn(ofNullable(mockTrainer));
+        when(dao.findByUserUsername(username)).thenReturn(ofNullable(mockTrainer));
         when(mapper.toGetDto(mockTrainer)).thenReturn(expectedResponse);
 
         TrainerGetDTO actualResponse = service.getTrainerByUsername(username);
@@ -160,7 +159,7 @@ class TrainerServiceImplTest {
         assertEquals(expectedResponse, actualResponse);
         assertEquals(expectedResponse.getLastName(), actualResponse.getLastName());
         assertEquals(expectedResponse.getSpecialization(), actualResponse.getSpecialization());
-        verify(dao).findByUsername(username);
+        verify(dao).findByUserUsername(username);
         verify(mapper).toGetDto(mockTrainer);
     }
 
@@ -181,7 +180,7 @@ class TrainerServiceImplTest {
 
         AssignedTrainerDTO unassignedAssignedTrainerDTO = GymTestProvider.createAssignedTrainerDTO();
 
-        when(trainerDAO.findByUsername(traineeUsername)).thenReturn(Optional.of(trainee));
+        when(trainerDAO.findByUserUsername(traineeUsername)).thenReturn(Optional.of(trainee));
         when(dao.findAll()).thenReturn(allTrainers);
         when(mapper.toAssignedDto(unassignedTrainer)).thenReturn(unassignedAssignedTrainerDTO);
 

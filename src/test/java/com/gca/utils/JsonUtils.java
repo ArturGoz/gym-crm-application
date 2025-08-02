@@ -1,6 +1,7 @@
 package com.gca.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,12 +9,10 @@ import java.nio.file.Paths;
 
 import static java.lang.String.format;
 
+@UtilityClass
 public class JsonUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    private JsonUtils() {
-    }
 
     public static String asJsonString(Object obj) {
         try {
