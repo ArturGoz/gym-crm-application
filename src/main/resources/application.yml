@@ -10,7 +10,6 @@ spring:
     show-sql: true
     properties:
         format_sql: true
-
   liquibase:
     changelog: classpath:db/changelog/db.changelog-master.xml
     enabled: true
