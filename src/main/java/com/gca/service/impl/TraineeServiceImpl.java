@@ -1,7 +1,5 @@
 package com.gca.service.impl;
 
-import com.gca.dao.TraineeDAO;
-import com.gca.dao.transaction.Transactional;
 import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeGetDTO;
 import com.gca.dto.trainee.TraineeTrainersUpdateDTO;
@@ -15,75 +13,46 @@ import com.gca.mapper.TraineeMapper;
 import com.gca.mapper.TrainerMapper;
 import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
+import com.gca.model.Trainer;
 import com.gca.model.User;
+import com.gca.repository.TraineeRepository;
+import com.gca.repository.TrainerRepository;
 import com.gca.service.TraineeService;
 import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
 import com.gca.service.common.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 public class TraineeServiceImpl implements TraineeService {
 
     private static final Logger logger = LoggerFactory.getLogger(TraineeServiceImpl.class);
+    private static final String TRAINEE_NOT_FOUND_MSG = "Trainee with username '%s' not found";
 
-    private TraineeDAO traineeDAO;
-    private UserService userService;
+    private final TraineeRepository traineeRepository;
+    private final TrainerRepository trainerRepository;
+    private final UserService userService;
+    private final UserProfileService userProfileService;
 
-    private TraineeMapper traineeMapper;
-    private TrainerMapper trainerMapper;
-    private UserMapper userMapper;
-    private UserProfileService userProfileService;
-
-    private CoreValidator validator;
-
-    @Autowired
-    public void setUserProfileService(UserProfileService userProfileService) {
-        this.userProfileService = userProfileService;
-    }
-
-    @Autowired
-    public void setTraineeDAO(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
-    }
-
-    @Autowired
-    public void setTrainerMapper(TrainerMapper trainerMapper) {
-        this.trainerMapper = trainerMapper;
-    }
-
-    @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
-    public void setTraineeMapper(TraineeMapper traineeMapper) {
-        this.traineeMapper = traineeMapper;
-    }
-
-    @Autowired
-    public void setValidator(CoreValidator validator) {
-        this.validator = validator;
-    }
+    private final TraineeMapper traineeMapper;
+    private final TrainerMapper trainerMapper;
+    private final UserMapper userMapper;
+    private final CoreValidator validator;
 
     @Transactional
     @Override
@@ -104,10 +73,9 @@ public class TraineeServiceImpl implements TraineeService {
                 .user(user)
                 .build();
 
-        Trainee created = traineeDAO.create(trainee);
+        Trainee created = traineeRepository.save(trainee);
 
         logger.info("Created trainee: {}", created);
-
         return userMapper.toResponse(user.toBuilder().password(rawPass).build());
     }
 
@@ -116,7 +84,7 @@ public class TraineeServiceImpl implements TraineeService {
     public TraineeUpdateResponseDTO updateTrainee(@Valid TraineeUpdateRequestDTO request) {
         logger.debug("Updating trainee");
 
-        Trainee trainee = Optional.ofNullable(traineeDAO.findByUsername(request.getUsername()))
+        Trainee trainee = traineeRepository.findByUserUsername(request.getUsername())
                 .orElseThrow(() -> new ServiceException(
                         format("Invalid trainee username: %s", request.getUsername())
                 ));
@@ -124,7 +92,7 @@ public class TraineeServiceImpl implements TraineeService {
         User filledUser = traineeMapper.fillUserFields(trainee.getUser(), request);
         Trainee filledTrainee = traineeMapper.fillTraineeFields(trainee, filledUser, request);
 
-        Trainee updated = traineeDAO.update(filledTrainee);
+        Trainee updated = traineeRepository.save(filledTrainee);
 
         logger.info("Updated trainee: {}", updated);
         return traineeMapper.toUpdateResponse(updated);
@@ -137,26 +105,31 @@ public class TraineeServiceImpl implements TraineeService {
 
         validator.validateUsername(username);
 
-        return Optional.ofNullable(traineeDAO.findByUsername(username))
+        return traineeRepository.findByUserUsername(username)
                 .map(trainee -> {
                     logger.debug("Trainee found by username: {}", username);
                     return traineeMapper.toGetDto(trainee);
                 })
                 .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainee with username '%s' not found", username)
+                        format(TRAINEE_NOT_FOUND_MSG, username)
                 ));
     }
 
-    @Transactional
+
+   @Transactional
     @Override
     public List<AssignedTrainerDTO> updateTraineeTrainers(@Valid TraineeTrainersUpdateDTO request) {
-        logger.debug("Updating trainers for trainee usernames");
+        logger.debug("Updating trainers for trainee username: {}", request.getTraineeUsername());
 
-        Trainee updated = traineeDAO.updateTraineeTrainers
-                (request.getTraineeUsername(), request.getTrainerNames());
+        Trainee trainee = traineeRepository.findByUserUsername(request.getTraineeUsername())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format(TRAINEE_NOT_FOUND_MSG, request.getTraineeUsername())
+                ));
+
+        trainee.setTrainers(new HashSet<>(getTrainerList(request.getTrainerNames())));
+        Trainee updated = traineeRepository.save(trainee);
 
         logger.info("Updated trainers for trainee");
-
         return updated.getTrainers().stream()
                 .map(trainerMapper::toAssignedDto)
                 .collect(Collectors.toList());
@@ -169,18 +142,19 @@ public class TraineeServiceImpl implements TraineeService {
 
         validator.validateUsername(username);
 
-        Optional.ofNullable(traineeDAO.findByUsername(username))
-                .ifPresentOrElse(
-                        trainee -> {
-                            traineeDAO.deleteByUsername(username);
-                            logger.info("Deleted trainee by username: {}", username);
-                        },
-                        () -> {
-                            throw new EntityNotFoundException(
-                                    format("Trainee with username '%s' not found", username)
-                            );
-                        }
-                );
+        traineeRepository.findByUserUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format(TRAINEE_NOT_FOUND_MSG, username)
+                ));
+
+        traineeRepository.deleteByUsername(username);
+    }
+
+    private List<Trainer> getTrainerList(List<String> usernames) {
+        return usernames.stream()
+                .map(name -> trainerRepository.findByUserUsername(name)
+                        .orElseThrow(() -> new EntityNotFoundException("Trainer not found: " + name)))
+                .toList();
     }
 }
 

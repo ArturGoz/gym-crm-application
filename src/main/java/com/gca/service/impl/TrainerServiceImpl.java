@@ -1,9 +1,8 @@
 package com.gca.service.impl;
 
-import com.gca.dao.TraineeDAO;
-import com.gca.dao.TrainerDAO;
-import com.gca.dao.TrainingTypeDAO;
-import com.gca.dao.transaction.Transactional;
+import com.gca.repository.TraineeRepository;
+import com.gca.repository.TrainerRepository;
+import com.gca.repository.TrainingTypeRepository;
 import com.gca.dto.trainer.AssignedTrainerDTO;
 import com.gca.dto.trainer.TrainerCreateDTO;
 import com.gca.dto.trainer.TrainerGetDTO;
@@ -24,14 +23,14 @@ import com.gca.service.common.CoreValidator;
 import com.gca.service.common.UserProfileService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,61 +38,20 @@ import static java.lang.String.format;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 public class TrainerServiceImpl implements TrainerService {
 
     private static final Logger logger = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
-    private TrainerDAO trainerDAO;
-    private TraineeDAO traineeDAO;
-    private TrainingTypeDAO trainingTypeDAO;
+    private final TrainerRepository trainerRepository;
+    private final TraineeRepository traineeRepository;
+    private final TrainingTypeRepository trainingTypeRepository;
+    private final UserService userService;
+    private final UserProfileService userProfileService;
 
-    private UserService userService;
-
-    private UserMapper userMapper;
-    private TrainerMapper trainerMapper;
-
-    private UserProfileService userProfileService;
-    private CoreValidator validator;
-
-    @Autowired
-    public void setUserProfileService(UserProfileService userProfileService) {
-        this.userProfileService = userProfileService;
-    }
-
-    @Autowired
-    public void setTrainerDAO(TrainerDAO trainerDAO) {
-        this.trainerDAO = trainerDAO;
-    }
-
-    @Autowired
-    public void setTrainingTypeDAO(TrainingTypeDAO trainingTypeDAO) {
-        this.trainingTypeDAO = trainingTypeDAO;
-    }
-
-    @Autowired
-    public void setUserDAO(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
-    public void setTrainerMapper(TrainerMapper trainerMapper) {
-        this.trainerMapper = trainerMapper;
-    }
-
-    @Autowired
-    public void setValidator(CoreValidator validator) {
-        this.validator = validator;
-    }
-
-    @Autowired
-    public void setTraineeDAO(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
-    }
-
-    @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+    private final UserMapper userMapper;
+    private final TrainerMapper trainerMapper;
+    private final CoreValidator validator;
 
     @Transactional
     @Override
@@ -110,21 +68,17 @@ public class TrainerServiceImpl implements TrainerService {
         String rawPass = user.getPassword();
         user.setPassword(userProfileService.encryptPassword(rawPass));
 
-        TrainingType trainingType = trainingTypeDAO.getByName(request.getSpecialization());
-
-        if (trainingType == null) {
-            throw new ServiceException("Invalid training type");
-        }
+        TrainingType trainingType = trainingTypeRepository.findByName(request.getSpecialization())
+                .orElseThrow(() -> new EntityNotFoundException("Invalid training type"));
 
         Trainer trainer = Trainer.builder()
                 .specialization(trainingType)
                 .user(user)
                 .build();
 
-        Trainer created = trainerDAO.create(trainer);
+        Trainer created = trainerRepository.save(trainer);
 
         logger.info("Trainer created: {}", created);
-
         return userMapper.toResponse(user.toBuilder().password(rawPass).build());
     }
 
@@ -133,19 +87,18 @@ public class TrainerServiceImpl implements TrainerService {
     public TrainerUpdateResponseDTO updateTrainer(@Valid TrainerUpdateRequestDTO request) {
         logger.debug("Updating trainer");
 
-        Trainer trainer = Optional.ofNullable(trainerDAO.findByUsername(request.getUsername()))
+        Trainer trainer = trainerRepository.findByUserUsername(request.getUsername())
                 .orElseThrow(() -> new ServiceException(
                         format("Invalid trainer username: %s", request.getUsername())
                 ));
 
         User updatedUser = trainerMapper.fillUserFields(trainer.getUser(), request);
 
-        TrainingType trainingType = Optional.ofNullable(trainingTypeDAO.getByName(request.getSpecialization()))
+        TrainingType trainingType = trainingTypeRepository.findByName(request.getSpecialization())
                 .orElse(trainer.getSpecialization());
 
         Trainer updatedTrainer = trainerMapper.fillTrainerFields(trainer, updatedUser, trainingType);
-
-        Trainer updated = trainerDAO.update(updatedTrainer);
+        Trainer updated = trainerRepository.save(updatedTrainer);
 
         logger.info("Trainer updated: {}", updated);
         return trainerMapper.toUpdateResponse(updated);
@@ -158,7 +111,7 @@ public class TrainerServiceImpl implements TrainerService {
 
         validator.validateUsername(username);
 
-        return Optional.ofNullable(trainerDAO.findByUsername(username))
+        return trainerRepository.findByUserUsername(username)
                 .map(trainer -> {
                     logger.debug("Trainer found by username: {}", username);
                     return trainerMapper.toGetDto(trainer);
@@ -175,13 +128,13 @@ public class TrainerServiceImpl implements TrainerService {
 
         validator.validateUsername(traineeUsername);
 
-        Trainee trainee = Optional.ofNullable(traineeDAO.findByUsername(traineeUsername))
+        Trainee trainee = traineeRepository.findByUserUsername(traineeUsername)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Trainee with username '%s' not found", traineeUsername)
                 ));
 
         Set<Trainer> assignedTrainers = trainee.getTrainers();
-        List<Trainer> allTrainers = trainerDAO.getAllTrainers();
+        List<Trainer> allTrainers = trainerRepository.findAll();
 
         List<Trainer> unassignedTrainers = allTrainers.stream()
                 .filter(trainer -> !assignedTrainers.contains(trainer))

@@ -2,7 +2,7 @@ package com.gca.service.impl;
 
 import com.gca.exception.ServiceException;
 import com.gca.utils.GymTestProvider;
-import com.gca.dao.UserDAO;
+import com.gca.repository.UserRepository;
 import com.gca.dto.PasswordChangeDTO;
 import com.gca.dto.user.UserCreateDTO;
 import com.gca.mapper.UserMapper;
@@ -17,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -30,7 +32,7 @@ import static org.mockito.Mockito.when;
 class UserServiceImplTest {
 
     @Mock
-    private UserDAO dao;
+    private UserRepository dao;
 
     @Mock
     private UserProfileService profileService;
@@ -62,7 +64,7 @@ class UserServiceImplTest {
     void isUserCredentialsValid_validCredentials_returnsTrue() {
         User user = GymTestProvider.constructUser();
 
-        when(dao.findByUsername(user.getUsername())).thenReturn(user);
+        when(dao.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
         when(profileService.verifyPassword(any(String.class), any(String.class))).thenReturn(true);
 
         boolean result = service.isUserCredentialsValid(user.getUsername(), user.getPassword());
@@ -75,7 +77,7 @@ class UserServiceImplTest {
     void isUserCredentialsValid_invalidPassword_returnsFalse() {
         User user = GymTestProvider.constructUser();
 
-        when(dao.findByUsername(user.getUsername())).thenReturn(user);
+        when(dao.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
         boolean result = service.isUserCredentialsValid(user.getUsername(), "wrongPass");
 
@@ -88,7 +90,7 @@ class UserServiceImplTest {
         User actual = buildUser();
         PasswordChangeDTO request = buildUserPasswordChange();
 
-        when(dao.findByUsername(actual.getUsername())).thenReturn(actual);
+        when(dao.findByUsername(actual.getUsername())).thenReturn(Optional.of(actual));
         when(profileService.verifyPassword(request.getOldPassword(), actual.getPassword())).thenReturn(true);
         when(profileService.encryptPassword(request.getNewPassword())).thenReturn("encryptedNewPass");
 
@@ -97,7 +99,7 @@ class UserServiceImplTest {
         assertEquals("encryptedNewPass", actual.getPassword());
         verify(dao).findByUsername(request.getUsername());
         verify(profileService).encryptPassword(request.getNewPassword());
-        verify(dao).update(actual);
+        verify(dao).save(actual);
     }
 
     @Test
@@ -106,7 +108,7 @@ class UserServiceImplTest {
         PasswordChangeDTO request = new PasswordChangeDTO(username,
                 "anyOldPass", "newPass");
 
-        when(dao.findByUsername(username)).thenReturn(null);
+        when(dao.findByUsername(username)).thenReturn(Optional.empty());
 
         EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () ->
                 service.changeUserPassword(request)
@@ -126,12 +128,12 @@ class UserServiceImplTest {
         User user = GymTestProvider.constructUser().toBuilder().isActive(currentStatus).build();
         User updatedUser = user.toBuilder().isActive(newStatus).build();
 
-        when(dao.findByUsername(user.getUsername())).thenReturn(user);
-        when(dao.update(any(User.class))).thenReturn(updatedUser);
+        when(dao.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        when(dao.save(any(User.class))).thenReturn(updatedUser);
 
         service.toggleActiveStatus(user.getUsername(), newStatus);
 
-        verify(dao).update(any(User.class));
+        verify(dao).save(any(User.class));
     }
 
     @ParameterizedTest
@@ -143,7 +145,7 @@ class UserServiceImplTest {
         User user = GymTestProvider.constructUser().toBuilder().isActive(currentStatus).build();
         String expectedAction = newStatus ? "activate" : "deactivate";
 
-        when(dao.findByUsername(user.getUsername())).thenReturn(user);
+        when(dao.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
 
         ServiceException ex = assertThrows(ServiceException.class, () ->
                 service.toggleActiveStatus(user.getUsername(), newStatus)

@@ -1,70 +1,47 @@
 package com.gca.service.impl;
 
-import com.gca.dao.TraineeDAO;
-import com.gca.dao.TrainerDAO;
-import com.gca.dao.TrainingDAO;
-import com.gca.dao.TrainingTypeDAO;
-import com.gca.dao.transaction.Transactional;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
-import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainingMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.Training;
 import com.gca.model.TrainingType;
+import com.gca.repository.TraineeRepository;
+import com.gca.repository.TrainerRepository;
+import com.gca.repository.TrainingQueryRepository;
+import com.gca.repository.TrainingRepository;
+import com.gca.repository.TrainingTypeRepository;
 import com.gca.service.TrainingService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.lang.String.format;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 public class TrainingServiceImpl implements TrainingService {
 
     private static final Logger logger = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
-    private TrainingDAO trainingDAO;
-    private TrainerDAO trainerDAO;
-    private TraineeDAO traineeDAO;
-    private TrainingTypeDAO trainingTypeDAO;
-    private TrainingMapper trainingMapper;
+    private final TrainingRepository trainingRepository;
+    private final TrainerRepository trainerRepository;
+    private final TraineeRepository traineeRepository;
+    private final TrainingTypeRepository trainingTypeRepository;
+    private final TrainingQueryRepository trainingQueryRepository;
 
-    @Autowired
-    public void setTrainingDAO(TrainingDAO trainingDAO) {
-        this.trainingDAO = trainingDAO;
-    }
-
-    @Autowired
-    public void setTrainerDAO(TrainerDAO trainerDAO) {
-        this.trainerDAO = trainerDAO;
-    }
-
-    @Autowired
-    public void setTraineeDAO(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
-    }
-
-    @Autowired
-    public void setTrainingTypeDAO(TrainingTypeDAO trainingTypeDAO) {
-        this.trainingTypeDAO = trainingTypeDAO;
-    }
-
-    @Autowired
-    public void setTrainingMapper(TrainingMapper trainingMapper) {
-        this.trainingMapper = trainingMapper;
-    }
+    private final TrainingMapper trainingMapper;
 
     @Transactional
     @Override
@@ -73,29 +50,13 @@ public class TrainingServiceImpl implements TrainingService {
 
         Training training = trainingMapper.toEntity(request);
 
-        Trainer trainer = Optional.ofNullable(trainerDAO.findByUsername(request.getTrainerUsername()))
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainer with username %s not found", request.getTrainerUsername())
-                ));
+        training.setTrainer(getTrainer(request.getTrainerUsername()));
+        training.setTrainee(getTrainee(request.getTraineeUsername()));
+        training.setType(getTrainingType(request.getTrainingName()));
 
-        Trainee trainee = Optional.ofNullable(traineeDAO.findByUsername(request.getTraineeUsername()))
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Trainee with username %s not found", request.getTraineeUsername())
-                ));
-
-        TrainingType trainingType = Optional.ofNullable(trainingTypeDAO.getByName(request.getTrainingName()))
-                .orElseThrow(() -> new EntityNotFoundException(
-                        format("Training type with name %s not found", request.getTrainingName())
-                ));
-
-        training.setTrainer(trainer);
-        training.setTrainee(trainee);
-        training.setType(trainingType);
-
-        Training created = trainingDAO.create(training);
+        Training created = trainingRepository.save(training);
 
         logger.info("Created training: {}", created);
-
         return trainingMapper.toResponse(created);
     }
 
@@ -104,17 +65,7 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDTO> getTraineeTrainings(@Valid TrainingTraineeCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainee");
 
-        Trainee trainee = Optional.ofNullable(filter.getTraineeUsername())
-                .map(traineeDAO::findByUsername)
-                .orElseThrow(() -> new ServiceException("Trainee username must be provided"));
-
-        List<Training> trainings = trainingDAO.getTraineeTrainings(
-                trainee,
-                filter.getFromDate(),
-                filter.getToDate(),
-                filter.getTrainerName(),
-                filter.getTrainingTypeName()
-        );
+        List<Training> trainings = trainingQueryRepository.findTrainingsForTrainee(filter);
 
         return trainings.stream()
                 .map(trainingMapper::toResponse)
@@ -126,16 +77,7 @@ public class TrainingServiceImpl implements TrainingService {
     public List<TrainingDTO> getTrainerTrainings(@Valid TrainingTrainerCriteriaFilter filter) {
         logger.debug("Filtering trainings by trainer");
 
-        Trainer trainer = Optional.ofNullable(filter.getTrainerUsername())
-                .map(trainerDAO::findByUsername)
-                .orElseThrow(() -> new ServiceException("Trainer username must be provided"));
-
-        List<Training> trainings = trainingDAO.getTrainerTrainings(
-                trainer,
-                filter.getFromDate(),
-                filter.getToDate(),
-                filter.getTraineeName()
-        );
+        List<Training> trainings = trainingQueryRepository.findTrainingsForTrainer(filter);
 
         return trainings.stream()
                 .map(trainingMapper::toResponse)
@@ -145,6 +87,28 @@ public class TrainingServiceImpl implements TrainingService {
     @Transactional(readOnly = true)
     @Override
     public List<TrainingType> getAllTrainingTypes() {
-        return trainingTypeDAO.findAllTrainingTypes();
+        logger.debug("Getting all training types");
+        return trainingTypeRepository.findAll();
+    }
+
+    private Trainer getTrainer(String username) {
+        return trainerRepository.findByUserUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Trainer with username %s not found", username)
+                ));
+    }
+
+    private Trainee getTrainee(String username) {
+        return traineeRepository.findByUserUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Trainee with username %s not found", username)
+                ));
+    }
+
+    private TrainingType getTrainingType(String username) {
+        return trainingTypeRepository.findByName(username)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        format("Training type with name %s not found", username)
+                ));
     }
 }

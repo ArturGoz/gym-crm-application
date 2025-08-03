@@ -1,35 +1,34 @@
 package com.gca.service.integration;
 
-import com.gca.dto.user.UserCredentialsDTO;
-import com.gca.service.common.UserProfileService;
-import com.gca.utils.GymTestProvider;
-import com.gca.dao.TraineeDAO;
 import com.gca.dto.trainee.TraineeCreateDTO;
 import com.gca.dto.trainee.TraineeUpdateRequestDTO;
 import com.gca.dto.trainee.TraineeUpdateResponseDTO;
-import com.gca.exception.DaoException;
+import com.gca.dto.user.UserCredentialsDTO;
 import com.gca.mapper.TraineeMapper;
+import com.gca.mapper.TrainerMapper;
 import com.gca.mapper.UserMapper;
 import com.gca.model.Trainee;
+import com.gca.repository.TraineeRepository;
+import com.gca.repository.TrainerRepository;
 import com.gca.service.UserService;
+import com.gca.service.common.UserProfileService;
 import com.gca.service.impl.TraineeServiceImpl;
+import com.gca.utils.GymTestProvider;
 import com.github.database.rider.core.api.dataset.DataSet;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TraineeServiceIT extends AbstractServiceIT {
 
     @Autowired
-    private TraineeDAO traineeDAO;
+    private TraineeRepository traineeRepository;
 
     @Autowired
     private UserMapper userMapper;
@@ -40,26 +39,27 @@ class TraineeServiceIT extends AbstractServiceIT {
     @Autowired
     private UserProfileService userProfileService;
 
+    @Autowired
+    private TraineeMapper traineeMapper;
+
+    @Autowired
+    private TrainerMapper trainerMapper;
+
+    @Autowired
+    private TrainerRepository trainerRepository;
+
     @BeforeEach
     void setUp() {
-        transaction = sessionFactory.getCurrentSession().beginTransaction();
-
-        TraineeMapper traineeMapper = Mappers.getMapper(TraineeMapper.class);
-
-        traineeService = new TraineeServiceImpl();
-        traineeService.setTraineeDAO(traineeDAO);
-        traineeService.setTraineeMapper(traineeMapper);
-        traineeService.setValidator(validator);
-        traineeService.setUserService(userService);
-        traineeService.setUserMapper(userMapper);
-        traineeService.setUserProfileService(userProfileService);
-    }
-
-    @AfterEach
-    void tearDown() {
-        if (transaction != null && transaction.isActive()) {
-            transaction.rollback();
-        }
+        traineeService = new TraineeServiceImpl(
+                traineeRepository,
+                trainerRepository,
+                userService,
+                userProfileService,
+                traineeMapper,
+                trainerMapper,
+                userMapper,
+                validator
+        );
     }
 
     @Test
@@ -89,21 +89,14 @@ class TraineeServiceIT extends AbstractServiceIT {
 
     @Test
     @DataSet(value = "dataset/trainee/trainee-data.xml", cleanBefore = true, cleanAfter = true, transactional = true)
-    void shouldDeleteTraineeByIdByUsername() {
+    void shouldDeleteTraineeByUsername() {
         String username = "arnold.schwarzenegger";
 
-        Trainee before = traineeDAO.findByUsername(username);
-        assertNotNull(before);
-
+        traineeRepository.findByUserUsername(username).orElseThrow();
         traineeService.deleteTraineeByUsername(username);
+        Optional<Trainee> trainee = traineeRepository.findByUserUsername(username);
 
-        DaoException ex = assertThrows(
-                DaoException.class,
-                () -> traineeDAO.findByUsername(username),
-                "Expected DaoException when trainee is not found"
-        );
-
-        assertTrue(ex.getMessage().contains("not found"), "Exception message should indicate not found");
+        assertThat(trainee).isEmpty();
     }
 }
 

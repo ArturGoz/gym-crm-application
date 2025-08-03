@@ -3,9 +3,9 @@ package com.gca.service.common;
 import com.gca.service.helper.RandomPasswordGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class UserProfileService {
     private final UsernameGenerator usernameGenerator;
