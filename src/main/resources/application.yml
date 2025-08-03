@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local
   datasource:
     driver-class-name: org.postgresql.Driver
   jpa:
@@ -13,7 +15,15 @@ spring:
     changelog: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
----
-spring:
-  profiles:
-    active: local
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+gca:
+  metrics:
+    max-memory-threshold: 2000
