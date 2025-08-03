@@ -3,10 +3,13 @@ package com.gca.repository.criteria;
 import com.gca.model.Training;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.criteria.Predicate;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class TrainingSpecification {
 
     protected static Specification<Training> dateRangePredicate(@Nullable LocalDate from, @Nullable LocalDate to) {

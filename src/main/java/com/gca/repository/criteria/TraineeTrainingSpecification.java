@@ -3,11 +3,12 @@ package com.gca.repository.criteria;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.model.Training;
 import jakarta.annotation.Nullable;
-import jakarta.persistence.criteria.Expression;
+import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+@UtilityClass
 public class TraineeTrainingSpecification extends TrainingSpecification {
 
     public static Specification<Training> findByCriteria(TrainingTraineeCriteriaFilter searchFilter) {

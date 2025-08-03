@@ -4,7 +4,6 @@ import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
 import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
-import com.gca.exception.ServiceException;
 import com.gca.mapper.TrainingMapper;
 import com.gca.model.Trainee;
 import com.gca.model.Trainer;
@@ -34,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -100,7 +98,6 @@ class TrainingServiceImplTest {
         Training training = GymTestProvider.constructTraining();
         List<Training> trainings = Collections.singletonList(training);
         TrainingDTO response = GymTestProvider.createTrainingDTO();
-        Trainer trainer = new Trainer();
 
         when(queryRepository.findTrainingsForTrainer(filter)).thenReturn(trainings);
         when(mapper.toResponse(training)).thenReturn(response);
@@ -119,7 +116,6 @@ class TrainingServiceImplTest {
         Training training = GymTestProvider.constructTraining();
         List<Training> trainings = Collections.singletonList(training);
         TrainingDTO expected = GymTestProvider.createTrainingDTO();
-        Trainee trainee = new Trainee();
 
         when(queryRepository.findTrainingsForTrainee(filter)).thenReturn(trainings);
         when(mapper.toResponse(training)).thenReturn(expected);
