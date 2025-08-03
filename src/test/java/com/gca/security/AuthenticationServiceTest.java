@@ -1,5 +1,6 @@
 package com.gca.security;
 
+import com.gca.actuator.prometheus.AuthenticationMetrics;
 import com.gca.dto.auth.AuthenticationRequestDTO;
 import com.gca.dto.auth.AuthenticationResponseDTO;
 import com.gca.exception.UserNotAuthenticatedException;
@@ -35,6 +36,9 @@ class AuthenticationServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private AuthenticationMetrics metrics;
+
     @InjectMocks
     private AuthenticationService authenticationService;
 
@@ -57,6 +61,7 @@ class AuthenticationServiceTest {
 
         assertTrue(result.isAuthenticated());
         assertEquals("User authenticated successfully", result.getMessage());
+        verify(metrics).recordSuccessfulLogin();
     }
 
     @Test
@@ -74,6 +79,7 @@ class AuthenticationServiceTest {
                 .thenReturn(false);
 
         assertThrows(UserNotAuthenticatedException.class, () -> authenticationService.authenticate(request));
+        verify(metrics).recordFailedLogin();
     }
 
     @Test

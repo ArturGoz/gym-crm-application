@@ -1,5 +1,6 @@
 package com.gca.service.impl;
 
+import com.gca.actuator.prometheus.UserRegistrationMetrics;
 import com.gca.exception.ServiceException;
 import com.gca.utils.GymTestProvider;
 import com.gca.repository.UserRepository;
@@ -40,6 +41,9 @@ class UserServiceImplTest {
     @Mock
     private UserMapper mapper;
 
+    @Mock
+    private UserRegistrationMetrics metrics;
+
     @InjectMocks
     private UserServiceImpl service;
 
@@ -58,6 +62,7 @@ class UserServiceImplTest {
         assertEquals(saved, actual);
         verify(profileService).generateUsername(request.getFirstName(), request.getLastName());
         verify(profileService).generatePassword();
+        verify(metrics).incrementSuccessCount();
     }
 
     @Test
