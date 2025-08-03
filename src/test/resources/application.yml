@@ -19,3 +19,7 @@ spring:
     enabled: true
     drop-first: true
 
+gca:
+  metrics:
+    max-memory-threshold: 2000
+
