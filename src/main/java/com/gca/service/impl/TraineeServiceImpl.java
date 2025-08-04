@@ -56,7 +56,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Transactional
     @Override
     public UserCredentialsDTO createTrainee(@Valid TraineeCreateDTO request) {
-        logger.debug("Creating trainee");
+        logger.debug("Creating trainee {}", request);
 
         UserCreateDTO userCreateDTO = UserCreateDTO.builder()
                 .firstName(request.getFirstName())
