@@ -1,5 +1,6 @@
 package com.gca.service.impl;
 
+import com.gca.actuator.prometheus.UserRegistrationMetrics;
 import com.gca.repository.UserRepository;
 import com.gca.dto.PasswordChangeDTO;
 import com.gca.dto.user.UserCreateDTO;
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserProfileService userProfileService;
     private final UserMapper userMapper;
+    private final UserRegistrationMetrics metrics;
 
     @Override
     public User createUser(@Valid UserCreateDTO request) {
@@ -42,6 +44,7 @@ public class UserServiceImpl implements UserService {
                 .isActive(true)
                 .build();
 
+        metrics.incrementSuccessCount();
         logger.info("User: {}", user);
         return user;
     }
