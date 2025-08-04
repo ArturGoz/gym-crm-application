@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void toggleActiveStatus(String username, boolean isActive) {
-        logger.debug("Toggling active status for user with username: {}", username);
+        logger.debug("Toggling active status for user with username");
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
         user.setIsActive(isActive);
 
         User updatedUser = userRepository.save(user);
-        logger.info("Toggled active status for user with username: {} to {}", username, updatedUser.getIsActive());
+        logger.info("Toggled active status for user with username: {} to {}", user.getUsername(), updatedUser.getIsActive());
     }
 
     private void validateActiveStatus(User user, boolean isActive) {
