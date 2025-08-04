@@ -148,12 +148,13 @@ class UserServiceImplTest {
     })
     void toggleActiveStatus_alreadyInStatus_throwsException(boolean currentStatus, boolean newStatus) {
         User user = GymTestProvider.constructUser().toBuilder().isActive(currentStatus).build();
+        String username = user.getUsername();
         String expectedAction = newStatus ? "activate" : "deactivate";
 
-        when(dao.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        when(dao.findByUsername(username)).thenReturn(Optional.of(user));
 
         ServiceException ex = assertThrows(ServiceException.class, () ->
-                service.toggleActiveStatus(user.getUsername(), newStatus)
+                service.toggleActiveStatus(username, newStatus)
         );
 
         assertTrue(ex.getMessage().contains(format("Could not %s user", expectedAction)));

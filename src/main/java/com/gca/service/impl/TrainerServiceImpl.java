@@ -1,8 +1,5 @@
 package com.gca.service.impl;
 
-import com.gca.repository.TraineeRepository;
-import com.gca.repository.TrainerRepository;
-import com.gca.repository.TrainingTypeRepository;
 import com.gca.dto.trainer.AssignedTrainerDTO;
 import com.gca.dto.trainer.TrainerCreateDTO;
 import com.gca.dto.trainer.TrainerGetDTO;
@@ -17,6 +14,9 @@ import com.gca.model.Trainee;
 import com.gca.model.Trainer;
 import com.gca.model.TrainingType;
 import com.gca.model.User;
+import com.gca.repository.TraineeRepository;
+import com.gca.repository.TrainerRepository;
+import com.gca.repository.TrainingTypeRepository;
 import com.gca.service.TrainerService;
 import com.gca.service.UserService;
 import com.gca.service.common.CoreValidator;
@@ -32,7 +32,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -107,7 +106,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Transactional(readOnly = true)
     @Override
     public TrainerGetDTO getTrainerByUsername(String username) {
-        logger.debug("Getting trainer by username: {}", username);
+        logger.debug("Getting trainer by username");
 
         validator.validateUsername(username);
 
@@ -124,7 +123,7 @@ public class TrainerServiceImpl implements TrainerService {
     @Transactional(readOnly = true)
     @Override
     public List<AssignedTrainerDTO> getUnassignedTrainers(String traineeUsername) {
-        logger.debug("Getting unassigned trainers for trainee username: {}", traineeUsername);
+        logger.debug("Getting unassigned trainers for trainee username");
 
         validator.validateUsername(traineeUsername);
 
@@ -140,10 +139,11 @@ public class TrainerServiceImpl implements TrainerService {
                 .filter(trainer -> !assignedTrainers.contains(trainer))
                 .toList();
 
-        logger.info("Found {} unassigned trainers for trainee '{}'", unassignedTrainers.size(), traineeUsername);
+        logger.info("Found {} unassigned trainers for trainee '{}'",
+                unassignedTrainers.size(), trainee.getUser().getUsername());
         return unassignedTrainers.stream()
                 .map(trainerMapper::toAssignedDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
 

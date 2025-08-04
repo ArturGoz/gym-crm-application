@@ -26,8 +26,8 @@ public class LoggingInterceptor implements HandlerInterceptor {
                              Object handler) {
         String body = "[empty]";
 
-        if (request instanceof CachingRequestWrapper) {
-            body = ((CachingRequestWrapper) request).getBody();
+        if (request instanceof CachingRequestWrapper cachingRequestWrapper) {
+            body = cachingRequestWrapper.getBody();
             body = readBody(body);
         }
 

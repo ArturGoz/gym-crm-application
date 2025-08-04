@@ -32,7 +32,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -101,7 +100,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Transactional(readOnly = true)
     @Override
     public TraineeGetDTO getTraineeByUsername(String username) {
-        logger.debug("Getting trainee by username: {}", username);
+        logger.debug("Getting trainee by username");
 
         validator.validateUsername(username);
 
@@ -116,7 +115,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
 
-   @Transactional
+    @Transactional
     @Override
     public List<AssignedTrainerDTO> updateTraineeTrainers(@Valid TraineeTrainersUpdateDTO request) {
         logger.debug("Updating trainers for trainee username: {}", request.getTraineeUsername());
@@ -132,7 +131,7 @@ public class TraineeServiceImpl implements TraineeService {
         logger.info("Updated trainers for trainee");
         return updated.getTrainers().stream()
                 .map(trainerMapper::toAssignedDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
