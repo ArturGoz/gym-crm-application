@@ -40,23 +40,25 @@ import com.gca.openapi.model.TrainingCreateRequest;
 import com.gca.openapi.model.TrainingGetResponse;
 import com.gca.openapi.model.TrainingTypeResponse;
 import com.gca.security.AuthenticationService;
+import com.gca.security.jwt.JwtTokenProvider;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
 import com.gca.service.UserService;
 import com.gca.utils.GymTestProvider;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -90,8 +92,24 @@ class TrainingAppFacadeTest {
     @Mock
     private HttpServletResponse httpServletResponse;
 
+    @Mock
+    private JwtTokenProvider jwtTokenProvider;
+
     @InjectMocks
     private TrainingAppFacade facade;
+
+    private final Long jwtDuration = 3600000L;
+
+    @BeforeEach
+    void setUp() {
+        try {
+            Field jwtDurationField = TrainingAppFacade.class.getDeclaredField("jwtDuration");
+            jwtDurationField.setAccessible(true);
+            jwtDurationField.set(facade, jwtDuration);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to set jwtDuration", e);
+        }
+    }
 
     @Test
     void createTrainee_delegatesToService() {
@@ -361,16 +379,17 @@ class TrainingAppFacadeTest {
         LoginRequest request = new LoginRequest("ronnie.coleman", "123qweQWE!@#");
         AuthenticationRequestDTO authRequest =
                 new AuthenticationRequestDTO("ronnie.coleman", "123qweQWE!@#");
+        String expectedHeaderValue = String.format(
+                "JWT=%s; Max-Age=%d; Path=/; Secure; HttpOnly; SameSite=Strict",
+                "token",
+                (int) (jwtDuration / 1000)
+        );
+
+        when(jwtTokenProvider.createToken(authRequest.getUsername())).thenReturn("token");
 
         facade.login(request, httpServletResponse);
 
         verify(authenticationService).authenticate(authRequest);
-        verify(httpServletResponse).addCookie(argThat(cookie ->
-                cookie.getName().equals("username") &&
-                        cookie.getValue().equals("ronnie.coleman") &&
-                        cookie.getMaxAge() == 3600 &&
-                        cookie.isHttpOnly() &&
-                        cookie.getPath().equals("/")
-        ));
+        verify(httpServletResponse).setHeader("Set-Cookie", expectedHeaderValue);
     }
 }

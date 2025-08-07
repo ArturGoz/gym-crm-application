@@ -2,7 +2,7 @@ package com.gca.service.common;
 
 import com.gca.service.helper.RandomPasswordGenerator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class UserProfileService {
     private final UsernameGenerator usernameGenerator;
     private final RandomPasswordGenerator randomPasswordGenerator;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder bCryptPasswordEncoder;
 
     public String generateUsername(String firstName, String lastName) {
         return usernameGenerator.generate(firstName, lastName);

@@ -27,3 +27,7 @@ management:
 gca:
   metrics:
     max-memory-threshold: 2000
+
+jwt:
+  secret: gym-crm-application-SECRETKEY123!@#
+  duration: 3600000
