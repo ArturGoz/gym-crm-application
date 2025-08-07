@@ -68,4 +68,12 @@ class AuthControllerTest {
 
         verify(facade).changePassword(any(LoginChangeRequest.class));
     }
+
+    @Test
+    void logout_shouldReturnOk() throws Exception {
+        mockMvc.perform(post(format("%s/%s", authApi, "/logout")))
+                .andExpect(status().isOk());
+
+        verify(facade).logout(any(HttpServletResponse.class));
+    }
 }

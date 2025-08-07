@@ -78,6 +78,10 @@ public class TrainingAppFacade {
         setJwtCookie(response, token);
     }
 
+    public void logout(HttpServletResponse response) {
+        clearJwtCookie(response);
+    }
+
     public TraineeCreateResponse createTrainee(TraineeCreateRequest request) {
         TraineeCreateDTO traineeCreateDTO = restTraineeMapper.toDto(request);
         UserCredentialsDTO userCredentialsDTO = traineeService.createTrainee(traineeCreateDTO);
@@ -180,17 +184,32 @@ public class TrainingAppFacade {
                 .toList();
     }
 
-    private void setJwtCookie(HttpServletResponse response, String jwtToken) {
-        int cookieDuration = (int) (jwtDuration / 1000);
-
-        Cookie cookie = new Cookie("JWT", jwtToken);
+    private Cookie createJwtCookie(String value, int maxAgeInSeconds) {
+        Cookie cookie = new Cookie("JWT", value);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setMaxAge(cookieDuration);
+        cookie.setMaxAge(maxAgeInSeconds);
+
+        return cookie;
+    }
+
+    private void setJwtCookie(HttpServletResponse response, String jwtToken) {
+        int cookieDuration = (int) (jwtDuration / 1000);
+
+        Cookie cookie = createJwtCookie(jwtToken, cookieDuration);
+        response.addCookie(cookie);
 
         response.setHeader("Set-Cookie",
                 format("JWT=%s; Max-Age=%d; Path=/; Secure; HttpOnly; SameSite=Strict", jwtToken, cookieDuration));
+    }
+
+    private void clearJwtCookie(HttpServletResponse response) {
+        Cookie cookie = createJwtCookie("", 0);
+        response.addCookie(cookie);
+
+        response.setHeader("Set-Cookie",
+                "JWT=; Max-Age=0; Path=/; Secure; HttpOnly; SameSite=Strict");
     }
 }
 
