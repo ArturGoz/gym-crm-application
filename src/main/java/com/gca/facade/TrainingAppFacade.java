@@ -36,8 +36,8 @@ import com.gca.openapi.model.TrainerUpdateResponse;
 import com.gca.openapi.model.TrainingCreateRequest;
 import com.gca.openapi.model.TrainingGetResponse;
 import com.gca.openapi.model.TrainingTypeResponse;
-import com.gca.security.Authenticated;
 import com.gca.security.AuthenticationService;
+import com.gca.security.jwt.JwtTokenProvider;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
@@ -45,9 +45,12 @@ import com.gca.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
@@ -57,17 +60,22 @@ public class TrainingAppFacade {
     private final TrainingService trainingService;
     private final UserService userService;
     private final AuthenticationService authenticationService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final RestTraineeMapper restTraineeMapper;
     private final RestTrainerMapper restTrainerMapper;
     private final RestTrainingMapper restTrainingMapper;
 
+    @Value("${jwt.duration}")
+    private Long jwtDuration;
+
     public void login(LoginRequest loginRequest, HttpServletResponse response) {
         AuthenticationRequestDTO request =
                 new AuthenticationRequestDTO(loginRequest.getUsername(), loginRequest.getPassword());
-
         authenticationService.authenticate(request);
-        setWebCookie(response, request.getUsername());
+
+        String token = jwtTokenProvider.createToken(request.getUsername());
+        setJwtCookie(response, token);
     }
 
     public TraineeCreateResponse createTrainee(TraineeCreateRequest request) {
@@ -77,7 +85,6 @@ public class TrainingAppFacade {
         return restTraineeMapper.toRest(userCredentialsDTO);
     }
 
-    @Authenticated
     public TraineeUpdateResponse updateTrainee(String username, TraineeUpdateRequest request) {
         TraineeUpdateRequestDTO requestDTO = restTraineeMapper.toDto(username, request);
         TraineeUpdateResponseDTO responseDTO = traineeService.updateTrainee(requestDTO);
@@ -92,7 +99,6 @@ public class TrainingAppFacade {
         return restTrainerMapper.toRest(credentialsDTO);
     }
 
-    @Authenticated
     public TrainerUpdateResponse updateTrainer(String username, TrainerUpdateRequest trainer) {
         TrainerUpdateRequestDTO requestDTO = restTrainerMapper.toDto(username, trainer);
         TrainerUpdateResponseDTO responseDTO = trainerService.updateTrainer(requestDTO);
@@ -100,13 +106,11 @@ public class TrainingAppFacade {
         return restTrainerMapper.toRest(responseDTO);
     }
 
-    @Authenticated
     public void createTraining(TrainingCreateRequest request) {
         TrainingCreateDTO dto = restTrainingMapper.toDto(request);
         trainingService.createTraining(dto);
     }
 
-    @Authenticated
     public void changePassword(LoginChangeRequest request) {
         PasswordChangeDTO dto = new PasswordChangeDTO(request.getUsername(),
                 request.getOldPassword(), request.getNewPassword());
@@ -114,7 +118,6 @@ public class TrainingAppFacade {
         userService.changeUserPassword(dto);
     }
 
-    @Authenticated
     public List<TrainingGetResponse> findFilteredTrainings(TrainingTrainerCriteriaFilter filter) {
         List<TrainingDTO> dtoList = trainingService.getTrainerTrainings(filter);
 
@@ -123,7 +126,6 @@ public class TrainingAppFacade {
                 .toList();
     }
 
-    @Authenticated
     public List<TrainingGetResponse> findFilteredTrainings(TrainingTraineeCriteriaFilter filter) {
         List<TrainingDTO> dtoList = trainingService.getTraineeTrainings(filter);
 
@@ -132,34 +134,28 @@ public class TrainingAppFacade {
                 .toList();
     }
 
-    @Authenticated
     public TraineeGetResponse getTraineeByUsername(String username) {
         return restTraineeMapper.toRest(traineeService.getTraineeByUsername(username));
     }
 
-    @Authenticated
     public TrainerGetResponse getTrainerByUsername(String username) {
         return restTrainerMapper.toRest(trainerService.getTrainerByUsername(username));
     }
 
-    @Authenticated
     public void deleteTraineeByUsername(String username) {
         traineeService.deleteTraineeByUsername(username);
     }
 
-    @Authenticated
     public void toggleUserActiveStatus(String username, boolean isActive) {
         userService.toggleActiveStatus(username, isActive);
     }
 
-    @Authenticated
     public List<AssignedTrainerResponse> getUnassignedTrainers(String traineeUsername) {
         return trainerService.getUnassignedTrainers(traineeUsername).stream()
                 .map(restTrainerMapper::toRest)
                 .toList();
     }
 
-    @Authenticated
     public TraineeAssignedTrainersUpdateResponse updateTraineeTrainers(String username,
                                                                        TraineeAssignedTrainersUpdateRequest request) {
         TraineeTrainersUpdateDTO traineeTrainersRequest
@@ -176,7 +172,6 @@ public class TrainingAppFacade {
         return response;
     }
 
-    @Authenticated
     public List<TrainingTypeResponse> getAllTrainingTypes() {
         List<TrainingType> typeList = trainingService.getAllTrainingTypes();
 
@@ -185,12 +180,17 @@ public class TrainingAppFacade {
                 .toList();
     }
 
-    private void setWebCookie(HttpServletResponse response, String username) {
-        Cookie cookie = new Cookie("username", username);
+    private void setJwtCookie(HttpServletResponse response, String jwtToken) {
+        int cookieDuration = (int) (jwtDuration / 1000);
+
+        Cookie cookie = new Cookie("JWT", jwtToken);
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setPath("/");
-        cookie.setMaxAge(3600);
-        response.addCookie(cookie);
+        cookie.setMaxAge(cookieDuration);
+
+        response.setHeader("Set-Cookie",
+                format("JWT=%s; Max-Age=%d; Path=/; Secure; HttpOnly; SameSite=Strict", jwtToken, cookieDuration));
     }
 }
 

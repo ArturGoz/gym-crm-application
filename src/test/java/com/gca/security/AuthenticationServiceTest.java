@@ -30,6 +30,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
 
+    private final AuthenticationRequestDTO request = new AuthenticationRequestDTO(
+            "arnold.schwarzenegger", "securePass123");
+
     @Mock
     private UserService userService;
 
@@ -43,8 +46,6 @@ class AuthenticationServiceTest {
     private AuthenticationService authenticationService;
 
     private User activeUser;
-    private final AuthenticationRequestDTO request = new AuthenticationRequestDTO(
-            "arnold.schwarzenegger", "securePass123");
 
     @BeforeEach
     void setUp() {
