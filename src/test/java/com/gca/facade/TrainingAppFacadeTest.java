@@ -53,8 +53,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -102,13 +102,7 @@ class TrainingAppFacadeTest {
 
     @BeforeEach
     void setUp() {
-        try {
-            Field jwtDurationField = TrainingAppFacade.class.getDeclaredField("jwtDuration");
-            jwtDurationField.setAccessible(true);
-            jwtDurationField.set(facade, jwtDuration);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to set jwtDuration", e);
-        }
+        ReflectionTestUtils.setField(facade, "jwtDuration", jwtDuration);
     }
 
     @Test

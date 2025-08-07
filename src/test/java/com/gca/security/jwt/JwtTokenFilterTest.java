@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -69,7 +70,7 @@ class JwtTokenFilterTest {
 
         jwtTokenFilter.doFilterInternal(request, response, filterChain);
 
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertNotNull(authentication);
         assertTrue(authentication.isAuthenticated());
         assertEquals(username, authentication.getName());
@@ -86,7 +87,7 @@ class JwtTokenFilterTest {
 
         jwtTokenFilter.doFilterInternal(request, response, filterChain);
 
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertNull(authentication);
         verify(filterChain).doFilter(request, response);
         verify(jwtTokenProvider, never()).getUsername(anyString());
@@ -99,7 +100,7 @@ class JwtTokenFilterTest {
 
         jwtTokenFilter.doFilterInternal(request, response, filterChain);
 
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertNull(authentication);
         verify(filterChain).doFilter(request, response);
         verify(jwtTokenProvider, never()).validateToken(anyString());

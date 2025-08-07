@@ -2,6 +2,7 @@ package com.gca.security.jwt;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -17,8 +18,8 @@ class JwtTokenProviderTest {
     @BeforeEach
     void setUp() {
         jwtTokenProvider = new JwtTokenProvider();
-        setPrivateField(jwtTokenProvider, "secretKey", SECRET_KEY);
-        setPrivateField(jwtTokenProvider, "jwtDuration", JWT_DURATION);
+        ReflectionTestUtils.setField(jwtTokenProvider, "secretKey", SECRET_KEY);
+        ReflectionTestUtils.setField(jwtTokenProvider, "jwtDuration", JWT_DURATION);
     }
 
     @Test
@@ -43,15 +44,5 @@ class JwtTokenProviderTest {
         String invalidToken = "invalid.token.string";
         boolean isValid = jwtTokenProvider.validateToken(invalidToken);
         assertFalse(isValid);
-    }
-
-    private void setPrivateField(Object target, String fieldName, Object value) {
-        try {
-            var field = target.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(target, value);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
