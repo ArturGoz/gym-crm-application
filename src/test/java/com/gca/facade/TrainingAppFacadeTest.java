@@ -392,9 +392,10 @@ class TrainingAppFacadeTest {
 
     @Test
     void logout_shouldClearJwtCookie() {
+        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
+
         facade.logout(httpServletResponse);
 
-        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
         verify(httpServletResponse).addCookie(cookieCaptor.capture());
         Cookie cookie = cookieCaptor.getValue();
         assertEquals("JWT", cookie.getName());
