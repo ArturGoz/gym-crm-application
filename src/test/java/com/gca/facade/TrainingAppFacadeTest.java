@@ -46,10 +46,12 @@ import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
 import com.gca.service.UserService;
 import com.gca.utils.GymTestProvider;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -58,6 +60,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -385,5 +388,23 @@ class TrainingAppFacadeTest {
 
         verify(authenticationService).authenticate(authRequest);
         verify(httpServletResponse).setHeader("Set-Cookie", expectedHeaderValue);
+    }
+
+    @Test
+    void logout_shouldClearJwtCookie() {
+        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
+
+        facade.logout(httpServletResponse);
+
+        verify(httpServletResponse).addCookie(cookieCaptor.capture());
+        Cookie cookie = cookieCaptor.getValue();
+        assertEquals("JWT", cookie.getName());
+        assertEquals("", cookie.getValue());
+        assertEquals("/", cookie.getPath());
+        assertTrue(cookie.isHttpOnly());
+        assertTrue(cookie.getSecure());
+        assertEquals(0, cookie.getMaxAge());
+        verify(httpServletResponse).setHeader(("Set-Cookie"),
+                "JWT=; Max-Age=0; Path=/; Secure; HttpOnly; SameSite=Strict");
     }
 }

@@ -43,6 +43,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginRequest request, HttpServletResponse response) {
         facade.login(request, response);
+
         return ResponseEntity.ok().build();
     }
 
@@ -63,6 +64,24 @@ public class AuthController {
     @PutMapping("/login")
     public ResponseEntity<Void> changeLogin(@RequestBody LoginChangeRequest request) {
         facade.changePassword(request);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            summary = "Logout",
+            description = "Performs logout by clearing the authentication cookie/token",
+            operationId = "logout"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully logged out"),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        facade.logout(response);
+
         return ResponseEntity.ok().build();
     }
 }
