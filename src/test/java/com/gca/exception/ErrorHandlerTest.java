@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
@@ -128,5 +129,18 @@ class ErrorHandlerTest {
         assertEquals(INTERNAL_SERVER_ERROR, actual.getStatusCode());
         assertEquals(SERVER_ERROR.getCode(), actual.getBody().getErrorCode());
         assertEquals(SERVER_ERROR.getMessage(), actual.getBody().getErrorMessage());
+    }
+
+    @Test
+    void handleAccountLockedException_shouldReturnTooManyRequestsError() {
+        AccountLockedException ex = new AccountLockedException();
+
+        ResponseEntity<ErrorResponse> actual = errorHandler.handleDaoException(ex);
+
+        assertNotNull(actual);
+        assertNotNull(actual.getBody());
+        assertEquals(HttpStatus.TOO_MANY_REQUESTS, actual.getStatusCode());
+        assertEquals(ApiError.TOO_MANY_REQUESTS_ERROR.getCode(), actual.getBody().getErrorCode());
+        assertEquals(ApiError.TOO_MANY_REQUESTS_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
 }

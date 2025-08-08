@@ -18,6 +18,7 @@ import static com.gca.exception.ApiError.DATABASE_ERROR;
 import static com.gca.exception.ApiError.INVALID_REQUEST_ERROR;
 import static com.gca.exception.ApiError.NOT_FOUND_ERROR;
 import static com.gca.exception.ApiError.SERVER_ERROR;
+import static com.gca.exception.ApiError.TOO_MANY_REQUESTS_ERROR;
 import static com.gca.exception.ApiError.VALIDATION_ERROR;
 
 @ControllerAdvice
@@ -40,6 +41,13 @@ public class ErrorHandler {
         ApiError error = resolveError(ex);
 
         return buildErrorResponse(error);
+    }
+
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<ErrorResponse> handleDaoException(AccountLockedException ex) {
+        log.error("Account Locked Exception: {}", ex.getMessage(), ex);
+
+        return buildErrorResponse(TOO_MANY_REQUESTS_ERROR);
     }
 
     @ExceptionHandler(DaoException.class)
