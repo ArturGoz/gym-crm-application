@@ -36,5 +36,3 @@ login:
   attempt:
     max: 3
     block-time-ms: 60000
-
-

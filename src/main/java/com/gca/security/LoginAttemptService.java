@@ -12,13 +12,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @NoArgsConstructor
 public class LoginAttemptService {
 
+    private final Map<String, Attempt> attemptsCache = new ConcurrentHashMap<>();
+
     @Value("${login.attempt.max}")
-    private int MAX_ATTEMPT = 3;
+    private int maxAttempt = 3;
 
     @Value("${login.attempt.block-time-ms}")
-    private long BLOCK_TIME_MS = 60 * 1000; // 1 minute
-
-    private final Map<String, Attempt> attemptsCache = new ConcurrentHashMap<>();
+    private long blockTimeMs = 60 * 1000L; // 1 minute
 
     public void loginSucceeded(String username) {
         attemptsCache.remove(username.toLowerCase());
@@ -35,11 +35,11 @@ public class LoginAttemptService {
     public boolean isBlocked(String username) {
         Attempt attempt = attemptsCache.get(username);
 
-        return attempt != null && attempt.count >= MAX_ATTEMPT && !isExpired(attempt);
+        return attempt != null && attempt.count >= maxAttempt && !isExpired(attempt);
     }
 
     private boolean isExpired(Attempt attempt) {
-        return (System.currentTimeMillis() - attempt.lastAttemptTime) >= BLOCK_TIME_MS;
+        return (System.currentTimeMillis() - attempt.lastAttemptTime) >= blockTimeMs;
     }
 
     @AllArgsConstructor

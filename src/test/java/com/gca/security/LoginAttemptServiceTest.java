@@ -6,15 +6,15 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class LoginAttemptServiceTest {
+class LoginAttemptServiceTest {
 
     private LoginAttemptService service;
 
     @BeforeEach
     void setUp() {
         service = new LoginAttemptService();
-        ReflectionTestUtils.setField(service, "MAX_ATTEMPT", 3);
-        ReflectionTestUtils.setField(service, "BLOCK_TIME_MS", 50L);
+        ReflectionTestUtils.setField(service, "maxAttempt", 3);
+        ReflectionTestUtils.setField(service, "blockTimeMs", 50L);
     }
 
     @Test
