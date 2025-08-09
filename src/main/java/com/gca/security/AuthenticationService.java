@@ -3,6 +3,7 @@ package com.gca.security;
 import com.gca.actuator.prometheus.AuthenticationMetrics;
 import com.gca.dto.auth.AuthenticationRequestDTO;
 import com.gca.dto.auth.AuthenticationResponseDTO;
+import com.gca.exception.AccountLockedException;
 import com.gca.exception.UserNotAuthenticatedException;
 import com.gca.model.User;
 import com.gca.repository.UserRepository;
@@ -20,21 +21,32 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @RequiredArgsConstructor
 public class AuthenticationService {
+
     private final UserService userService;
     private final UserRepository userRepository;
     private final AuthenticationMetrics metrics;
+    private final LoginAttemptService loginAttemptService;
 
     @Transactional(readOnly = true)
     public AuthenticationResponseDTO authenticate(@Valid AuthenticationRequestDTO request) {
+
+        if (loginAttemptService.isBlocked(request.getUsername())) {
+            throw new AccountLockedException();
+        }
+
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         if (isNotAuthenticated(user, request.getPassword())) {
+            loginAttemptService.loginFailed(request.getUsername());
             metrics.recordFailedLogin();
+
             throw new UserNotAuthenticatedException("Wrong user credentials");
         }
 
+        loginAttemptService.loginSucceeded(request.getUsername());
         metrics.recordSuccessfulLogin();
+
         log.info("Authenticated user: {}", user.getUsername());
         return new AuthenticationResponseDTO("User authenticated successfully", true);
     }
