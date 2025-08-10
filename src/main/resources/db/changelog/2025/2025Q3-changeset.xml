@@ -6,4 +6,10 @@
       http://www.liquibase.org/xml/ns/dbchangelog
       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.18.xsd">
 
+    <changeSet id="GCA-137-create-refresh-tokens-table" author="ArturGoz">
+        <sqlFile path="create-refresh-tokens-table.sql"
+                 relativeToChangelogFile="true"
+                 encoding="UTF-8"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -11,17 +11,17 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
-public class JwtTokenProvider {
+public class AccessTokenService {
 
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.duration}")
-    private Long jwtDuration;
+    @Value("${jwt.access.duration}")
+    private Long jwtAccessDuration;
 
-    public String createToken(String username) {
+    public String createAccessToken(String username) {
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + jwtDuration);
+        Date expiry = new Date(now.getTime() + jwtAccessDuration);
 
         return Jwts.builder()
                 .setSubject(username)

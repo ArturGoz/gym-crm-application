@@ -19,7 +19,9 @@ enum ApiError {
     NOT_FOUND_ERROR(2835, "Requested data was not found: ", NOT_FOUND),
     SERVER_ERROR(3200, "Internal processing error", INTERNAL_SERVER_ERROR),
     DATABASE_ERROR(3358, "Unexpected database access failure", INTERNAL_SERVER_ERROR),
-    TOO_MANY_REQUESTS_ERROR(4290, "Too many requests, please try later", TOO_MANY_REQUESTS);
+    TOO_MANY_REQUESTS_ERROR(4290, "Too many requests, please try later", TOO_MANY_REQUESTS),
+    REFRESH_TOKEN_ERROR(4500, "Refresh token expired", NOT_FOUND),
+    ;
 
     private final int code;
     private final String message;

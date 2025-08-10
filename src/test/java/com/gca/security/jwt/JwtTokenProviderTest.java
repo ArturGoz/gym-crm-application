@@ -13,36 +13,36 @@ class JwtTokenProviderTest {
     private static final String SECRET_KEY = "mysupersecretkeymysupersecretkey1234";
     private static final long JWT_DURATION = 3600000L;
 
-    private JwtTokenProvider jwtTokenProvider;
+    private AccessTokenService accessTokenService;
 
     @BeforeEach
     void setUp() {
-        jwtTokenProvider = new JwtTokenProvider();
-        ReflectionTestUtils.setField(jwtTokenProvider, "secretKey", SECRET_KEY);
-        ReflectionTestUtils.setField(jwtTokenProvider, "jwtDuration", JWT_DURATION);
+        accessTokenService = new AccessTokenService();
+        ReflectionTestUtils.setField(accessTokenService, "secretKey", SECRET_KEY);
+        ReflectionTestUtils.setField(accessTokenService, "jwtAccessDuration", JWT_DURATION);
     }
 
     @Test
     void createToken_and_parseToken_ShouldReturnCorrectUsername() {
         String username = "testuser";
 
-        String token = jwtTokenProvider.createToken(username);
+        String token = accessTokenService.createAccessToken(username);
 
-        String extractedUsername = jwtTokenProvider.getUsername(token);
+        String extractedUsername = accessTokenService.getUsername(token);
         assertEquals(username, extractedUsername);
     }
 
     @Test
     void validateToken_withValidToken_ShouldReturnTrue() {
-        String token = jwtTokenProvider.createToken("validuser");
-        boolean isValid = jwtTokenProvider.validateToken(token);
+        String token = accessTokenService.createAccessToken("validuser");
+        boolean isValid = accessTokenService.validateToken(token);
         assertTrue(isValid);
     }
 
     @Test
     void validateToken_withInvalidToken_ShouldReturnFalse() {
         String invalidToken = "invalid.token.string";
-        boolean isValid = jwtTokenProvider.validateToken(invalidToken);
+        boolean isValid = accessTokenService.validateToken(invalidToken);
         assertFalse(isValid);
     }
 }

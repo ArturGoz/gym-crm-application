@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 class JwtTokenFilterTest {
 
     @Mock
-    private JwtTokenProvider jwtTokenProvider;
+    private AccessTokenService accessTokenService;
 
     @Mock
     private UserDetailsService userDetailsService;
@@ -64,8 +64,8 @@ class JwtTokenFilterTest {
         UserDetails userDetails = new User(username, "password", List.of());
 
         when(request.getCookies()).thenReturn(new Cookie[]{jwtCookie});
-        when(jwtTokenProvider.validateToken(token)).thenReturn(true);
-        when(jwtTokenProvider.getUsername(token)).thenReturn(username);
+        when(accessTokenService.validateToken(token)).thenReturn(true);
+        when(accessTokenService.getUsername(token)).thenReturn(username);
         when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
 
         jwtTokenFilter.doFilterInternal(request, response, filterChain);
@@ -83,14 +83,14 @@ class JwtTokenFilterTest {
         Cookie jwtCookie = new Cookie("JWT", token);
 
         when(request.getCookies()).thenReturn(new Cookie[]{jwtCookie});
-        when(jwtTokenProvider.validateToken(token)).thenReturn(false);
+        when(accessTokenService.validateToken(token)).thenReturn(false);
 
         jwtTokenFilter.doFilterInternal(request, response, filterChain);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertNull(authentication);
         verify(filterChain).doFilter(request, response);
-        verify(jwtTokenProvider, never()).getUsername(anyString());
+        verify(accessTokenService, never()).getUsername(anyString());
         verify(userDetailsService, never()).loadUserByUsername(anyString());
     }
 
@@ -103,6 +103,6 @@ class JwtTokenFilterTest {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertNull(authentication);
         verify(filterChain).doFilter(request, response);
-        verify(jwtTokenProvider, never()).validateToken(anyString());
+        verify(accessTokenService, never()).validateToken(anyString());
     }
 }
