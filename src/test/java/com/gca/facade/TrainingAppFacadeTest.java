@@ -1,6 +1,7 @@
 package com.gca.facade;
 
 import com.gca.dto.PasswordChangeDTO;
+import com.gca.dto.auth.AuthTokensDTO;
 import com.gca.dto.auth.AuthenticationRequestDTO;
 import com.gca.dto.filter.TrainingTraineeCriteriaFilter;
 import com.gca.dto.filter.TrainingTrainerCriteriaFilter;
@@ -17,6 +18,7 @@ import com.gca.dto.trainer.TrainerUpdateResponseDTO;
 import com.gca.dto.training.TrainingCreateDTO;
 import com.gca.dto.training.TrainingDTO;
 import com.gca.dto.user.UserCredentialsDTO;
+import com.gca.exception.TokenRefreshException;
 import com.gca.mapper.rest.RestTraineeMapper;
 import com.gca.mapper.rest.RestTrainerMapper;
 import com.gca.mapper.rest.RestTrainingMapper;
@@ -40,33 +42,42 @@ import com.gca.openapi.model.TrainingCreateRequest;
 import com.gca.openapi.model.TrainingGetResponse;
 import com.gca.openapi.model.TrainingTypeResponse;
 import com.gca.security.AuthenticationService;
-import com.gca.security.jwt.JwtTokenProvider;
+import com.gca.security.jwt.JwtCookieService;
 import com.gca.service.TraineeService;
 import com.gca.service.TrainerService;
 import com.gca.service.TrainingService;
 import com.gca.service.UserService;
 import com.gca.utils.GymTestProvider;
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TrainingAppFacadeTest {
+
+    private static final long ACCESS_TOKEN_DURATION = 3600_00L;
+    private static final String ACCESS_TOKEN_COOKIE_NAME = "JWT";
+    private static final String REFRESH_TOKEN_COOKIE_NAME = "REFRESH_TOKEN";
 
     @Mock
     private TraineeService traineeService;
@@ -96,17 +107,19 @@ class TrainingAppFacadeTest {
     private HttpServletResponse httpServletResponse;
 
     @Mock
-    private JwtTokenProvider jwtTokenProvider;
+    private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private JwtCookieService jwtCookieService;
+
+    @Mock
+    private Authentication authentication;
+
+    @Mock
+    private SecurityContext securityContext;
 
     @InjectMocks
     private TrainingAppFacade facade;
-
-    private final Long jwtDuration = 3600000L;
-
-    @BeforeEach
-    void setUp() {
-        ReflectionTestUtils.setField(facade, "jwtDuration", jwtDuration);
-    }
 
     @Test
     void createTrainee_delegatesToService() {
@@ -372,39 +385,93 @@ class TrainingAppFacadeTest {
     }
 
     @Test
-    void login_delegatesToAuthService() {
-        LoginRequest request = new LoginRequest("ronnie.coleman", "123qweQWE!@#");
+    void login_delegatesToAuthService_andSetsCookie() {
+        LoginRequest loginRequest = new LoginRequest("ronnie.coleman", "123qweQWE!@#");
         AuthenticationRequestDTO authRequest =
-                new AuthenticationRequestDTO("ronnie.coleman", "123qweQWE!@#");
-        String expectedHeaderValue = String.format(
-                "JWT=%s; Max-Age=%d; Path=/; Secure; HttpOnly; SameSite=Strict",
-                "token",
-                (int) (jwtDuration / 1000)
-        );
+                new AuthenticationRequestDTO(loginRequest.getUsername(), loginRequest.getPassword());
 
-        when(jwtTokenProvider.createToken(authRequest.getUsername())).thenReturn("token");
+        AuthTokensDTO tokens = new AuthTokensDTO("access-token", "refresh-token");
+        ResponseCookie accessTokenCookie = buildCookie(tokens.getAccessToken());
+        ResponseCookie refreshTokenCookie = buildCookie(tokens.getRefreshToken());
 
-        facade.login(request, httpServletResponse);
+        when(authenticationService.authenticate(authRequest)).thenReturn(tokens);
+        when(jwtCookieService.createAccessTokenCookie(tokens.getAccessToken())).thenReturn(accessTokenCookie);
+        when(jwtCookieService.createRefreshTokenCookie(tokens.getRefreshToken())).thenReturn(refreshTokenCookie);
+
+        facade.login(loginRequest, httpServletResponse);
 
         verify(authenticationService).authenticate(authRequest);
-        verify(httpServletResponse).setHeader("Set-Cookie", expectedHeaderValue);
+        verify(httpServletResponse).addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        verify(httpServletResponse).addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
     }
 
     @Test
     void logout_shouldClearJwtCookie() {
-        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
+        ResponseCookie accessTokenCookie = ResponseCookie.from(ACCESS_TOKEN_COOKIE_NAME, "").build();
+        ResponseCookie refreshTokenCookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, "").build();
+        String username = "testuser";
+        SecurityContextHolder.setContext(securityContext);
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(username);
+        when(jwtCookieService.createCleanJwtCookie()).thenReturn(accessTokenCookie);
+        when(jwtCookieService.createCleanRefreshTokenCookie()).thenReturn(refreshTokenCookie);
 
         facade.logout(httpServletResponse);
 
-        verify(httpServletResponse).addCookie(cookieCaptor.capture());
-        Cookie cookie = cookieCaptor.getValue();
-        assertEquals("JWT", cookie.getName());
-        assertEquals("", cookie.getValue());
-        assertEquals("/", cookie.getPath());
-        assertTrue(cookie.isHttpOnly());
-        assertTrue(cookie.getSecure());
-        assertEquals(0, cookie.getMaxAge());
-        verify(httpServletResponse).setHeader(("Set-Cookie"),
-                "JWT=; Max-Age=0; Path=/; Secure; HttpOnly; SameSite=Strict");
+        verify(authenticationService).logout(username);
+        verify(jwtCookieService).createCleanJwtCookie();
+        verify(jwtCookieService).createCleanRefreshTokenCookie();
+        verify(httpServletResponse).addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        verify(httpServletResponse).addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+    }
+
+    @Test
+    void refreshToken_ShouldRefreshTokenAndAddToResponse_WhenRefreshTokenExists() {
+        String refreshToken = "existing-refresh-token";
+        AuthTokensDTO tokensDTO = new AuthTokensDTO("accessToken", "refreshToken");
+        ResponseCookie accessTokenCookie = buildCookie(tokensDTO.getAccessToken());
+        ResponseCookie refreshTokenCookie = buildCookie(tokensDTO.getRefreshToken());
+
+        when(jwtCookieService.extractRefreshTokenFromCookies(httpServletRequest)).thenReturn(refreshToken);
+        when(authenticationService.refreshToken(refreshToken)).thenReturn(tokensDTO);
+        when(jwtCookieService.createAccessTokenCookie(tokensDTO.getAccessToken()))
+                .thenReturn(accessTokenCookie);
+        when(jwtCookieService.createRefreshTokenCookie(tokensDTO.getRefreshToken()))
+                .thenReturn(refreshTokenCookie);
+
+        facade.refreshToken(httpServletRequest, httpServletResponse);
+
+        verify(jwtCookieService).extractRefreshTokenFromCookies(httpServletRequest);
+        verify(authenticationService).refreshToken(refreshToken);
+        verify(jwtCookieService).createAccessTokenCookie(tokensDTO.getAccessToken());
+        verify(jwtCookieService).createRefreshTokenCookie(tokensDTO.getRefreshToken());
+        verify(httpServletResponse).addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        verify(httpServletResponse).addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+    }
+
+    @Test
+    void refreshToken_shouldThrowException_whenRefreshTokenIsNull() {
+        when(jwtCookieService.extractRefreshTokenFromCookies(httpServletRequest)).thenReturn(null);
+
+        TokenRefreshException exception = assertThrows(
+                TokenRefreshException.class,
+                () -> facade.refreshToken(httpServletRequest, httpServletResponse)
+        );
+
+        assertEquals("Refresh token is absent", exception.getMessage());
+        verify(jwtCookieService).extractRefreshTokenFromCookies(httpServletRequest);
+        verify(authenticationService, never()).refreshToken(any());
+        verify(httpServletResponse, never()).addHeader(eq(HttpHeaders.SET_COOKIE), any());
+    }
+
+    private ResponseCookie buildCookie(String value) {
+        return ResponseCookie.from(TrainingAppFacadeTest.ACCESS_TOKEN_COOKIE_NAME, value)
+                .maxAge(Duration.ofMillis(TrainingAppFacadeTest.ACCESS_TOKEN_DURATION))
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Lax")
+                .path("/")
+                .build();
     }
 }

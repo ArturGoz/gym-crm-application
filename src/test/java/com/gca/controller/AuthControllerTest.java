@@ -5,6 +5,7 @@ import com.gca.facade.TrainingAppFacade;
 import com.gca.openapi.model.LoginChangeRequest;
 import com.gca.openapi.model.LoginRequest;
 import com.gca.utils.GymTestProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,5 +76,13 @@ class AuthControllerTest {
                 .andExpect(status().isOk());
 
         verify(facade).logout(any(HttpServletResponse.class));
+    }
+
+    @Test
+    void refreshToken_shouldReturnOk() throws Exception {
+        mockMvc.perform(post(format("%s/%s", authApi, "/refresh")))
+                .andExpect(status().isOk());
+
+        verify(facade).refreshToken(any(HttpServletRequest.class), any(HttpServletResponse.class));
     }
 }

@@ -17,6 +17,7 @@ import static com.gca.exception.ApiError.AUTHENTICATION_ERROR;
 import static com.gca.exception.ApiError.DATABASE_ERROR;
 import static com.gca.exception.ApiError.INVALID_REQUEST_ERROR;
 import static com.gca.exception.ApiError.NOT_FOUND_ERROR;
+import static com.gca.exception.ApiError.REFRESH_TOKEN_ERROR;
 import static com.gca.exception.ApiError.SERVER_ERROR;
 import static com.gca.exception.ApiError.TOO_MANY_REQUESTS_ERROR;
 import static com.gca.exception.ApiError.VALIDATION_ERROR;
@@ -41,6 +42,13 @@ public class ErrorHandler {
         ApiError error = resolveError(ex);
 
         return buildErrorResponse(error);
+    }
+
+    @ExceptionHandler(TokenRefreshException.class)
+    public ResponseEntity<ErrorResponse> handleTokenRefreshException(TokenRefreshException ex) {
+        log.error("Exception with refresh token: {}", ex.getMessage(), ex);
+
+        return buildErrorResponse(REFRESH_TOKEN_ERROR);
     }
 
     @ExceptionHandler(AccountLockedException.class)

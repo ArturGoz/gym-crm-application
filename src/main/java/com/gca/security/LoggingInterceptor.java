@@ -19,12 +19,14 @@ public class LoggingInterceptor implements HandlerInterceptor {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final Set<String> SENSITIVE_FIELDS = Set.of("password", "oldPassword", "newPassword");
+    private static final String EMPTY_BODY = "[empty]";
+    private static final String UNSUPPORTED_ENCODING = "[unsupported encoding]";
 
     @Override
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) {
-        String body = "[empty]";
+        String body = EMPTY_BODY;
 
         if (request instanceof CachingRequestWrapper cachingRequestWrapper) {
             body = cachingRequestWrapper.getBody();
@@ -58,15 +60,18 @@ public class LoggingInterceptor implements HandlerInterceptor {
     }
 
     private String readBody(String body) {
+        if (body == null || body.isEmpty() || EMPTY_BODY.equals(body) || UNSUPPORTED_ENCODING.equals(body)) {
+            return body;
+        }
+
         try {
             ObjectNode jsonNode = (ObjectNode) objectMapper.readTree(body);
-
             hideSensitiveData(jsonNode);
-            body = jsonNode.toString();
+            return jsonNode.toString();
         } catch (Exception e) {
             logger.warn("Failed to parse JSON body: {}", e.getMessage());
+            return body;
         }
-        return body;
     }
 
     private void hideSensitiveData(ObjectNode node) {
@@ -79,13 +84,13 @@ public class LoggingInterceptor implements HandlerInterceptor {
         byte[] buf = response.getContentAsByteArray();
 
         if (buf.length == 0) {
-            return "[empty]";
+            return EMPTY_BODY;
         }
 
         try {
             return new String(buf, response.getCharacterEncoding());
         } catch (UnsupportedEncodingException e) {
-            return "[unsupported encoding]";
+            return UNSUPPORTED_ENCODING;
         }
     }
 }

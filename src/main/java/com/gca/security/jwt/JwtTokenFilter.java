@@ -22,23 +22,23 @@ import java.util.Arrays;
 @Slf4j
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final AccessTokenService accessTokenService;
     private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         log.debug("JWT Token Filter triggered");
-        String token = extractTokenFromRequest(request);
+        String token = extractAccessTokenFromRequest(request);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        if (token != null && accessTokenService.validateToken(token)) {
             setAuthenticationWithToken(token);
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private String extractTokenFromRequest(HttpServletRequest request) {
+    private String extractAccessTokenFromRequest(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null) {
@@ -55,7 +55,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private void setAuthenticationWithToken(String token) {
         log.debug("Setting Authentication With Token");
 
-        String username = jwtTokenProvider.getUsername(token);
+        String username = accessTokenService.getUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         UsernamePasswordAuthenticationToken auth =

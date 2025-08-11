@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: dev
   datasource:
     driver-class-name: org.postgresql.Driver
   jpa:
@@ -30,7 +30,10 @@ gca:
 
 jwt:
   secret: gym-crm-application-SECRETKEY123!@#
-  duration: 3600000
+  access:
+    duration: 3600000
+  refresh:
+    duration: 604800000
 
 login:
   attempt:

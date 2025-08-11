@@ -71,6 +71,15 @@
             "url": "{{baseURL}}/auth/logout"
           },
           "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseURL}}/auth/refresh"
+          },
+          "response": []
         }
       ],
       "variable": [

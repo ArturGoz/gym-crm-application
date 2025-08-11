@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -75,12 +76,35 @@ public class AuthController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully logged out"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized access",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         facade.logout(response);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            summary = "Refresh JWT token",
+            description = "Generates a new JWT access token using the refresh token from cookies",
+            operationId = "refreshToken"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully refreshed token"),
+            @ApiResponse(responseCode = "401", description = "Invalid or expired refresh token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Refresh token is expired",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping("/refresh")
+    public ResponseEntity<Void> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        facade.refreshToken(request, response);
 
         return ResponseEntity.ok().build();
     }

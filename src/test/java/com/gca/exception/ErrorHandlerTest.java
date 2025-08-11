@@ -4,6 +4,7 @@ import com.gca.openapi.model.ErrorResponse;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.AssertionsKt;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import static com.gca.exception.ApiError.AUTHENTICATION_ERROR;
 import static com.gca.exception.ApiError.DATABASE_ERROR;
 import static com.gca.exception.ApiError.INVALID_REQUEST_ERROR;
 import static com.gca.exception.ApiError.NOT_FOUND_ERROR;
+import static com.gca.exception.ApiError.REFRESH_TOKEN_ERROR;
 import static com.gca.exception.ApiError.SERVER_ERROR;
 import static com.gca.exception.ApiError.VALIDATION_ERROR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,6 +75,19 @@ class ErrorHandlerTest {
         assertEquals(INTERNAL_SERVER_ERROR, actual.getStatusCode());
         assertEquals(DATABASE_ERROR.getCode(), actual.getBody().getErrorCode());
         assertEquals(DATABASE_ERROR.getMessage(), actual.getBody().getErrorMessage());
+    }
+
+    @Test
+    void handleTokenRefreshException_shouldReturnRefreshTokenError() {
+        String message = "Refresh token expired";
+        TokenRefreshException ex = new TokenRefreshException(message);
+
+        ResponseEntity<ErrorResponse> actual = errorHandler.handleTokenRefreshException(ex);
+
+        AssertionsKt.assertNotNull(actual.getBody());
+        assertEquals(NOT_FOUND, actual.getStatusCode());
+        assertEquals(REFRESH_TOKEN_ERROR.getCode(), actual.getBody().getErrorCode());
+        assertEquals(REFRESH_TOKEN_ERROR.getMessage(), actual.getBody().getErrorMessage());
     }
 
     @Test
