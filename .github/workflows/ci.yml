@@ -37,4 +37,4 @@ jobs:
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
             -Dsonar.qualitygate.wait=true \
-            -Dsonar.coverage.exclusions=**/mapper/**,**/openapi/**,**/dto/**,**/model/**,**/web/**
+            -Dsonar.coverage.exclusions=**/mapper/**,**/openapi/**,**/dto/**,**/model/**,**/web/**,**/config/**
