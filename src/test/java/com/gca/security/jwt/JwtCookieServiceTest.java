@@ -27,49 +27,49 @@ class JwtCookieServiceTest {
     private HttpServletRequest httpServletRequest;
 
     @InjectMocks
-    private JwtCookieService jwtCookieService;
+    private JwtCookieService service;
 
     @Test
     void createAccessTokenCookie_shouldCreateValidCookie() {
-        String accessToken = "access-token-123";
-        ReflectionTestUtils.setField(jwtCookieService, "jwtAccessDuration", JWT_ACCESS_DURATION);
+        String expectedAccessToken = "access-token-123";
+        ReflectionTestUtils.setField(service, "jwtAccessDuration", JWT_ACCESS_DURATION);
 
-        ResponseCookie cookie = jwtCookieService.createAccessTokenCookie(accessToken);
+        ResponseCookie actual = service.createAccessTokenCookie(expectedAccessToken);
 
-        assertEquals("JWT", cookie.getName());
-        assertEquals(accessToken, cookie.getValue());
-        assertEquals(Duration.ofMillis(JWT_ACCESS_DURATION), cookie.getMaxAge());
-        assertTrue(cookie.isHttpOnly());
+        assertEquals("JWT", actual.getName());
+        assertEquals(expectedAccessToken, actual.getValue());
+        assertEquals(Duration.ofMillis(JWT_ACCESS_DURATION), actual.getMaxAge());
+        assertTrue(actual.isHttpOnly());
     }
 
     @Test
     void createRefreshTokenCookie_shouldCreateValidCookie() {
-        String refreshToken = "refresh-token-456";
-        ReflectionTestUtils.setField(jwtCookieService, "jwtRefreshDuration", JWT_REFRESH_DURATION);
+        String expectedRefreshToken = "refresh-token-456";
+        ReflectionTestUtils.setField(service, "jwtRefreshDuration", JWT_REFRESH_DURATION);
 
-        ResponseCookie cookie = jwtCookieService.createRefreshTokenCookie(refreshToken);
+        ResponseCookie actual = service.createRefreshTokenCookie(expectedRefreshToken);
 
-        assertEquals("REFRESH_TOKEN", cookie.getName());
-        assertEquals(refreshToken, cookie.getValue());
-        assertEquals(Duration.ofMillis(JWT_REFRESH_DURATION), cookie.getMaxAge());
+        assertEquals("REFRESH_TOKEN", actual.getName());
+        assertEquals(expectedRefreshToken, actual.getValue());
+        assertEquals(Duration.ofMillis(JWT_REFRESH_DURATION), actual.getMaxAge());
     }
 
     @Test
     void createCleanJwtCookie_shouldCreateEmptyCookie() {
-        ResponseCookie cookie = jwtCookieService.createCleanJwtCookie();
+        ResponseCookie actual = service.createCleanJwtCookie();
 
-        assertEquals("JWT", cookie.getName());
-        assertEquals("", cookie.getValue());
-        assertEquals(Duration.ofMillis(0L), cookie.getMaxAge());
+        assertEquals("JWT", actual.getName());
+        assertEquals("", actual.getValue());
+        assertEquals(Duration.ofMillis(0L), actual.getMaxAge());
     }
 
     @Test
     void createCleanRefreshTokenCookie_shouldCreateEmptyCookie() {
-        ResponseCookie cookie = jwtCookieService.createCleanRefreshTokenCookie();
+        ResponseCookie actual = service.createCleanRefreshTokenCookie();
 
-        assertEquals("REFRESH_TOKEN", cookie.getName());
-        assertEquals("", cookie.getValue());
-        assertEquals(Duration.ofMillis(0L), cookie.getMaxAge());
+        assertEquals("REFRESH_TOKEN", actual.getName());
+        assertEquals("", actual.getValue());
+        assertEquals(Duration.ofMillis(0L), actual.getMaxAge());
     }
 
     @Test
@@ -82,7 +82,7 @@ class JwtCookieServiceTest {
 
         when(httpServletRequest.getCookies()).thenReturn(cookies);
 
-        String actualToken = jwtCookieService.extractRefreshTokenFromCookies(httpServletRequest);
+        String actualToken = service.extractRefreshTokenFromCookies(httpServletRequest);
 
         assertEquals(expectedToken, actualToken);
     }
@@ -93,7 +93,7 @@ class JwtCookieServiceTest {
 
         when(httpServletRequest.getCookies()).thenReturn(cookies);
 
-        String actualToken = jwtCookieService.extractRefreshTokenFromCookies(httpServletRequest);
+        String actualToken = service.extractRefreshTokenFromCookies(httpServletRequest);
 
         assertNull(actualToken);
     }
@@ -101,7 +101,7 @@ class JwtCookieServiceTest {
     @Test
     void extractRefreshTokenFromCookies_shouldReturnNull_whenCookiesAreNull() {
         when(httpServletRequest.getCookies()).thenReturn(null);
-        String actualToken = jwtCookieService.extractRefreshTokenFromCookies(httpServletRequest);
+        String actualToken = service.extractRefreshTokenFromCookies(httpServletRequest);
         assertNull(actualToken);
     }
 }

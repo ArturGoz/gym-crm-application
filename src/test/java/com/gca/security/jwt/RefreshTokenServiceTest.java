@@ -28,62 +28,62 @@ import static org.mockito.Mockito.when;
 class RefreshTokenServiceTest {
 
     @Mock
-    private RefreshTokenRepository refreshTokenRepository;
+    private RefreshTokenRepository repository;
 
     @InjectMocks
-    private RefreshTokenService refreshTokenService;
+    private RefreshTokenService service;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(refreshTokenService, "jwtRefreshDuration", 3600_000L);
+        ReflectionTestUtils.setField(service, "jwtRefreshDuration", 3600_000L);
     }
 
     @Test
     void findByToken_shouldReturnOptionalRefreshToken() {
-        String token = "test-token";
-        RefreshToken refreshToken = RefreshToken.builder().token(token).build();
+        String expectedToken = "test-token";
+        RefreshToken refreshToken = RefreshToken.builder().token(expectedToken).build();
 
-        when(refreshTokenRepository.findByToken(token)).thenReturn(Optional.of(refreshToken));
+        when(repository.findByToken(expectedToken)).thenReturn(Optional.of(refreshToken));
 
-        Optional<RefreshToken> result = refreshTokenService.findByToken(token);
+        Optional<RefreshToken> actual = service.findByToken(expectedToken);
 
-        assertTrue(result.isPresent());
-        assertEquals(token, result.get().getToken());
-        verify(refreshTokenRepository).findByToken(token);
+        assertTrue(actual.isPresent());
+        assertEquals(expectedToken, actual.get().getToken());
+        verify(repository).findByToken(expectedToken);
     }
 
     @Test
     void createRefreshToken_shouldDeleteOldAndSaveNew() {
-        String username = "user123";
+        String expectedUsername = "user123";
         RefreshToken savedToken = RefreshToken.builder()
-                .username(username)
+                .username(expectedUsername)
                 .token("new-token")
                 .expiryDate(Instant.now().plusSeconds(3600))
                 .build();
 
-        when(refreshTokenRepository.save(any(RefreshToken.class))).thenReturn(savedToken);
+        when(repository.save(any(RefreshToken.class))).thenReturn(savedToken);
 
-        RefreshToken result = refreshTokenService.createRefreshToken(username);
+        RefreshToken actual = service.createRefreshToken(expectedUsername);
 
-        assertNotNull(result);
-        assertEquals(username, result.getUsername());
-        assertNotNull(result.getToken());
-        assertTrue(result.getExpiryDate().isAfter(Instant.now()));
-        verify(refreshTokenRepository).deleteByUsername(username);
-        verify(refreshTokenRepository).save(any(RefreshToken.class));
+        assertNotNull(actual);
+        assertEquals(expectedUsername, actual.getUsername());
+        assertNotNull(actual.getToken());
+        assertTrue(actual.getExpiryDate().isAfter(Instant.now()));
+        verify(repository).deleteByUsername(expectedUsername);
+        verify(repository).save(any(RefreshToken.class));
     }
 
     @Test
     void verifyExpiration_shouldReturnToken_whenNotExpired() {
-        RefreshToken token = RefreshToken.builder()
+        RefreshToken expected = RefreshToken.builder()
                 .token("valid-token")
                 .expiryDate(Instant.now().plusSeconds(60))
                 .build();
 
-        RefreshToken result = refreshTokenService.verifyExpiration(token);
+        RefreshToken actual = service.verifyExpiration(expected);
 
-        assertSame(token, result);
-        verify(refreshTokenRepository, never()).delete(any());
+        assertSame(expected, actual);
+        verify(repository, never()).delete(any());
     }
 
     @Test
@@ -95,17 +95,16 @@ class RefreshTokenServiceTest {
 
         TokenRefreshException ex = assertThrows(
                 TokenRefreshException.class,
-                () -> refreshTokenService.verifyExpiration(token)
-        );
+                () -> service.verifyExpiration(token));
 
         assertTrue(ex.getMessage().contains("Refresh token was expired"));
-        verify(refreshTokenRepository).delete(token);
+        verify(repository).delete(token);
     }
 
     @Test
     void deleteByUsername_shouldCallRepositoryDelete() {
         String username = "user123";
-        refreshTokenService.deleteByUsername(username);
-        verify(refreshTokenRepository).deleteByUsername(username);
+        service.deleteByUsername(username);
+        verify(repository).deleteByUsername(username);
     }
 }

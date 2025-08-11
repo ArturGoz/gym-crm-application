@@ -39,7 +39,6 @@ class AuthenticationServiceTest {
     private static final String ACCESS_TOKEN = "accessToken";
     private static final String REFRESH_TOKEN = "refreshToken";
 
-
     @Mock
     private UserService userService;
 
@@ -59,7 +58,7 @@ class AuthenticationServiceTest {
     private RefreshTokenService refreshTokenService;
 
     @InjectMocks
-    private AuthenticationService authenticationService;
+    private AuthenticationService service;
 
     private User activeUser;
 
@@ -82,10 +81,10 @@ class AuthenticationServiceTest {
         when(accessTokenService.createAccessToken(activeUser.getUsername())).thenReturn(ACCESS_TOKEN);
         when(refreshTokenService.createRefreshToken(activeUser.getUsername())).thenReturn(refreshToken);
 
-        AuthTokensDTO result = authenticationService.authenticate(request);
+        AuthTokensDTO actual = service.authenticate(request);
 
-        assertEquals(ACCESS_TOKEN, result.getAccessToken());
-        assertEquals(REFRESH_TOKEN, result.getRefreshToken());
+        assertEquals(ACCESS_TOKEN, actual.getAccessToken());
+        assertEquals(REFRESH_TOKEN, actual.getRefreshToken());
         verify(loginAttemptService).isBlocked(request.getUsername());
         verify(userRepository).findByUsername(request.getUsername());
         verify(userService).isUserCredentialsValid(request.getUsername(), request.getPassword());
@@ -97,10 +96,10 @@ class AuthenticationServiceTest {
     void authenticate_userBlocked_throwsAccountLockedException() {
         when(loginAttemptService.isBlocked(request.getUsername())).thenReturn(true);
 
-        AccountLockedException ex = assertThrows(AccountLockedException.class,
-                () -> authenticationService.authenticate(request));
+        AccountLockedException actual = assertThrows(AccountLockedException.class,
+                () -> service.authenticate(request));
 
-        assertNotNull(ex);
+        assertNotNull(actual);
         verify(loginAttemptService).isBlocked(request.getUsername());
         verifyNoMoreInteractions(loginAttemptService, userRepository, userService, metrics);
     }
@@ -110,10 +109,10 @@ class AuthenticationServiceTest {
         when(loginAttemptService.isBlocked(request.getUsername())).thenReturn(false);
         when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.empty());
 
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
-                () -> authenticationService.authenticate(request));
+        EntityNotFoundException actual = assertThrows(EntityNotFoundException.class,
+                () -> service.authenticate(request));
 
-        assertNotNull(ex);
+        assertNotNull(actual);
         verify(loginAttemptService).isBlocked(request.getUsername());
         verify(userRepository).findByUsername(request.getUsername());
     }
@@ -124,10 +123,10 @@ class AuthenticationServiceTest {
         when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(activeUser));
         when(userService.isUserCredentialsValid(request.getUsername(), request.getPassword())).thenReturn(false);
 
-        UserNotAuthenticatedException ex = assertThrows(UserNotAuthenticatedException.class,
-                () -> authenticationService.authenticate(request));
+        UserNotAuthenticatedException actual = assertThrows(UserNotAuthenticatedException.class,
+                () -> service.authenticate(request));
 
-        assertNotNull(ex);
+        assertNotNull(actual);
         verify(loginAttemptService).isBlocked(request.getUsername());
         verify(userRepository).findByUsername(request.getUsername());
         verify(userService).isUserCredentialsValid(request.getUsername(), request.getPassword());
@@ -143,10 +142,10 @@ class AuthenticationServiceTest {
         when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(activeUser));
         when(userService.isUserCredentialsValid(request.getUsername(), request.getPassword())).thenReturn(true);
 
-        UserNotAuthenticatedException ex = assertThrows(UserNotAuthenticatedException.class,
-                () -> authenticationService.authenticate(request));
+        UserNotAuthenticatedException actual = assertThrows(UserNotAuthenticatedException.class,
+                () -> service.authenticate(request));
 
-        assertNotNull(ex);
+        assertNotNull(actual);
         verify(loginAttemptService).isBlocked(request.getUsername());
         verify(userRepository).findByUsername(request.getUsername());
         verify(userService).isUserCredentialsValid(request.getUsername(), request.getPassword());

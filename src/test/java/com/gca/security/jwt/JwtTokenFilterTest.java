@@ -49,7 +49,7 @@ class JwtTokenFilterTest {
     private FilterChain filterChain;
 
     @InjectMocks
-    private JwtTokenFilter jwtTokenFilter;
+    private JwtTokenFilter filter;
 
     @BeforeEach
     void setUp() {
@@ -59,21 +59,21 @@ class JwtTokenFilterTest {
     @Test
     void doFilterInternal_validToken_setsAuthentication() throws ServletException, IOException {
         String token = "valid.jwt.token";
-        String username = "testuser";
+        String expectedUsername = "testuser";
         Cookie jwtCookie = new Cookie("JWT", token);
-        UserDetails userDetails = new User(username, "password", List.of());
+        UserDetails userDetails = new User(expectedUsername, "password", List.of());
 
         when(request.getCookies()).thenReturn(new Cookie[]{jwtCookie});
         when(accessTokenService.validateToken(token)).thenReturn(true);
-        when(accessTokenService.getUsername(token)).thenReturn(username);
-        when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
+        when(accessTokenService.getUsername(token)).thenReturn(expectedUsername);
+        when(userDetailsService.loadUserByUsername(expectedUsername)).thenReturn(userDetails);
 
-        jwtTokenFilter.doFilterInternal(request, response, filterChain);
+        filter.doFilterInternal(request, response, filterChain);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        assertNotNull(authentication);
-        assertTrue(authentication.isAuthenticated());
-        assertEquals(username, authentication.getName());
+        Authentication actual = SecurityContextHolder.getContext().getAuthentication();
+        assertNotNull(actual);
+        assertTrue(actual.isAuthenticated());
+        assertEquals(expectedUsername, actual.getName());
         verify(filterChain).doFilter(request, response);
     }
 
@@ -85,10 +85,10 @@ class JwtTokenFilterTest {
         when(request.getCookies()).thenReturn(new Cookie[]{jwtCookie});
         when(accessTokenService.validateToken(token)).thenReturn(false);
 
-        jwtTokenFilter.doFilterInternal(request, response, filterChain);
+        filter.doFilterInternal(request, response, filterChain);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        assertNull(authentication);
+        Authentication actual = SecurityContextHolder.getContext().getAuthentication();
+        assertNull(actual);
         verify(filterChain).doFilter(request, response);
         verify(accessTokenService, never()).getUsername(anyString());
         verify(userDetailsService, never()).loadUserByUsername(anyString());
@@ -98,10 +98,10 @@ class JwtTokenFilterTest {
     void doFilterInternal_noCookie_doesNotSetAuthentication() throws ServletException, IOException {
         when(request.getCookies()).thenReturn(null);
 
-        jwtTokenFilter.doFilterInternal(request, response, filterChain);
+        filter.doFilterInternal(request, response, filterChain);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        assertNull(authentication);
+        Authentication actual = SecurityContextHolder.getContext().getAuthentication();
+        assertNull(actual);
         verify(filterChain).doFilter(request, response);
         verify(accessTokenService, never()).validateToken(anyString());
     }

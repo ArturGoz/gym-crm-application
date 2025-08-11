@@ -39,10 +39,13 @@ public class JwtCookieService {
 
     public String extractRefreshTokenFromCookies(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        if (cookies == null) return null;
+
+        if (cookies == null) {
+            return null;
+        }
 
         return Arrays.stream(cookies)
-                .filter(cookie -> "REFRESH_TOKEN".equals(cookie.getName()))
+                .filter(cookie -> TOKEN_REFRESH_COOKIE_NAME.equals(cookie.getName()))
                 .map(Cookie::getValue)
                 .findFirst()
                 .orElse(null);

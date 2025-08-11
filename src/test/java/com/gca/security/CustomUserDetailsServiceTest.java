@@ -29,20 +29,20 @@ class CustomUserDetailsServiceTest {
 
     @Test
     void loadUserByUsername_whenUserExists_returnsUserDetails() {
-        User user = GymTestProvider.constructUser();
+        User expected = GymTestProvider.constructUser();
 
-        when(userRepository.findByUsername(user.getUsername()))
-                .thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(expected.getUsername()))
+                .thenReturn(Optional.of(expected));
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        UserDetails actual = userDetailsService.loadUserByUsername(expected.getUsername());
 
-        assertEquals(user.getUsername(), userDetails.getUsername());
-        assertEquals(user.getPassword(), userDetails.getPassword());
-        assertTrue(userDetails.isEnabled());
-        assertTrue(userDetails.isAccountNonExpired());
-        assertTrue(userDetails.isAccountNonLocked());
-        assertTrue(userDetails.isCredentialsNonExpired());
-        assertTrue(userDetails.getAuthorities().isEmpty());
+        assertEquals(expected.getUsername(), actual.getUsername());
+        assertEquals(expected.getPassword(), actual.getPassword());
+        assertTrue(actual.isEnabled());
+        assertTrue(actual.isAccountNonExpired());
+        assertTrue(actual.isAccountNonLocked());
+        assertTrue(actual.isCredentialsNonExpired());
+        assertTrue(actual.getAuthorities().isEmpty());
     }
 
     @Test

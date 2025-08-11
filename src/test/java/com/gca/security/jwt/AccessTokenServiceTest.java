@@ -19,53 +19,53 @@ import static org.junit.jupiter.api.AssertionsKt.assertNotNull;
 @ExtendWith(MockitoExtension.class)
 class AccessTokenServiceTest {
 
-    private AccessTokenService accessTokenService;
+    private AccessTokenService service;
     private String secret;
     private Long accessDuration;
 
     @BeforeEach
     void setUp() {
-        accessTokenService = new AccessTokenService();
+        service = new AccessTokenService();
         secret = "ThisIsASecretKeyForJwtThatIsAtLeast32Bytes!";
         accessDuration = 3600_000L;
 
-        ReflectionTestUtils.setField(accessTokenService, "secretKey", secret);
-        ReflectionTestUtils.setField(accessTokenService, "jwtAccessDuration", accessDuration);
+        ReflectionTestUtils.setField(service, "secretKey", secret);
+        ReflectionTestUtils.setField(service, "jwtAccessDuration", accessDuration);
     }
 
     @Test
     void createAccessToken_shouldReturnValidJwt() {
-        String username = "testUser";
+        String expected = "testUser";
 
-        String token = accessTokenService.createAccessToken(username);
+        String actual = service.createAccessToken(expected);
 
-        assertNotNull(token);
-        assertEquals(username, parseUsername(token));
+        assertNotNull(actual);
+        assertEquals(expected, parseUsername(actual));
     }
 
     @Test
     void getUsername_shouldExtractCorrectUsernameFromToken() {
-        String username = "yurii_donets";
-        String token = buildToken(username, accessDuration);
+        String expected = "yurii_donets";
+        String actual = buildToken(expected, accessDuration);
 
-        assertEquals(username, accessTokenService.getUsername(token));
+        assertEquals(expected, service.getUsername(actual));
     }
 
     @Test
     void validateToken_shouldReturnTrueForValidToken() {
-        String token = buildToken("validUser", accessDuration);
-        assertTrue(accessTokenService.validateToken(token));
+        String actual = buildToken("validUser", accessDuration);
+        assertTrue(service.validateToken(actual));
     }
 
     @Test
     void validateToken_shouldReturnFalseForInvalidToken() {
-        assertFalse(accessTokenService.validateToken("invalid.token.value"));
+        assertFalse(service.validateToken("invalid.token.value"));
     }
 
     @Test
     void validateToken_shouldReturnFalseForExpiredToken() {
-        String token = buildToken("expiredUser", -5_000L);
-        assertFalse(accessTokenService.validateToken(token));
+        String actual = buildToken("expiredUser", -5_000L);
+        assertFalse(service.validateToken(actual));
     }
 
     private String buildToken(String username, long durationMillis) {
