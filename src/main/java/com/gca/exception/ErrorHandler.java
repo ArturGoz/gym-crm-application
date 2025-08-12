@@ -38,7 +38,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<ErrorResponse> handleServiceException(ServiceException ex) {
-        log.error("ServiceException: {}", ex.getMessage(), ex);
+        log.error("ServiceException: {}", ex.getMessage());
         ApiError error = resolveError(ex);
 
         return buildErrorResponse(error);
@@ -46,49 +46,49 @@ public class ErrorHandler {
 
     @ExceptionHandler(TokenRefreshException.class)
     public ResponseEntity<ErrorResponse> handleTokenRefreshException(TokenRefreshException ex) {
-        log.error("Exception with refresh token: {}", ex.getMessage(), ex);
+        log.error("Exception with refresh token: {}", ex.getMessage());
 
         return buildErrorResponse(REFRESH_TOKEN_ERROR);
     }
 
     @ExceptionHandler(AccountLockedException.class)
     public ResponseEntity<ErrorResponse> handleDaoException(AccountLockedException ex) {
-        log.error("Account Locked Exception: {}", ex.getMessage(), ex);
+        log.error("Account Locked Exception: {}", ex.getMessage());
 
         return buildErrorResponse(TOO_MANY_REQUESTS_ERROR);
     }
 
     @ExceptionHandler(DaoException.class)
     public ResponseEntity<ErrorResponse> handleDaoException(DaoException ex) {
-        log.error("Database Exception: {}", ex.getMessage(), ex);
+        log.error("Database Exception: {}", ex.getMessage());
 
         return buildErrorResponse(DATABASE_ERROR);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleEntityNotFoundExceptions(Exception ex) {
-        log.error("Entity not found Exception: {}", ex.getMessage(), ex);
+        log.error("Entity not found Exception: {}", ex.getMessage());
 
         return buildErrorResponse(NOT_FOUND_ERROR, ex.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(ConstraintViolationException ex) {
-        log.error("Validation Exception: {}", ex.getMessage(), ex);
+        log.error("Validation Exception: {}", ex.getMessage());
 
         return buildErrorResponse(VALIDATION_ERROR, extractValidationMessage(ex));
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleUnhandledExceptions(Exception ex) {
-        log.error("Unhandled Exception: {}", ex.getMessage(), ex);
+        log.error("Unhandled Exception: {}", ex.getMessage());
 
         return buildErrorResponse(SERVER_ERROR);
     }
 
     @ExceptionHandler(UserNotAuthenticatedException.class)
     public ResponseEntity<ErrorResponse> handleUserNotAuthenticatedExceptions(Exception ex) {
-        log.error("Authentication Exception: {}", ex.getMessage(), ex);
+        log.error("Authentication Exception: {}", ex.getMessage());
 
         return buildErrorResponse(AUTHENTICATION_ERROR);
     }
