@@ -1,5 +1,7 @@
 package com.gca.config;
 
+import com.gca.security.RequestResponseLoggingFilter;
+import com.gca.security.TransactionIdFilter;
 import com.gca.security.jwt.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +34,8 @@ import static com.gca.controller.ApiConstant.BASE_PATH;
 public class SecurityConfig {
 
     private final JwtTokenFilter jwtTokenFilter;
+    private final RequestResponseLoggingFilter requestResponseLoggingFilter;
+    private final TransactionIdFilter transactionIdFilter;
 
     @Value("${cors.allowed-origins:*}")
     private String allowedOrigins;
@@ -52,6 +56,8 @@ public class SecurityConfig {
                         .requestMatchers(BASE_PATH + "/trainers/register").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(transactionIdFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(requestResponseLoggingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
